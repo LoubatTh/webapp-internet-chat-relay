@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    networks:
+        - p-network
+
+  frontend:
+    container_name: frontend 
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - ./frontend:/app
+    networks:
+        - p-network
+
+networks:
+  p-network: 
