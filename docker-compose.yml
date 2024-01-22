@@ -14,7 +14,7 @@ services:
     volumes:
       - ./backend:/app
     networks:
-        - p-network
+        - jsf-network
 
   frontend:
     container_name: frontend 
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./frontend:/app
     networks:
-        - p-network
+      - jsf-network
 
 networks:
-  p-network: 
+  jsf-network: 
