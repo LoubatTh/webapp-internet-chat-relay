@@ -22,7 +22,11 @@
 - [Shadcn](https://shadcn.com/)
 - [Tailwind](https://tailwindcss.com/)
 - [Vite](https://vitejs.dev/)
-- [Auth0](https://auth0.com/)
+- [Auth.js](https://authjs.dev/)
+
+## Commit convention
+
+[Angular conventionnal commit](https://github.com/T-JAV-501)
 
 ## Installation
 
