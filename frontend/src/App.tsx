@@ -1,10 +1,13 @@
-function App() {
+import Body from "./components/Body";
+import Header from "./components/Header";
 
+function App() {
   return (
     <>
-      <h1 className=" text-red-900">React App</h1>
+      <Header />
+      <Body />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

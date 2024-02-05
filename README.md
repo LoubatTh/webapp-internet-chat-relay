@@ -2,9 +2,9 @@
 
 ## Team
 
-- [Ariirauu FUCK](https://github.com/AriirauF)
-- [Matteo DEGANO](https://github.com/MDeganoWDev)
 - [Thomas LOUBAT](https://github.com/LoubatTh)
+- [Matteo DEGANO](https://github.com/MDeganoWDev)
+- [Ariirauu FUCKS](https://github.com/AriirauF)
 
 ## Stack
 
@@ -12,25 +12,23 @@
 - [Docker Compose](https://docs.docker.com/compose/)
 
 ### Backend
+
 - [Node.js](https://nodejs.org/en/)
 - [Express](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [Prisma](https://www.prisma.io/)
 
 ### Frontend
-- [React](https://reactjs.org/)
-- [Shadcn](https://shadcn.com/)
-- [Tailwind](https://tailwindcss.com/)
+
 - [Vite](https://vitejs.dev/)
-- [Auth.js](https://authjs.dev/)
-
-## Commit convention
-
-[Angular conventionnal commit](https://github.com/T-JAV-501)
+- [React](https://reactjs.org/)
+- [Tailwind](https://tailwindcss.com/)
+- [Shadcn](https://shadcn.com/)
+- [Auth0](https://auth0.com/)
+- [Jest](https://jestjs.io/docs/getting-started)
 
 ## Installation
 
 ```bash
 docker-compose up --build
 ```
-
