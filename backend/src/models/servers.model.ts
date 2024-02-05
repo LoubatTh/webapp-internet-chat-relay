@@ -18,6 +18,5 @@ const serverSchema = new Schema<IServer>({
   },
 });
 
-const Server = model("server", serverSchema);
+export const Server = model("server", serverSchema);
 
-module.exports = Server;

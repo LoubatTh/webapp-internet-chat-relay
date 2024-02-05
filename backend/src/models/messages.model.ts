@@ -18,6 +18,4 @@ const messageSchema = new Schema<IMessage>({
   },
 });
 
-const Message = model("message", messageSchema);
-
-module.exports = Message;
+export const Message = model("message", messageSchema);
