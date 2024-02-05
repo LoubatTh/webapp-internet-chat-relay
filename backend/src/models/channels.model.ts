@@ -1,8 +1,8 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 
-interface IChannel {
+export interface IChannel {
   name: string;
-  members: Types.Array<string>;
+  members: string[];
   visibility: string;
 }
 

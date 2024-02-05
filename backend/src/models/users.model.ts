@@ -1,9 +1,9 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 
 // TODO: Replace channels by servers when the servers will be implemented
 interface IUser {
   username: string;
-  channels: Types.Array<string>;
+  channels: string[];
   informations: string;
   createdAt: Date;
 }

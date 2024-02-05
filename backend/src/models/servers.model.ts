@@ -1,9 +1,9 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 
 interface IServer {
   name: string;
-  channels: Types.Array<string>;
-  members: Types.Array<string>;
+  channels: string[];
+  members: string[];
   createdAt: Date;
 }
 
