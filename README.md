@@ -2,7 +2,7 @@
 
 ## Team
 
-- [Ariirauu FUCK](https://github.com/AriirauF)
+- [Ariirauu FUCKS](https://github.com/AriirauF)
 - [Matteo DEGANO](https://github.com/MDeganoWDev)
 - [Thomas LOUBAT](https://github.com/LoubatTh)
 
