@@ -1,18 +1,18 @@
 import create from "zustand";
 
 type ChannelMessageDisplayState = {
-  channelId: string;
+  channelId: number;
 };
 
 type ChannelMessageDisplayActions = {
-  setChannelId: (channelId: string) => void;
+  setChannelId: (channelId: number) => void;
 };
 
 const useChannelMessageDisplayStore = create<
   ChannelMessageDisplayState & ChannelMessageDisplayActions
 >((set) => ({
-  channelId: "",
-  setChannelId: (channelId: string) => set({ channelId }),
+  channelId: 0,
+  setChannelId: (channelId: number) => set({ channelId }),
 }));
 
 export default useChannelMessageDisplayStore;
