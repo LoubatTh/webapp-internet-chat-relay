@@ -4,3 +4,16 @@ export type ChannelType = {
   visibility: string;
   members: string[];
 };
+
+export type MessagesType = {
+  _id: string;
+  text: string;
+  channelId: string;
+  author: string;
+};
+
+export type MessagesPostType = {
+  text: string;
+  channelId: string;
+  author: string;
+};

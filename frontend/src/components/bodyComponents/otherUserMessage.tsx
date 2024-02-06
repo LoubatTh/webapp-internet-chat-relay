@@ -1,7 +1,7 @@
 import React from "react";
 
 type OtherUserMessageProps = {
-  id: number;
+  id: string;
   username: string;
   text: string;
 };

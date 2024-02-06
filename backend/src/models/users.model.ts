@@ -9,7 +9,7 @@ interface IUser {
 }
 
 const userSchema = new Schema<IUser>({
-  username: { type: String, required: true },
+  username: { type: String, required: false },
   channels: { type: [String], required: false },
   informations: { type: String, required: false },
   createdAt: {

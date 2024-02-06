@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Channel from "./sidePanelComponents/Channel";
 import useSidePanelStore from "../store/sidePanelStore";
 import { fetchApi } from "../lib/api";
-import { ChannelType } from "../lib/type";
+import type { ChannelType } from "../lib/type";
 
 const getAllChannel = async (): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>("GET", "channels");
