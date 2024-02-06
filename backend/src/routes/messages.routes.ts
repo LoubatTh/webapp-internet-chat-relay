@@ -9,4 +9,4 @@ router.post("/:channelId/messages", messagesController.createMessage);
 router.put("/:channelId/messages/:id", messagesController.updateMessage);
 router.delete("/:channelId/messages/:id", messagesController.deleteMessage);
 
-export default router;
+module.exports = router;

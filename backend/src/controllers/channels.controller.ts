@@ -6,8 +6,9 @@ import { Channel, IChannel } from "../models/channels.model";
 export const getChannels = async (req: Request, res: Response) => {
   try {
     const channels = await Channel.find();
-    res.json(channels);
-    //TODO: remove "any" type for error handling
+    res.status(200).json(channels);
+    return;
+    // TODO: remove "any" type for error handling
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -22,8 +23,10 @@ export const getChannel = async (req: Request, res: Response) => {
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
     } else {
-      res.json(channel);
+      res.status(200).json(channel);
+      return;
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -38,6 +41,7 @@ export const createChannel = async (req: Request, res: Response) => {
 
     if (!name || name.length === 0 || typeof name !== "string") {
       res.status(400).json({ message: "Name is required" });
+      return;
     }
 
     if (
@@ -46,8 +50,10 @@ export const createChannel = async (req: Request, res: Response) => {
       typeof visibility !== "string"
     ) {
       res.status(400).json({ message: "Visibility is required" });
+      return;
     } else if (visibility !== "public" && visibility !== "private") {
       res.status(400).json({ message: 'Visibility is "public" or "private"' });
+      return;
     }
 
     let data: IChannel = {
@@ -58,7 +64,8 @@ export const createChannel = async (req: Request, res: Response) => {
 
     const channel = new Channel(data);
     const savedChannel = await channel.save();
-    res.json(savedChannel);
+    res.status(201).json(savedChannel);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -78,6 +85,7 @@ export const updateChannel = async (req: Request, res: Response) => {
 
     if (!name && !visibility) {
       res.status(400).json({ message: "At least one field is required" });
+      return;
     }
 
     let data = {} as IChannelUpdate;
@@ -94,12 +102,12 @@ export const updateChannel = async (req: Request, res: Response) => {
     }
 
     const channel = await Channel.findByIdAndUpdate(id, data, { new: true });
-    console.log(channel);
+
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
-    } else {
-      res.status(200).json(channel);
     }
+
+    res.status(200).json(channel);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -114,7 +122,6 @@ export const deleteChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const channel = await Channel.findByIdAndDelete(id);
-    console.log(channel)
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
     } else {
