@@ -3,6 +3,8 @@ import { Channel } from '~/models/channels.model';
 import { User } from '~/models/users.model';
 import { Message } from '~/models/messages.model';
 
+//TODO: Verifier que les données ne sont pas en doublant dans la base de données
+
 // Connexion à MongoDB
 mongoose
   .connect("mongodb+srv://user-db:Rmh1Z8aNNTaXVMPt@cluster0.kmky613.mongodb.net/Epichat", { })
@@ -60,13 +62,13 @@ db.once('open', async () => {
   ];
 
   const messagesData = [
-    { text: 'message1' , channelId: 'channel1pub', author: 'user1'},
-    { text: 'message2' , channelId: 'channel1pub', author: 'user2'},
-    { text: 'message3' , channelId: 'channel1pub', author: 'user3'},
-    { text: 'message4' , channelId: 'channel1pub', author: 'user4'},
-    { text: 'message5' , channelId: 'channel1pub', author: 'user5'},
-    { text: 'message6' , channelId: 'channel2pub', author: 'user1'},
-    { text: 'message7' , channelId: 'channel2pub', author: 'user2'},
+    { text: 'message1' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user1'},
+    { text: 'message2' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user2'},
+    { text: 'message3' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user3'},
+    { text: 'message4' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user4'},
+    { text: 'message5' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user5'},
+    { text: 'message6' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user1'},
+    { text: 'message7' , channelId: '65c29168b1ef82e2f1ccee92', author: 'user2'},
     { text: 'message8' , channelId: 'channel2pub', author: 'user3'},
     { text: 'message9' , channelId: 'channel2pub', author: 'user4'},
     { text: 'message10' , channelId: 'channel2pub', author: 'user5'},
