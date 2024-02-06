@@ -25,3 +25,5 @@ dist-ssr
 
 # env files
 .env
+frontend/bun.lockb
+backend/package-lock.json
