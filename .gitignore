@@ -25,3 +25,7 @@ dist-ssr
 
 # env files
 .env
+
+# unecessary files
+*.lockb
+package-lock.json
