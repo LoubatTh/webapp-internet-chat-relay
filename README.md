@@ -4,7 +4,7 @@
 
 - [Thomas LOUBAT](https://github.com/LoubatTh)
 - [Matteo DEGANO](https://github.com/MDeganoWDev)
-- [Ariirauu FUCKS](https://github.com/AriirauF)
+- [Ariirau FUCKS](https://github.com/AriirauF)
 
 ## Stack
 
