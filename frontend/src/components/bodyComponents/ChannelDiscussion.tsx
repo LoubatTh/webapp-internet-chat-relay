@@ -13,12 +13,14 @@ const ChannelDiscussion = () => {
           {messages.messages.map((message) =>
             message.userId === 101 ? (
               <UserMessage
+                key={message.id}
                 id={message.id}
                 username={message.username}
                 text={message.text}
               />
             ) : (
               <OtherUserMessage
+                key={message.id}
                 id={message.id}
                 username={message.username}
                 text={message.text}
