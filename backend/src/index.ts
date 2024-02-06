@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import { Server } from "socket.io";
 
 require("dotenv").config();
 
@@ -11,10 +12,17 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017";
 
 const app = express();
 
+const io = new Server(4000, {
+  cors: {
+    origin: "http://localhost:3000",
+    }
+    });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("combined"));
+
 
 mongoose
   .connect(MONGO_URI)
@@ -32,4 +40,15 @@ app.use("/ping", (req: Request, res: Response) => {
   res.send({ message: "Ping" });
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+const socketio = io.listen(server);
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
