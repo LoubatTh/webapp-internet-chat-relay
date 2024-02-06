@@ -1,9 +1,11 @@
 import React from "react";
-
+import ChannelDiscussion from "./bodyComponents/ChannelDiscussion";
 const Body = () => {
   return (
     <>
-      <div className="bg-background p-2 w-full h-full">Body</div>
+      <div className="flex bg-background h-[calc(100%-20px)] w-full">
+        <ChannelDiscussion />
+      </div>
     </>
   );
 };
