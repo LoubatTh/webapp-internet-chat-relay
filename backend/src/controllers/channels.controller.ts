@@ -59,6 +59,7 @@ export const createChannel = async (req: Request, res: Response) => {
     let data: IChannel = {
       name: name,
       members: members.length > 0 ? members : [],
+      guests: [],
       visibility: visibility,
     };
 

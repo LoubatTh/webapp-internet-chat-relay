@@ -56,7 +56,7 @@ export const createMessage = async (req: Request, res: Response) => {
     const { channelId } = req.params;
     const { text, author } = req.body;
     const channel = await Channel.findById(channelId);
-    console.log(channelId, channel);
+
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
       return;
@@ -76,7 +76,7 @@ export const createMessage = async (req: Request, res: Response) => {
       text: text,
       channelId: channelId,
       author: author,
-      timestamp: new Date(),
+      createdAt: new Date(),
     };
 
     const message = new Message(data);
@@ -93,7 +93,7 @@ export const createMessage = async (req: Request, res: Response) => {
 export const updateMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
-    const { text } = req.body;
+    const { text, author } = req.body;
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
@@ -105,6 +105,18 @@ export const updateMessage = async (req: Request, res: Response) => {
       res.status(400).json({ message: "Missing text field" });
       return;
     }
+
+    if (!author) {
+      res.status(400).json({ message: "Missing author field" });
+      return;
+    }
+
+    const checkMessage = await Message.findOne({ _id: id, author: author });
+    if (!checkMessage) {
+      res.status(403).json({ message: "You can't edit this message" });
+      return;
+    }
+
     const message = await Message.findByIdAndUpdate(
       id,
       { text: text },
@@ -126,10 +138,22 @@ export const updateMessage = async (req: Request, res: Response) => {
 export const deleteMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
+    const { author } = req.body;
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
+    }
+
+    if (!author) {
+      res.status(400).json({ message: "Missing author field" });
+      return;
+    }
+
+    const checkMessage = await Message.findOne({ _id: id, author: author });
+    if (!checkMessage) {
+      res.status(403).json({ message: "You can't delete this message" });
       return;
     }
 
