@@ -22,7 +22,7 @@ const createFakeData = async () => {
         members: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
           faker.internet.email()
         ),
-        visibility: faker.random.arrayElement(["public", "private", "hidden"]),
+        visibility: faker.random.arrayElement(["public", "private"]),
       });
 
       await channel.save();
