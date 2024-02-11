@@ -3,7 +3,7 @@ import React from "react";
 type OtherUserMessageProps = {
   id: string;
   username: string;
-  text: string;
+  text: string | JSX.Element;
 };
 
 const OtherUserMessage = ({ id, username, text }: OtherUserMessageProps) => {

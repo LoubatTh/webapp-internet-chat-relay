@@ -7,7 +7,7 @@ export type ChannelType = {
 
 export type MessagesType = {
   _id: string;
-  text: string;
+  text: string | JSX.Element;
   channelId: string;
   author: string;
 };
@@ -17,3 +17,4 @@ export type MessagesPostType = {
   channelId: string;
   author: string;
 };
+

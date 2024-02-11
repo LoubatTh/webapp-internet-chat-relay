@@ -3,7 +3,7 @@ import React from "react";
 type UserMessageProps = {
   id: string;
   username: string;
-  text: string;
+  text: string | JSX.Element;
 };
 
 const UserMessage = ({ id, username, text }: UserMessageProps) => {

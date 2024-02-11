@@ -1,7 +1,7 @@
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 
 type ChannelProps = {
-  id: number;
+  id: string;
   name: string;
 };
 
