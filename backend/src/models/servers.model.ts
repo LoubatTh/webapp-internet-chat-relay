@@ -15,6 +15,7 @@ const serverSchema = new Schema<IServer>({
     type: Date,
     default: () => Date.now(),
     immutable: true,
+    index: true,
   },
 });
 
