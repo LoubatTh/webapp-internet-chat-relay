@@ -25,7 +25,7 @@ const ChannelDiscussion = () => {
   const [messages, setMessages] = useState<MessagesType[]>([]);
   const lastMessageRef = useRef(null);
 
-  const onCommand = (command, args) => {
+  const onCommand = (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any) => {
     switch (command) {
       case 'help':
         // Display help message
@@ -63,7 +63,8 @@ const ChannelDiscussion = () => {
               length: 0,
               text: (
                 <>
-                  Veuillez spécifier un pseudo.
+                  Veuillez spécifier un pseudo. <br />
+                  Exemple : <strong>/nick <i>[nickname]</i></strong>
                 </>
               ), },
           ]);
