@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Ensure React and useState are imported
+import React, { useState } from 'react';
 import { Button } from "../ui/ui/button";
 import { Textarea } from "../ui/ui/textarea";
 import type { MessagesPostType } from "../../lib/type";
@@ -20,28 +20,42 @@ const postMessage = async (
   return data;
 };
 
-const InputMessage = () => {
+const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string) => void }) => {
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
   const [author, setAuthor] = useState("user");
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
 
   const handlePostMessage = async () => {
     if (!message.trim()) return; // Prevent sending empty messages
 
-    const newMessage = await postMessage(channelId, { text: message, author, channelId });
-    setMessage(""); // Clear input field on successful send
+    const trimmedMessage = message.trim();
+    const isCommand = trimmedMessage.startsWith('/');
+    
+    if (isCommand) {
+      // If message is a command, parse it
+      const [command, ...argsArray] = trimmedMessage.slice(1).split(' ');
+      const args = argsArray.join(' ');
 
-    socket.emit("newMessage", newMessage); // Emit new message event
+      // Get the command and its arguments
+      onCommand(command, args);
+      console.log("Commande", command);
+    } else {
+      // If message is not a command, send it as a regular message
+      const newMessage = await postMessage(channelId, { text: trimmedMessage, author, channelId });
+      socket.emit("newMessage", newMessage); // Emit new message event
+    }
+
+    setMessage(""); // Clear input field on successful send
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); 
-      handlePostMessage(); 
+      event.preventDefault();
+      handlePostMessage();
     }
   };
 

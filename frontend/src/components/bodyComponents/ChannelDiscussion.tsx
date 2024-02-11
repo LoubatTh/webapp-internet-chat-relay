@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import InputMessage from "./InputMessage";
 import UserMessage from "./userMessage";
 import OtherUserMessage from "./otherUserMessage";
@@ -7,8 +7,9 @@ import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import type { MessagesType } from "../../lib/type";
 import { io, Socket } from 'socket.io-client';
+import Markdown from "react-markdown";
 
-const socket: Socket = io('http://localhost:4000'); // Connect to the Socket server
+const socket: Socket = io('http://localhost:4000');
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
   const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
@@ -18,30 +19,45 @@ const fetchMessages = async (id: string): Promise<MessagesType[]> => {
 const ChannelDiscussion = () => {
   const { channelId } = useChannelMessageDisplayStore();
   const [messages, setMessages] = useState<MessagesType[]>([]);
-  const scrollAreaRef = useRef(null);
-  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const [helpMessage, setHelpMessage] = useState<string | null>(null);
+  const lastMessageRef = useRef(null);
+
+  const onCommand = (command) => {
+    switch (command) {
+      case 'help':
+        // Display help message
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { _id: 'system-message', author: 'System', text: 'La liste des commandes : ...' },
+        ]);
+        break;
+      default:
+        // If command is not recognized
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { _id: 'system-message', author: 'System', text: `Commande non reconnue : ${command}` },
+        ]);
+        break;
+    }
+  };
 
   useEffect(() => {
     if (!channelId) return;
 
-    // Listening for new message event
     socket.on('newMessage', (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    // Get messages from the API
     fetchMessages(channelId).then((data) => {
       setMessages(data);
     });
 
     return () => {
-      // Clean up the event listener
       socket.off('newMessage');
     };
   }, [channelId]);
 
-  useEffect(() => {
-    // Scroll down after each message update
+  useLayoutEffect(() => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -50,11 +66,11 @@ const ChannelDiscussion = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex flex-col h-[calc(100%-50px)] w-[calc(100%-10px)]">
-        <ScrollArea className="h-full w-full" ref={scrollAreaRef}>
+        <ScrollArea className="h-full w-full">
           {messages.map((message, index) => (
             <div
-              ref={index === messages.length - 1 ? lastMessageRef : null}
               key={message._id}
+              ref={index === messages.length - 1 ? lastMessageRef : null}
             >
               {message._id === "101" ? (
                 <UserMessage
@@ -73,7 +89,7 @@ const ChannelDiscussion = () => {
           ))}
         </ScrollArea>
       </div>
-      <InputMessage />
+      <InputMessage onCommand={onCommand} />
     </div>
   );
 };
