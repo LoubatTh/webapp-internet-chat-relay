@@ -32,6 +32,13 @@ const InputMessage = () => {
       setMessage(""); // Clear input field on successful send
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); 
+      handlePostMessage(); 
+    }
+  };
+
   return (
     <div className="flex flex-row h-5 w-full p-2 gap-2">
       <Textarea
@@ -39,6 +46,7 @@ const InputMessage = () => {
         placeholder="Type your message here."
         value={message} // Controlled component
         onChange={handleInputChange} // Update state on change
+        onKeyDown={handleKeyDown} // Handle enter key press
       />
       <Button className="h-10" onClick={handlePostMessage}>
         Send
