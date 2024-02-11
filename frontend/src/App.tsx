@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react";
+
+import Body from "./components/Body";
+import Header from "./components/Header";
+import SidePanel from "./components/SidePanel";
 
 function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('http://localhost:5000/hello')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-  })
   return (
-    <>
-      <h1 className=" text-red-900">React App</h1>
-      <p>{message}</p>
-    </>
-  )
+    <div className="flex flex-col w-screen h-screen">
+      <Header />
+      <div className="flex flex-row h-[calc(100%-80px)]">
+        <SidePanel />
+        <Body />
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
