@@ -6,6 +6,9 @@ import { ScrollArea } from "../ui/ui/scroll-area";
 import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import type { MessagesType } from "../../lib/type";
+import { io, Socket } from 'socket.io-client';
+
+const socket: Socket = io('http://localhost:4000'); // Assurez-vous de remplacer l'URL par celle de votre serveur Socket.IO
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
   const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
@@ -18,10 +21,21 @@ const ChannelDiscussion = () => {
 
   useEffect(() => {
     if (!channelId) return;
+
+    // Écouter les nouveaux messages via Socket.IO
+    socket.on('newMessage', (newMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    // Récupérer les messages existants depuis l'API
     fetchMessages(channelId).then((data) => {
       setMessages(data);
-      console.log("data", data);
     });
+
+    return () => {
+      // Nettoyer l'écouteur d'événement lorsque le composant est démonté
+      socket.off('newMessage');
+    };
   }, [channelId]);
 
   return (

@@ -4,6 +4,9 @@ import { Textarea } from "../ui/ui/textarea";
 import type { MessagesPostType } from "../../lib/type";
 import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
+import { io, Socket } from "socket.io-client";
+
+const socket: Socket = io("http://localhost:4000");
 
 const postMessage = async (
   id: string,
@@ -20,7 +23,7 @@ const postMessage = async (
 const InputMessage = () => {
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
-  const [author, setAuthor] = useState("user"); // Consider if this needs to be dynamic or could be removed if always static
+  const [author, setAuthor] = useState("user");
 
   const handleInputChange = (event) => {
     setMessage(event.target.value);
@@ -28,8 +31,11 @@ const InputMessage = () => {
 
   const handlePostMessage = async () => {
     if (!message.trim()) return; // Prevent sending empty messages
-      postMessage(channelId, { text: message, author, channelId });
-      setMessage(""); // Clear input field on successful send
+
+    const newMessage = await postMessage(channelId, { text: message, author, channelId });
+    setMessage(""); // Clear input field on successful send
+
+    socket.emit("newMessage", newMessage); // Emit new message event
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

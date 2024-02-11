@@ -48,7 +48,15 @@ const socketio = io.listen(server);
 
 io.on("connection", (socket) => {
   console.log("A user connected");
+
   socket.on("disconnect", () => {
     console.log("A user disconnected");
+  });
+
+  // Récupérer les nouveaux messages
+  socket.on("newMessage", (newMessage) => {
+    console.log("New message received:", newMessage);
+
+    io.emit("newMessage", newMessage);
   });
 });
