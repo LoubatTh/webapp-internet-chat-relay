@@ -34,7 +34,6 @@ const randomId = () => {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
             author: 'System',
-            length: 0,
             text: (
               <>
                 Veuillez spécifier un pseudo. <br />
@@ -47,7 +46,6 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            length: 0,
             author: 'System',
             text: (
               <>
@@ -56,7 +54,169 @@ const randomId = () => {
             ),
           },
         ];
-      // ... (rest of the cases)
+      case 'list':
+        // List available channels
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /list non implémentée.
+              </>
+            ),
+          },
+        ];
+      case 'create':
+        // Create a new channel
+        if (!args) return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Veuillez spécifier un nom de canal. <br />
+                Exemple : <strong>/create <i>[channel]</i></strong>
+              </>
+            ),
+          },
+        ];
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /create non implémentée.
+              </>
+            ),
+          },
+        ];
+        case 'delete':
+        // Delete a channel
+        if (!args) return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Veuillez spécifier un nom de canal. <br />
+                Exemple : <strong>/delete <i>[channel]</i></strong>
+              </>
+            ),
+          },
+        ];
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /delete non implémentée.
+              </>
+            ),
+          },
+        ];
+      case 'join':
+        // Join a channel
+        if (!args) return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Veuillez spécifier un nom de canal. <br />
+                Exemple : <strong>/join <i>[channel]</i></strong>
+              </>
+            ),
+          },
+        ];
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /join non implémentée.
+              </>
+            ),
+          },
+        ];
+      case 'quit':
+        // Quit a channel
+        if (!args) return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Veuillez spécifier un nom de canal. <br />
+                Exemple : <strong>/quit <i>[channel]</i></strong>
+              </>
+            ),
+          },
+        ];
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /quit non implémentée.
+              </>
+            ),
+          },
+        ];
+      case 'users':
+        // List users in the channel
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /users non implémentée.
+              </>
+            ),
+          },
+        ];
+      case 'msg':
+        // Send a private message
+        if (!args) return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Veuillez spécifier un pseudo et un message. <br />
+                Exemple : <strong>/msg <i>[nickname] [message]</i></strong>
+              </>
+            ),
+          },
+        ];
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            text: (
+              <>
+                Commande /msg non implémentée.
+              </>
+            ),
+          },
+        ];
       default:
         // If command is not recognized
         return [
