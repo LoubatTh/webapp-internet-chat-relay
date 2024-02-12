@@ -3,15 +3,15 @@ import { Schema, model } from "mongoose";
 export interface IMessage {
   text: string;
   channelId: string;
-  author: string;
-  timestamp: Date;
+  authorId: string;
+  createdAt: Date;
 }
 
 const messageSchema = new Schema<IMessage>({
   text: { type: String, required: true },
-  channelId: { type: String, required: true },
-  author: { type: String, required: true },
-  timestamp: {
+  channelId: { type: String, required: true, index: true },
+  authorId: { type: String, required: true, index: true },
+  createdAt: {
     type: Date,
     default: () => Date.now(),
     immutable: true,
@@ -19,3 +19,4 @@ const messageSchema = new Schema<IMessage>({
 });
 
 export const Message = model("message", messageSchema);
+Message.ensureIndexes();
