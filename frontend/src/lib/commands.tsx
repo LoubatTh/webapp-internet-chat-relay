@@ -10,7 +10,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
                 <>
                 Voici la liste des commandes disponibles : <br />
@@ -33,7 +33,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un pseudo. <br />
@@ -46,7 +46,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /nick non implémentée.
@@ -60,7 +60,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /list non implémentée.
@@ -74,7 +74,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un nom de canal. <br />
@@ -87,7 +87,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /create non implémentée.
@@ -101,7 +101,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un nom de canal. <br />
@@ -114,7 +114,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /delete non implémentée.
@@ -128,7 +128,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un nom de canal. <br />
@@ -141,7 +141,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /join non implémentée.
@@ -155,7 +155,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un nom de canal. <br />
@@ -168,7 +168,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /quit non implémentée.
@@ -182,7 +182,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /users non implémentée.
@@ -196,7 +196,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Veuillez spécifier un pseudo et un message. <br />
@@ -209,7 +209,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             text: (
               <>
                 Commande /msg non implémentée.
@@ -223,7 +223,7 @@ const randomId = () => {
           {
             channelId: 'system',
             _id: `system-message-notfound-${randomId()}`,
-            author: 'System',
+            authorId: 'System',
             length: 0,
             text: (
               <>

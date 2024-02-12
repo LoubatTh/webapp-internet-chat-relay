@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "../ui/ui/button";
 import { Textarea } from "../ui/ui/textarea";
 import type { MessagesPostType } from "../../lib/type";
@@ -10,7 +10,7 @@ const socket: Socket = io("http://localhost:4000");
 
 const postMessage = async (
   id: string,
-  body: { text: string; author: string; channelId: string }
+  body: { text: string; authorId: string; channelId: string }
 ): Promise<MessagesPostType> => {
   const data = await fetchApi<MessagesPostType>(
     "POST",
@@ -23,7 +23,15 @@ const postMessage = async (
 const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string) => void }) => {
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
-  const [author, setAuthor] = useState("user");
+  const [authorId, setAuthorId] = useState("");
+
+  useEffect(() => {
+    // Retrieve 'identity' from localStorage when the component mounts
+    const storedIdentity = localStorage.getItem('identity');
+    if (storedIdentity) {
+      setAuthorId(storedIdentity);
+    }
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
@@ -44,8 +52,9 @@ const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string
       onCommand(command, args);
       console.log("Commande", command);
     } else {
+      
       // If message is not a command, send it as a regular message
-      const newMessage = await postMessage(channelId, { text: trimmedMessage, author, channelId });
+      const newMessage = await postMessage(channelId, { text: trimmedMessage, authorId, channelId });
       socket.emit("newMessage", newMessage); // Emit new message event
     }
 

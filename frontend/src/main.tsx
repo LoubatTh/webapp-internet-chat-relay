@@ -4,7 +4,7 @@ import {createBrowserRouter,RouterProvider} from "react-router-dom";
 import './index.css'
 import ChannelDiscussion from './routes/ChannelDiscussion.tsx';
 import Home from './routes/Home.tsx';
-
+console.log("Hello World");
 const router = createBrowserRouter([
   {
     path: "/",

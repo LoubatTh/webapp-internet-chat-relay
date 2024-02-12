@@ -9,12 +9,12 @@ export type MessagesType = {
   _id: string;
   text: string | JSX.Element;
   channelId: string;
-  author: string;
+  authorId: string;
 };
 
 export type MessagesPostType = {
   text: string;
   channelId: string;
-  author: string;
+  authorId: string;
 };
 

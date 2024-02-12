@@ -8,6 +8,7 @@ import type { MessagesType } from "../lib/type";
 import { io, Socket } from 'socket.io-client';
 import { onCommand } from "../lib/commands";
 import { useParams } from "react-router-dom";
+import { getAuthorById } from "../lib/getauthorbyid";
 
 const socket: Socket = io('http://localhost:4000');
 
@@ -67,13 +68,13 @@ const ChannelDiscussion = () => {
                   {message._id === '101' ? (
                     <UserMessage
                       id={message._id}
-                      username={message.author}
+                      username={message.authorId}
                       text={message.text}
                     />
                   ) : (
                     <OtherUserMessage
                       id={message._id}
-                      username={message.author}
+                      username={message.authorId}
                       text={message.text}
                     />
                   )}
@@ -95,7 +96,7 @@ const ChannelDiscussion = () => {
 };
 
 const isCommand = (message: MessagesType): boolean => {
-  return message.author == 'System';
+  return message.authorId == 'System';
 };
 
 export default ChannelDiscussion;
