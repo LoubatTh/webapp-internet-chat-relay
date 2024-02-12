@@ -5,7 +5,7 @@
     "build": "tsup src/index.ts --format cjs --clean",
     "test": "jest --coverage",
     "start": "node dist/index.js",
-    "supply": "nodemon --watch src -e js,ts,json --exec \"ts-node src/faker.ts\""
+    "supply": "ts-node src/faker.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -12,8 +12,8 @@ mongoose.connect("mongodb+srv://user-db:Rmh1Z8aNNTaXVMPt@cluster0.kmky613.mongod
 const createFakeData = async () => {
   try {
     // Define how many fake entries you want
-    const numberOfChannels = 20;
-    const messagesPerChannel = 200;
+    const numberOfChannels = 25;
+    const messagesPerChannel = 50;
 
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
