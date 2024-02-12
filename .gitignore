@@ -28,4 +28,6 @@ dist-ssr
 
 # unecessary files
 *.lockb
-package-lock.json
+backend/package-lock.json
+frontend/package-lock.json
+
