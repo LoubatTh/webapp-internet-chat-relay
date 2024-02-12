@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User, IUser } from "../models/users.model";
 import { Guest } from "~/models/guests.model";
 import { Channel } from "~/models/channels.model";
+import { Message } from "~/models/messages.model";
 
 // GET /users
 // Get all users
@@ -52,6 +53,13 @@ export const createUser = async (req: Request, res: Response) => {
       return;
     }
 
+    const checkGuest = await Guest.findOne({ username: username });
+
+    if (checkGuest) {
+      res.status(400).json({ message: "Username already taken" });
+      return;
+    }
+
     const data: IUser = {
       username: username,
       channels: [],
@@ -80,6 +88,11 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { username, informations } = req.body;
+    const oldUsername = await User.findById(id).then((oldUser) => {
+      return oldUser ? oldUser.username : "";
+    });
+
+    console.log(oldUsername);
 
     if (!username && !informations) {
       res.status(400).json({ message: "Missing field" });
@@ -107,6 +120,44 @@ export const updateUser = async (req: Request, res: Response) => {
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
+    }
+
+    if (data.username) {
+      for (let i = 0; i < user.channels.length; i++) {
+        const channel = await Channel.findById(user.channels[i]);
+
+        if (!channel) {
+          res.status(404).json({ message: "Channel not found" });
+          return;
+        }
+
+        const channelIndex = channel.members.indexOf(oldUsername);
+
+        if (channelIndex === -1) {
+          res.status(404).json({ message: "User not found in channel" });
+          return;
+        }
+
+        channel.members.splice(channelIndex, 1, data.username);
+        await channel.save();
+      }
+
+      const messages = await Message.find({ author: oldUsername });
+
+      for (let i = 0; i < messages.length; i++) {
+        const message = await Message.findByIdAndUpdate(
+          messages[i]._id,
+          { author: data.username },
+          { new: true }
+        );
+
+        if (!message) {
+          res.status(404).json({ message: "Message ot found" });
+          return;
+        }
+
+        await message.save();
+      }
     }
 
     res.status(200).json(user);
