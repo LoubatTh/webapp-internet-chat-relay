@@ -1,17 +1,8 @@
-
-import Body from "./components/Body";
-import Header from "./components/Header";
-import SidePanel from "./components/SidePanel";
+import Home from "./routes/Home";
 
 function App() {
   return (
-    <div className="flex flex-col w-screen h-screen">
-      <Header />
-      <div className="flex flex-row h-[calc(100%-80px)]">
-        <SidePanel />
-        <Body />
-      </div>
-    </div>
+   <Home/>
   );
 }
 

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
-import InputMessage from "./InputMessage";
-import UserMessage from "./userMessage";
-import OtherUserMessage from "./otherUserMessage";
-import { ScrollArea } from "../ui/ui/scroll-area";
-import { fetchApi } from "../../lib/api";
-import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
-import type { MessagesType } from "../../lib/type";
+import InputMessage from "../components/bodyComponents/InputMessage";
+import UserMessage from "../components/bodyComponents/userMessage";
+import OtherUserMessage from "../components/bodyComponents/otherUserMessage";
+import { ScrollArea } from "../components/ui/ui/scroll-area";
+import { fetchApi } from "../lib/api";
+import type { MessagesType } from "../lib/type";
 import { io, Socket } from 'socket.io-client';
+import { useParams } from "react-router-dom";
 
 const socket: Socket = io('http://localhost:4000');
 
@@ -19,9 +19,8 @@ const fetchMessages = async (id: string): Promise<MessagesType[]> => {
   return data;
 };
 
-
 const ChannelDiscussion = () => {
-  const { channelId } = useChannelMessageDisplayStore();
+  const channelId = useParams<{ channelId: string }>().channelId;
   const [messages, setMessages] = useState<MessagesType[]>([]);
   const lastMessageRef = useRef(null);
 
