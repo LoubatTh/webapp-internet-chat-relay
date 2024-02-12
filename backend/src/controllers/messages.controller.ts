@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { Message, IMessage } from "../models/messages.model";
 import { Channel } from "../models/channels.model";
+import { User } from "~/models/users.model";
+import { findSourceMap } from "module";
+import { Guest } from "~/models/guests.model";
 
 // GET /channels/:channelId/messages
 // Get all messages for a channel
@@ -54,7 +57,7 @@ export const getMessage = async (req: Request, res: Response) => {
 export const createMessage = async (req: Request, res: Response) => {
   try {
     const { channelId } = req.params;
-    const { text, author } = req.body;
+    const { text, authorId } = req.body;
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
@@ -67,15 +70,23 @@ export const createMessage = async (req: Request, res: Response) => {
       return;
     }
 
-    if (!author || author.length === 0) {
+    if (!authorId || authorId.length === 0) {
       res.status(400).json({ message: "Missing author field" });
+      return;
+    }
+
+    const checkUser = await User.findById(authorId);
+    const checkGuest = await Guest.findById(authorId);
+
+    if (!checkUser && !checkGuest) {
+      res.status(404).json({ message: "Author not found" });
       return;
     }
 
     let data: IMessage = {
       text: text,
       channelId: channelId,
-      author: author,
+      authorId: authorId,
       createdAt: new Date(),
     };
 
@@ -93,7 +104,7 @@ export const createMessage = async (req: Request, res: Response) => {
 export const updateMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
-    const { text, author } = req.body;
+    const { text, authorId } = req.body;
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
@@ -106,14 +117,20 @@ export const updateMessage = async (req: Request, res: Response) => {
       return;
     }
 
-    if (!author) {
+    if (!authorId) {
       res.status(400).json({ message: "Missing author field" });
       return;
     }
 
-    const checkMessage = await Message.findOne({ _id: id, author: author });
+    const checkMessage = await Message.findById(id);
+
     if (!checkMessage) {
-      res.status(403).json({ message: "You can't edit this message" });
+      res.status(400).json({ message: "Message not found" });
+      return;
+    }
+
+    if (checkMessage.authorId !== authorId) {
+      res.status(403).json({ message: "You can't delete this message" });
       return;
     }
 
@@ -138,7 +155,7 @@ export const updateMessage = async (req: Request, res: Response) => {
 export const deleteMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
-    const { author } = req.body;
+    const { authorId } = req.body;
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
@@ -146,13 +163,19 @@ export const deleteMessage = async (req: Request, res: Response) => {
       return;
     }
 
-    if (!author) {
+    if (!authorId) {
       res.status(400).json({ message: "Missing author field" });
       return;
     }
 
-    const checkMessage = await Message.findOne({ _id: id, author: author });
+    const checkMessage = await Message.findById(id);
+
     if (!checkMessage) {
+      res.status(400).json({ message: "Message not found" });
+      return;
+    }
+
+    if (checkMessage.authorId !== authorId) {
       res.status(403).json({ message: "You can't delete this message" });
       return;
     }
