@@ -1,5 +1,5 @@
 export type ChannelType = {
-  _id: number;
+  _id: string;
   name: string;
   visibility: string;
   members: string[];

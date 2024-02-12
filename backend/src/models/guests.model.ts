@@ -1,23 +1,21 @@
 import { Schema, model } from "mongoose";
 
 // TODO: Replace channels by servers when the servers will be implemented
-export interface IUser {
+export interface IGuest {
   username: string;
   channels: string[];
-  informations: string;
-  createdAt: Date;
+  lastConnexion: Date;
 }
 
-const userSchema = new Schema<IUser>({
+const guestSchema = new Schema<IGuest>({
   username: { type: String, required: true, unique: true },
   channels: { type: [String], required: false },
-  createdAt: {
+  lastConnexion: {
     type: Date,
     default: () => Date.now(),
-    immutable: true,
     index: true,
   },
 });
 
-export const User = model("user", userSchema);
-User.ensureIndexes();
+export const Guest = model("guest", guestSchema);
+Guest.ensureIndexes();

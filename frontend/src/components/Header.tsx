@@ -9,7 +9,6 @@ const Header = () => {
   ]);
   const HandleOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);
-    console.log("openSidePanel", openSidePanel);
   };
   return (
     <header className="flex center bg-secondary text-secondary-foreground border-b-2 border-background p-2 h-20 w-full">

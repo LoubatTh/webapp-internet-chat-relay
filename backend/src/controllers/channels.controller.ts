@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { Channel, IChannel } from "../models/channels.model";
+import { User } from "~/models/users.model";
+import { Message } from "~/models/messages.model";
 
 // GET /channels
 // Get all channels
@@ -56,11 +58,26 @@ export const createChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    let data: IChannel = {
+    let data = {
       name: name,
-      members: members.length > 0 ? members : [],
       visibility: visibility,
-    };
+    } as IChannel;
+
+    if (members && members.length > 0) {
+      for (let i = 0; i < members.length; i++) {
+        const member = await User.findById(members[i]);
+        const guest = await Channel.findById(members[i]);
+
+        if (!member && !guest) {
+          res.status(404).json({ message: "Member not found" });
+          return;
+        }
+      }
+
+      data.members = members;
+    } else {
+      data.members = [];
+    }
 
     const channel = new Channel(data);
     const savedChannel = await channel.save();
@@ -116,13 +133,53 @@ export const updateChannel = async (req: Request, res: Response) => {
 // DELETE /channels/:id
 // Delete a channel by id
 export const deleteChannel = async (req: Request, res: Response) => {
-  // TODO: should also delete all messages in the channel
-  // TODO: should also remove the channel from the members' channels list
-  // TODO: should also remove the channel from the server' channels list
   try {
     const { id } = req.params;
-    const channel = await Channel.findByIdAndDelete(id);
+
+    const messages = await Message.find({ channelId: id });
+
+    for (let i = 0; i < messages.length; i++) {
+      const message = await Message.findByIdAndDelete(messages[i]._id);
+
+      if (!message) {
+        res.status(404).json({ message: "Message not found" });
+        return;
+      }
+    }
+
+    const channel = await Channel.findById(id);
     if (!channel) {
+      res.status(404).json({ message: "Channel not found" });
+      return;
+    }
+
+    for (let i = 0; i < channel.members.length; i++) {
+      const member = await User.findById(channel.members[i]);
+      const guest = await Channel.findById(channel.members[i]);
+
+      if (member) {
+        const memberIndex = member.channels.indexOf(id);
+        if (memberIndex === -1) {
+          res.status(404).json({ message: "Channel not found in member" });
+          return;
+        }
+
+        member.channels.splice(memberIndex, 1);
+        await member.save();
+      } else if (guest) {
+        const guestIndex = guest.members.indexOf(id);
+        if (guestIndex === -1) {
+          res.status(404).json({ message: "Channel not found in guest" });
+          return;
+        }
+
+        guest.members.splice(guestIndex, 1);
+        await guest.save();
+      }
+    }
+
+    const deletedChannel = await Channel.findByIdAndDelete(id);
+    if (!deletedChannel) {
       res.status(404).json({ message: "Channel not found" });
     } else {
       res.status(200).json({ message: "Channel deleted" });

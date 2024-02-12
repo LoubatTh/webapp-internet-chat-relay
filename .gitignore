@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+package-lock.json
+bun.lockb
 dist
 dist-ssr
 *.local
@@ -25,8 +27,3 @@ dist-ssr
 
 # env files
 .env
-
-# unecessary files
-*.lockb
-package-lock.json
-
