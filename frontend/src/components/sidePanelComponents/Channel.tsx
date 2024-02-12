@@ -1,15 +1,12 @@
-import React from "react";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 
 type ChannelProps = {
-  id: string;
+  id: number;
   name: string;
 };
 
 const Channel = ({ id, name }: ChannelProps) => {
-  const [setChannelId] = useChannelMessageDisplayStore((state) => [
-    state.setChannelId,
-  ]);
+  const { setChannelId } = useChannelMessageDisplayStore();
 
   const handleChannelMessageDisplay = () => {
     setChannelId(id);

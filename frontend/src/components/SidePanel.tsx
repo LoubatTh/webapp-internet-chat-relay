@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Channel from "./sidePanelComponents/Channel";
 import useSidePanelStore from "../store/sidePanelStore";
 import { fetchApi } from "../lib/api";
 import { ChannelType } from "../lib/type";
 
-const getAllChannel = async () => {
-  const data = await fetchApi("GET", "/channels");
+const getAllChannel = async (): Promise<ChannelType[]> => {
+  const data = await fetchApi<ChannelType[]>("GET", "channels");
   return data;
 };
 
 const SidePanel = () => {
-  const [openSidePanel] = useSidePanelStore((state) => [state.openSidePanel]);
+  const { openSidePanel } = useSidePanelStore();
   const [channels, setChannels] = useState<ChannelType[]>([]);
 
   useEffect(() => {
     getAllChannel().then((data) => {
       setChannels(data);
     });
-    console.log("channels", channels);
-  }, [channels]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div

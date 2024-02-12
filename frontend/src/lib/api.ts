@@ -18,7 +18,7 @@ export async function fetchApi<T>(
   }
 
   try {
-    const response = await fetch(endpoint, config);
+    const response = await fetch(`/api/${endpoint}`, config);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
