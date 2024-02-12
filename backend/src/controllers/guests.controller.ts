@@ -118,44 +118,6 @@ export const updateGuest = async (req: Request, res: Response) => {
       return;
     }
 
-    if (data.username) {
-      for (let i = 0; i < guest.channels.length; i++) {
-        const channel = await Channel.findById(guest.channels[i]);
-
-        if (!channel) {
-          res.status(404).json({ message: "Channel not found" });
-          return;
-        }
-
-        const channelIndex = channel.members.indexOf(oldUsername);
-
-        if (channelIndex === -1) {
-          res.status(404).json({ message: "User not found in channel" });
-          return;
-        }
-
-        channel.members.splice(channelIndex, 1, data.username);
-        await channel.save();
-      }
-
-      const messages = await Message.find({ author: oldUsername });
-
-      for (let i = 0; i < messages.length; i++) {
-        const message = await Message.findByIdAndUpdate(
-          messages[i]._id,
-          { author: data.username },
-          { new: true }
-        );
-
-        if (!message) {
-          res.status(404).json({ message: "Message ot found" });
-          return;
-        }
-
-        await message.save();
-      }
-    }
-
     res.status(200).json(guest);
   } catch (error: any) {
     res.status(500).json(error.message);
@@ -182,7 +144,7 @@ export const deleteGuest = async (req: Request, res: Response) => {
         return;
       }
 
-      const channelIndex = channel.members.indexOf(guest.username);
+      const channelIndex = channel.members.indexOf(id);
 
       if (channelIndex === -1) {
         res.status(404).json({ message: "Guest not found in channel" });
@@ -244,7 +206,7 @@ export const addGuestChannel = async (req: Request, res: Response) => {
     }
 
     guest.channels.push(channelId);
-    channel.members.push(guest.username);
+    channel.members.push(id);
     const savedGuest = await guest.save();
     const savedChannel = await channel.save();
 
@@ -280,7 +242,7 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    const channelIndex = channel.members.indexOf(guest.username);
+    const channelIndex = channel.members.indexOf(id);
 
     if (channelIndex === -1) {
       res.status(404).json({ message: "Guest not found in channel" });

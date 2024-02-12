@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Channel, IChannel } from "../models/channels.model";
 import { User } from "~/models/users.model";
-import { off } from "process";
+import { Message } from "~/models/messages.model";
 
 // GET /channels
 // Get all channels
@@ -75,6 +75,8 @@ export const createChannel = async (req: Request, res: Response) => {
       }
 
       data.members = members;
+    } else {
+      data.members = [];
     }
 
     const channel = new Channel(data);

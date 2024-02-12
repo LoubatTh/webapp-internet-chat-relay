@@ -122,44 +122,6 @@ export const updateUser = async (req: Request, res: Response) => {
       return;
     }
 
-    if (data.username) {
-      for (let i = 0; i < user.channels.length; i++) {
-        const channel = await Channel.findById(user.channels[i]);
-
-        if (!channel) {
-          res.status(404).json({ message: "Channel not found" });
-          return;
-        }
-
-        const channelIndex = channel.members.indexOf(oldUsername);
-
-        if (channelIndex === -1) {
-          res.status(404).json({ message: "User not found in channel" });
-          return;
-        }
-
-        channel.members.splice(channelIndex, 1, data.username);
-        await channel.save();
-      }
-
-      const messages = await Message.find({ author: oldUsername });
-
-      for (let i = 0; i < messages.length; i++) {
-        const message = await Message.findByIdAndUpdate(
-          messages[i]._id,
-          { author: data.username },
-          { new: true }
-        );
-
-        if (!message) {
-          res.status(404).json({ message: "Message ot found" });
-          return;
-        }
-
-        await message.save();
-      }
-    }
-
     res.status(200).json(user);
   } catch (error: any) {
     res.status(500).json(error.message);
@@ -248,7 +210,7 @@ export const addUserChannel = async (req: Request, res: Response) => {
     }
 
     user.channels.push(channelId);
-    channel.members.push(user.username);
+    channel.members.push(id);
     const savedUser = await user.save();
     const savedChannel = await channel.save();
 
@@ -284,7 +246,7 @@ export const removeUserChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    const channelIndex = channel.members.indexOf(user.username);
+    const channelIndex = channel.members.indexOf(id);
 
     if (channelIndex === -1) {
       res.status(404).json({ message: "User not found in channel" });

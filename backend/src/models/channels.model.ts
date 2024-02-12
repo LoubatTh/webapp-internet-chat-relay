@@ -8,7 +8,7 @@ export interface IChannel {
 
 const channelSchema = new Schema<IChannel>({
   name: { type: String, required: true },
-  members: { type: [String], required: false, unique: true },
+  members: { type: [String], required: false },
   visibility: { type: String, required: true },
 });
 

@@ -15,14 +15,13 @@ const app = express();
 const io = new Server(4000, {
   cors: {
     origin: "http://localhost:3000",
-    }
-    });
+  },
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("combined"));
-
 
 mongoose
   .connect(MONGO_URI)
@@ -36,6 +35,7 @@ mongoose
 app.use("/api/channels", require("./routes/channels.routes"));
 app.use("/api/channels", require("./routes/messages.routes"));
 app.use("/api/users", require("./routes/users.routes"));
+app.use("/api/guests", require("./routes/guests.routes"));
 
 app.use("/ping", (req: Request, res: Response) => {
   res.send({ message: "Ping" });
