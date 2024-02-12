@@ -2,10 +2,10 @@
 import Body from "./components/Body";
 import Header from "./components/Header";
 import SidePanel from "./components/SidePanel";
-import { setCookie, getCookie } from "./lib/cookie";
+import { setIdentity, getIdentity } from "./lib/localstorage";
 
 function App() {
-  if(!getCookie())setCookie();
+  if(!getIdentity())setIdentity();
   return (
     <div className="flex flex-col w-screen h-screen">
       <Header />
