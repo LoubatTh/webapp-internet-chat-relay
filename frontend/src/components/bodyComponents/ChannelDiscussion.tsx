@@ -20,6 +20,12 @@ const ChannelDiscussion = () => {
   const { channelId } = useChannelMessageDisplayStore();
   const [messages, setMessages] = useState<MessagesType[]>([]);
   const lastMessageRef = useRef(null);
+  const [hiddenMessages, setHiddenMessages] = useState<string[]>([]);
+
+  // Hide message function
+  const handleHideMessage = (messageId: string) => {
+    setHiddenMessages((prevHiddenMessages) => [...prevHiddenMessages, messageId]);
+  };
 
   const handleCommand = (command: string, args: string) => {
     const newMessages = onCommand(command, args);
@@ -55,22 +61,29 @@ const ChannelDiscussion = () => {
       <div className="flex flex-col h-[calc(100%-50px)] w-[calc(100%-10px)]">
         <ScrollArea className="h-full w-full">
           {messages.map((message, index) => (
-            <div
-              key={message._id}
-              ref={index === messages.length - 1 ? lastMessageRef : null}
-            >
-              {message._id === "101" ? (
-                <UserMessage
-                  id={message._id}
-                  username={message.author}
-                  text={message.text}
-                />
-              ) : (
-                <OtherUserMessage
-                  id={message._id}
-                  username={message.author}
-                  text={message.text}
-                />
+            <div key={message._id} ref={index === messages.length - 1 ? lastMessageRef : null}>
+              {hiddenMessages.includes(message._id) ? null : (
+                <>
+                  {message._id === '101' ? (
+                    <UserMessage
+                      id={message._id}
+                      username={message.author}
+                      text={message.text}
+                    />
+                  ) : (
+                    <OtherUserMessage
+                      id={message._id}
+                      username={message.author}
+                      text={message.text}
+                    />
+                  )}
+                  {isCommand(message) && (
+                    <div className="pl-5 text-red-400">
+                   <button onClick={() => handleHideMessage(message._id)}><i>Cliquez ici</i></button>
+                   <span> pour cacher ce message.</span>
+                 </div>
+                  )}
+                </>
               )}
             </div>
           ))}
@@ -79,6 +92,10 @@ const ChannelDiscussion = () => {
       <InputMessage onCommand={handleCommand} />
     </div>
   );
+};
+
+const isCommand = (message: MessagesType): boolean => {
+  return message.author == 'System';
 };
 
 export default ChannelDiscussion;
