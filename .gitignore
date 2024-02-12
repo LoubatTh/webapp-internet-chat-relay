@@ -25,5 +25,9 @@ dist-ssr
 
 # env files
 .env
-frontend/bun.lockb
+
+# unecessary files
+*.lockb
 backend/package-lock.json
+frontend/package-lock.json
+
