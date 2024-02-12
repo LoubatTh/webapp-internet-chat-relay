@@ -1,4 +1,3 @@
-import React from "react";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 
 type ChannelProps = {
@@ -7,9 +6,7 @@ type ChannelProps = {
 };
 
 const Channel = ({ id, name }: ChannelProps) => {
-  const [setChannelId] = useChannelMessageDisplayStore((state) => [
-    state.setChannelId,
-  ]);
+  const { setChannelId } = useChannelMessageDisplayStore();
 
   const handleChannelMessageDisplay = () => {
     setChannelId(id);
@@ -18,7 +15,7 @@ const Channel = ({ id, name }: ChannelProps) => {
 
   return (
     <div
-      className="bg-background text-background-foreground border-[1px] border-foreground rounded-md p-1 my-2 cursor-pointer"
+      className="bg-background text-background-foreground border-[1px] border-foreground rounded-md p-1 mr-2 my-2 cursor-pointer"
       onClick={handleChannelMessageDisplay}
     >
       #{name}
