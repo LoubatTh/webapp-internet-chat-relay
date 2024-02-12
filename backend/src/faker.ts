@@ -1,12 +1,17 @@
+import { dot } from "node:test/reporters";
+
 const mongoose = require("mongoose");
 const { Channel } = require("./models/channels.model");
 const { Message } = require("./models/messages.model");
 const { Guest } = require("./models/guests.model");
 const { User } = require("./models/users.model");
 const faker = require("faker");
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://user-db:Rmh1Z8aNNTaXVMPt@cluster0.kmky613.mongodb.net/Epichat?retryWrites=true&w=majority", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -19,22 +24,37 @@ const createFakeData = async () => {
     const numberOfChannels = 20;
     const messagesPerChannel = 50;
 
+    // Create fake users
+    for (let i = 0; i < numberOfUsers; i++) {
+      const user = new User({
+        username: faker.internet.userName(),
+        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
+          faker.company.companyName()
+        ),
+        informations: faker.lorem.sentence(),
+        createdAt: faker.date.past(),
+      });
+
+      await user.save();
+
     // Create fake guests
     for (let i = 0; i < numberOfGuests; i++) {
       const guest = new Guest({
-        email: faker.internet.email(),
-        password: faker.internet.password(),
         username: faker.internet.userName(),
+        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
+          faker.company.companyName()
+        ),
+        lastConnexion: faker.date.past(),
       });
 
       await guest.save();
-    }
+
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
       const channel = new Channel({
         name: faker.company.companyName(),
         members: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.internet.email()
+          guest._id,
         ),
         visibility: faker.random.arrayElement(["public", "private"]),
       });
@@ -46,13 +66,15 @@ const createFakeData = async () => {
         const message = new Message({
           text: faker.lorem.sentence(),
           channelId: channel._id,
-          author: faker.name.findName(),
+          authorId: faker.name.findName(),
           timestamp: faker.date.past(),
         });
 
         await message.save();
+        }
       }
     }
+  }
 
     console.log("Fake data generation complete!");
   } catch (error) {
