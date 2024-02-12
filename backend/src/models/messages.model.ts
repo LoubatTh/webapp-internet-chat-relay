@@ -10,12 +10,11 @@ export interface IMessage {
 const messageSchema = new Schema<IMessage>({
   text: { type: String, required: true },
   channelId: { type: String, required: true, index: true },
-  authorId: { type: String, required: true },
+  authorId: { type: String, required: true, index: true },
   createdAt: {
     type: Date,
     default: () => Date.now(),
     immutable: true,
-    index: true,
   },
 });
 

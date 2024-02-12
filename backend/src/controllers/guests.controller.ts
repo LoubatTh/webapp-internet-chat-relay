@@ -127,7 +127,7 @@ export const updateGuest = async (req: Request, res: Response) => {
           return;
         }
 
-        const channelIndex = channel.guests.indexOf(oldUsername);
+        const channelIndex = channel.members.indexOf(oldUsername);
 
         if (channelIndex === -1) {
           res.status(404).json({ message: "User not found in channel" });
@@ -182,14 +182,14 @@ export const deleteGuest = async (req: Request, res: Response) => {
         return;
       }
 
-      const channelIndex = channel.guests.indexOf(guest.username);
+      const channelIndex = channel.members.indexOf(guest.username);
 
       if (channelIndex === -1) {
         res.status(404).json({ message: "Guest not found in channel" });
         return;
       }
 
-      channel.guests.splice(channelIndex, 1);
+      channel.members.splice(channelIndex, 1);
       await channel.save();
     }
 
@@ -244,7 +244,7 @@ export const addGuestChannel = async (req: Request, res: Response) => {
     }
 
     guest.channels.push(channelId);
-    channel.guests.push(guest.username);
+    channel.members.push(guest.username);
     const savedGuest = await guest.save();
     const savedChannel = await channel.save();
 
@@ -280,7 +280,7 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    const channelIndex = channel.guests.indexOf(guest.username);
+    const channelIndex = channel.members.indexOf(guest.username);
 
     if (channelIndex === -1) {
       res.status(404).json({ message: "Guest not found in channel" });
@@ -288,7 +288,7 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
     }
 
     guest.channels.splice(guestIndex, 1);
-    channel.guests.splice(channelIndex, 1);
+    channel.members.splice(channelIndex, 1);
     const savedGuest = await guest.save();
     const savedChannel = await channel.save();
 

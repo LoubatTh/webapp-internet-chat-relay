@@ -11,7 +11,6 @@ export interface IUser {
 const userSchema = new Schema<IUser>({
   username: { type: String, required: true, unique: true },
   channels: { type: [String], required: false },
-  informations: { type: String, required: false },
   createdAt: {
     type: Date,
     default: () => Date.now(),
