@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
-const { Channel } = require("./models/channels.model"); // Adjust the path as necessary
-const { Message } = require("./models/messages.model"); // Adjust the path as necessary
+const { Channel } = require("./models/channels.model");
+const { Message } = require("./models/messages.model");
+const { Guest } = require("./models/guests.model");
+const { User } = require("./models/users.model");
 const faker = require("faker");
 
 // Connect to MongoDB
@@ -12,9 +14,21 @@ mongoose.connect("mongodb+srv://user-db:Rmh1Z8aNNTaXVMPt@cluster0.kmky613.mongod
 const createFakeData = async () => {
   try {
     // Define how many fake entries you want
-    const numberOfChannels = 25;
+    const numberOfGuests = 10;
+    const numberOfUsers = 10;
+    const numberOfChannels = 20;
     const messagesPerChannel = 50;
 
+    // Create fake guests
+    for (let i = 0; i < numberOfGuests; i++) {
+      const guest = new Guest({
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        username: faker.internet.userName(),
+      });
+
+      await guest.save();
+    }
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
       const channel = new Channel({
