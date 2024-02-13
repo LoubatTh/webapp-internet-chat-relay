@@ -1,10 +1,15 @@
 import { Schema, model } from "mongoose";
 
 export interface IMessage {
+  _id?: string
   text: string;
   channelId: string;
   authorId: string;
   createdAt: Date;
+}
+
+export interface IMessageAuthor extends IMessage {
+  author: string;
 }
 
 const messageSchema = new Schema<IMessage>({
