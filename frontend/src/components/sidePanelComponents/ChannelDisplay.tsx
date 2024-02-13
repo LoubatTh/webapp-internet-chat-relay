@@ -10,7 +10,6 @@ const Channel = ({ id, name }: ChannelProps) => {
 
   const handleChannelMessageDisplay = () => {
     setChannelId(id);
-    console.log("channelId", id);
   };
 
   return (

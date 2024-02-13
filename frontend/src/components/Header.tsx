@@ -1,6 +1,12 @@
-import React from "react";
 import useSidePanelStore from "../store/sidePanelStore";
-import { MessageCircle } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "./ui/ui/navigation-menu";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [openSidePanel, setOpenSidePanel] = useSidePanelStore((state) => [
@@ -11,13 +17,35 @@ const Header = () => {
     setOpenSidePanel(!openSidePanel);
   };
   return (
-    <header className="flex center bg-secondary text-secondary-foreground border-b-2 border-background p-2 h-20 w-full">
-      <div className="h-full pl-2">
-        <button className="h-full" onClick={HandleOpenSidePanel}>
-          <MessageCircle size={60} />
-        </button>
-      </div>
-    </header>
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <Link to={"channels"}>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Channels
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <Link to={"messages"} onClick={HandleOpenSidePanel}>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Messages
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <Link to={"/"} onClick={HandleOpenSidePanel}>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Welcome
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 };
 

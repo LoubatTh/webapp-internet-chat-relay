@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/ui/button";
 import { Textarea } from "../ui/ui/textarea";
 import type { MessagesPostType } from "../../lib/type";
@@ -20,14 +20,18 @@ const postMessage = async (
   return data;
 };
 
-const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string) => void }) => {
+const InputMessage = ({
+  onCommand,
+}: {
+  onCommand: (command: string, args: string) => void;
+}) => {
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
   const [authorId, setAuthorId] = useState("");
 
   useEffect(() => {
     // Retrieve 'identity' from localStorage when the component mounts
-    const storedIdentity = localStorage.getItem('identity');
+    const storedIdentity = localStorage.getItem("identity");
     if (storedIdentity) {
       setAuthorId(storedIdentity);
     }
@@ -41,20 +45,23 @@ const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string
     if (!message.trim()) return; // Prevent sending empty messages
 
     const trimmedMessage = message.trim();
-    const isCommand = trimmedMessage.startsWith('/');
-    
+    const isCommand = trimmedMessage.startsWith("/");
+
     if (isCommand) {
       // If message is a command, parse it
-      const [command, ...argsArray] = trimmedMessage.slice(1).split(' ');
-      const args = argsArray.join(' ');
+      const [command, ...argsArray] = trimmedMessage.slice(1).split(" ");
+      const args = argsArray.join(" ");
 
       // Get the command and its arguments
       onCommand(command, args);
       console.log("Commande", command);
     } else {
-      
       // If message is not a command, send it as a regular message
-      const newMessage = await postMessage(channelId, { text: trimmedMessage, authorId, channelId });
+      const newMessage = await postMessage(channelId, {
+        text: trimmedMessage,
+        authorId,
+        channelId,
+      });
       socket.emit("newMessage", newMessage); // Emit new message event
     }
 
@@ -62,7 +69,7 @@ const InputMessage = ({ onCommand }: { onCommand: (command: string, args: string
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handlePostMessage();
     }
