@@ -61,14 +61,14 @@ export type MessagesType = {
   _id: string;
   text: string | JSX.Element;
   channelId: string;
-  authorId: string[];
+  authorId: string;
   createdAt: string
 };
 
 export type MessagesPostType = {
   text: string | JSX.Element;
   channelId: string;
-  authorId: string[];
+  authorId: string;
   createdAt: string
 };
 
