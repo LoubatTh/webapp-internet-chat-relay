@@ -1,17 +1,16 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
-import InputMessage from "../components/bodyComponents/InputMessage";
-import UserMessage from "../components/bodyComponents/userMessage";
-import OtherUserMessage from "../components/bodyComponents/otherUserMessage";
-import { ScrollArea } from "../components/ui/ui/scroll-area";
-import { fetchApi } from "../lib/api";
-import type { MessagesType } from "../lib/type";
-import { io, Socket } from 'socket.io-client';
-import { onCommand } from "../lib/commands";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import type { MessagesType } from "../../lib/type";
+import UserMessage from "../chatComponents/userMessage";
+import OtherUserMessage from "../chatComponents/otherUserMessage";
+import { ScrollArea } from "../ui/ui/scroll-area";
+import { fetchApi } from "../../lib/api";
+import { io, Socket } from "socket.io-client";
+import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
-import { User } from "lucide-react";
+import InputMessage from "../chatComponents/InputMessage";
 // import { getAuthorById } from "../lib/getauthorbyid";
 
-const socket: Socket = io('http://localhost:4000');
+const socket: Socket = io("http://localhost:4000");
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
   const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
@@ -26,7 +25,10 @@ const ChannelDiscussion = () => {
 
   // Hide message function
   const handleHideMessage = (messageId: string) => {
-    setHiddenMessages((prevHiddenMessages) => [...prevHiddenMessages, messageId]);
+    setHiddenMessages((prevHiddenMessages) => [
+      ...prevHiddenMessages,
+      messageId,
+    ]);
   };
 
   const handleCommand = (command: string, args: string) => {
@@ -37,7 +39,7 @@ const ChannelDiscussion = () => {
   useEffect(() => {
     if (!channelId) return;
 
-    socket.on('newMessage', (newMessage) => {
+    socket.on("newMessage", (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -46,14 +48,14 @@ const ChannelDiscussion = () => {
     });
 
     return () => {
-      socket.off('newMessage');
+      socket.off("newMessage");
     };
   }, [channelId]);
 
   useLayoutEffect(() => {
     if (lastMessageRef.current) {
       setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 0);
     }
   }, [messages]);
@@ -63,10 +65,13 @@ const ChannelDiscussion = () => {
       <div className="flex flex-col h-[calc(100%-50px)] w-[calc(100%-10px)]">
         <ScrollArea className="h-full w-full">
           {messages.map((message, index) => (
-            <div key={message._id} ref={index === messages.length - 1 ? lastMessageRef : null}>
+            <div
+              key={message._id}
+              ref={index === messages.length - 1 ? lastMessageRef : null}
+            >
               {hiddenMessages.includes(message._id) ? null : (
                 <>
-                  {message._id === '101' ? (
+                  {message._id === "101" ? (
                     <UserMessage
                       id={message._id}
                       username={message.authorId}
@@ -81,9 +86,11 @@ const ChannelDiscussion = () => {
                   )}
                   {isCommand(message) && (
                     <div className="pl-5 text-red-400">
-                   <button onClick={() => handleHideMessage(message._id)}><i>Cliquez ici</i></button>
-                   <span> pour cacher ce message.</span>
-                 </div>
+                      <button onClick={() => handleHideMessage(message._id)}>
+                        <i>Cliquez ici</i>
+                      </button>
+                      <span> pour cacher ce message.</span>
+                    </div>
                   )}
                 </>
               )}
@@ -97,7 +104,7 @@ const ChannelDiscussion = () => {
 };
 
 const isCommand = (message: MessagesType): boolean => {
-  return message.authorId == 'System';
+  return message.authorId == "System";
 };
 
 export default ChannelDiscussion;
