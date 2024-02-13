@@ -1,10 +1,15 @@
+import Home from "./pages/Home";
+import StartPage  from "./pages/StartPage";
 
-import Home from "./routes/Home";
+// function App() {
+//   return (
+//    <StartPage/>
+//   );
+// }
 
 function App() {
   return (
-   <Home/>
+    <Home/>
   );
 }
-
 export default App;

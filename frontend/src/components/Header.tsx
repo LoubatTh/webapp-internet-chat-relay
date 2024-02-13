@@ -1,4 +1,3 @@
-import React from "react";
 import useSidePanelStore from "../store/sidePanelStore";
 import { MessageCircle } from "lucide-react";
 
