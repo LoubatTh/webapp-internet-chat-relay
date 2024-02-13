@@ -8,7 +8,8 @@ import type { MessagesType } from "../lib/type";
 import { io, Socket } from 'socket.io-client';
 import { onCommand } from "../lib/commands";
 import { useParams } from "react-router-dom";
-import { getAuthorById } from "../lib/getauthorbyid";
+import { User } from "lucide-react";
+// import { getAuthorById } from "../lib/getauthorbyid";
 
 const socket: Socket = io('http://localhost:4000');
 
