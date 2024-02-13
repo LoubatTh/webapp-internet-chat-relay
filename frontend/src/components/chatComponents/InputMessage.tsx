@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/ui/button";
-import { Textarea } from "../ui/ui/textarea";
 import type { MessagesPostType } from "../../lib/type";
 import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import { io, Socket } from "socket.io-client";
+import { Input } from "../ui/ui/input";
 
 const socket: Socket = io("http://localhost:4000");
 
@@ -77,7 +77,7 @@ const InputMessage = ({
 
   return (
     <div className="flex flex-row h-5 w-full p-2 gap-2">
-      <Textarea
+      <Input
         className="resize-none text-secondary bg-white rounded-md w-full p-1 min-h-10"
         placeholder="Type your message here."
         value={message} // Controlled component
