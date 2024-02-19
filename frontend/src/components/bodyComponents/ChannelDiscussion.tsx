@@ -8,6 +8,7 @@ import { io, Socket } from "socket.io-client";
 import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
+import { getIdentity } from "../../lib/localstorage";
 // import { getAuthorById } from "../lib/getauthorbyid";
 
 const socket: Socket = io("http://localhost:4000");
@@ -20,8 +21,9 @@ const fetchMessages = async (id: string): Promise<MessagesType[]> => {
 const ChannelDiscussion = () => {
   const channelId = useParams<{ channelId: string }>().channelId;
   const [messages, setMessages] = useState<MessagesType[]>([]);
-  const lastMessageRef = useRef(null);
   const [hiddenMessages, setHiddenMessages] = useState<string[]>([]);
+  const [userConnected, setUserConnected] = useState<string>("");
+  const lastMessageRef = useRef(null);
 
   // Hide message function
   const handleHideMessage = (messageId: string) => {
@@ -38,6 +40,11 @@ const ChannelDiscussion = () => {
 
   useEffect(() => {
     if (!channelId) return;
+
+    const storedIdentity = getIdentity()
+    if (storedIdentity) {
+      setUserConnected(storedIdentity);
+    }
 
     socket.on("newMessage", (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -71,16 +78,16 @@ const ChannelDiscussion = () => {
             >
               {hiddenMessages.includes(message._id) ? null : (
                 <>
-                  {message._id === "101" ? (
+                  {message.authorId === userConnected ? (
                     <UserMessage
                       id={message._id}
-                      username={message.authorId}
+                      username={message.author}
                       text={message.text}
                     />
                   ) : (
                     <OtherUserMessage
                       id={message._id}
-                      username={message.authorId}
+                      username={message.author}
                       text={message.text}
                     />
                   )}

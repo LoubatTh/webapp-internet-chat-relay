@@ -1,10 +1,11 @@
+import type { MessagesPostType } from "../../lib/type";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/ui/button";
-import type { MessagesPostType } from "../../lib/type";
 import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import { io, Socket } from "socket.io-client";
 import { Input } from "../ui/ui/input";
+import { getIdentity } from "../../lib/localstorage";
 
 const socket: Socket = io("http://localhost:4000");
 
@@ -28,30 +29,22 @@ const InputMessage = ({
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
   const [authorId, setAuthorId] = useState("");
-
-  useEffect(() => {
-    // Retrieve 'identity' from localStorage when the component mounts
-    const storedIdentity = localStorage.getItem("identity");
-    if (storedIdentity) {
-      setAuthorId(storedIdentity);
-    }
-  }, []);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  
+  const handleInputChange = (event: { target: { value: React.SetStateAction<string>; }; } ) => {
     setMessage(event.target.value);
   };
-
+  
   const handlePostMessage = async () => {
     if (!message.trim()) return; // Prevent sending empty messages
-
+    
     const trimmedMessage = message.trim();
     const isCommand = trimmedMessage.startsWith("/");
-
+    
     if (isCommand) {
       // If message is a command, parse it
       const [command, ...argsArray] = trimmedMessage.slice(1).split(" ");
       const args = argsArray.join(" ");
-
+      
       // Get the command and its arguments
       onCommand(command, args);
       console.log("Commande", command);
@@ -59,26 +52,35 @@ const InputMessage = ({
       // If message is not a command, send it as a regular message
       const newMessage = await postMessage(channelId, {
         text: trimmedMessage,
-        authorId,
+        authorId: authorId,
         channelId,
       });
       socket.emit("newMessage", newMessage); // Emit new message event
     }
-
+    
     setMessage(""); // Clear input field on successful send
   };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  
+  const handleKeyDown = (event: { key: string; shiftKey: unknown; preventDefault: () => void; }) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handlePostMessage();
     }
   };
+  
+  useEffect(() => {
+      // Retrieve 'identity' from localStorage when the component mounts
+      const storedIdentity = getIdentity();
+      if (storedIdentity) {
+        setAuthorId(storedIdentity);
+      }
+      console.log(storedIdentity)
+    }, []);
 
   useEffect(() => {
     setMessage("");
   }, [channelId]);
-
+  
   return (
     <div className="flex flex-row bg-background h-5 w-full pr-2 pt-2 gap-2">
       <Input
