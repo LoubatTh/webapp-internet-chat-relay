@@ -31,8 +31,8 @@ const ChannelDiscussion = () => {
     ]);
   };
 
-  const handleCommand = (command: string, args: string) => {
-    const newMessages = onCommand(command, args);
+  const handleCommand = async (command: string, args: string) => {
+    const newMessages = await onCommand(command, args);
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
   };
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 type OtherUserMessageProps = {
   id: string;
   username: string;
