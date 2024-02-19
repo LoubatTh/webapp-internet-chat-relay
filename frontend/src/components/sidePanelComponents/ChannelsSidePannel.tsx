@@ -21,7 +21,6 @@ const ChannelsSidePannel = () => {
   }, []);
   return (
     <>
-      <h2 className="mb-2">Channel</h2>
       <ScrollArea className="h-[calc(100%-50px)] ">
         {channels.map((channel) => (
           <React.Fragment key={channel._id}>

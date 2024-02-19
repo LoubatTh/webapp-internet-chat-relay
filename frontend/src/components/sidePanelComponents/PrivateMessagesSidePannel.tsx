@@ -1,7 +1,8 @@
-import React from "react";
 
 const PrivateMessagesSidePannel = () => {
-  return <div>PrivateMessagesSideBar</div>;
+  return (<>
+  <div>test</div>
+  </>);
 };
 
 export default PrivateMessagesSidePannel;
