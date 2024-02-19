@@ -1,12 +1,25 @@
 import { fetchApi } from "./api";
-import { ChannelListType } from "./type";
+import { getIdentity } from "./localstorage";
+import { ChannelPostType, ChannelType } from "./type";
+
 
 const randomId = () => {
   return Math.floor(Math.random() * 1000).toString();
 };
 
-const getAllChannel = async (): Promise<ChannelListType[]> => {
-  const data = await fetchApi<ChannelListType[]>("GET", "channels");
+const getAllChannel = async (): Promise<ChannelType[]> => {
+  const data = await fetchApi<ChannelType[]>("GET", "channels");
+  return data;
+};
+
+const postChannel = async (
+  body: { name: string; visibility: string; members: string[]; guests: string[] }
+): Promise<ChannelPostType> => {
+  const data = await fetchApi<ChannelPostType>(
+    "POST",
+    `channels`,
+    body
+  );
   return data;
 };
 
@@ -16,7 +29,6 @@ const getAllChannelNames = async (): Promise<string[]> => {
     const names = channels.map((channel) => channel.name);
     return names;
   } catch (error) {
-    // Gérer les erreurs ici
     console.error("Erreur lors de la récupération des noms de chaînes :", error);
     throw error;
   }
@@ -88,9 +100,9 @@ export const onCommand = async (command: string | number | boolean | React.React
           text: (
             <>
               Voici la liste des canaux disponibles : <br />
-              
+
               {(await channels).map((channel) => (
-              <strong key={channel}>#{channel}<br/></strong>
+                <strong key={channel}>#{channel}<br /></strong>
               ))}
             </>
           ),
@@ -110,7 +122,25 @@ export const onCommand = async (command: string | number | boolean | React.React
             </>
           ),
         },
-      ];
+      ]
+      try {
+        const idUser = getIdentity() || '0000';
+        postChannel({ name: args, visibility: 'public', members: [idUser], guests: [] });
+      } catch (error) {
+        console.error("Erreur lors de la création du canal :", error);
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            authorId: 'System',
+            text: (
+              <>
+                Erreur lors de la création du canal : {error}
+              </>
+            ),
+          },
+        ];
+      }
       return [
         {
           channelId: 'system',
@@ -118,7 +148,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           authorId: 'System',
           text: (
             <>
-
+              Canal <strong><i>#{args}</i></strong> créé avec succès.
             </>
           ),
         },
