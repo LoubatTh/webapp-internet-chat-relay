@@ -1,5 +1,3 @@
-import { dot } from "node:test/reporters";
-
 const mongoose = require("mongoose");
 const { Channel } = require("./models/channels.model");
 const { Message } = require("./models/messages.model");
@@ -19,10 +17,13 @@ mongoose.connect(process.env.MONGO_URI, {
 const createFakeData = async () => {
   try {
     // Define how many fake entries you want
-    const numberOfGuests = 10;
-    const numberOfUsers = 10;
+    const numberOfGuests = 20;
+    const numberOfUsers = 20;
     const numberOfChannels = 20;
-    const messagesPerChannel = 50;
+    const messagesPerChannel = 500;
+
+    const userIDs: any[] = [];
+    const guestIDs: any[] = [];
 
     // Create fake users
     for (let i = 0; i < numberOfUsers; i++) {
@@ -36,6 +37,8 @@ const createFakeData = async () => {
       });
 
       await user.save();
+      userIDs.push(user._id);
+    }
 
     // Create fake guests
     for (let i = 0; i < numberOfGuests; i++) {
@@ -48,15 +51,17 @@ const createFakeData = async () => {
       });
 
       await guest.save();
+      guestIDs.push(guest._id);
+    }
 
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
       const channel = new Channel({
         name: faker.company.companyName(),
         members: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          guest._id,
+          faker.random.arrayElement([...userIDs, ...guestIDs])
         ),
-        visibility: faker.random.arrayElement(["public", "private"]),
+        visibility: faker.random.arrayElement(["public", "private", "mp","group"]),
       });
 
       await channel.save();
@@ -66,20 +71,20 @@ const createFakeData = async () => {
         const message = new Message({
           text: faker.lorem.sentence(),
           channelId: channel._id,
-          authorId: faker.name.findName(),
+          authorId: faker.random.arrayElement([...userIDs, ...guestIDs]),
           timestamp: faker.date.past(),
         });
 
         await message.save();
-        }
       }
     }
-  }
 
     console.log("Fake data generation complete!");
   } catch (error) {
     console.error("Error generating fake data:", error);
+  } finally {
+    mongoose.disconnect();
   }
 };
 
-createFakeData().then(() => mongoose.disconnect());
+createFakeData();
