@@ -13,10 +13,15 @@ const getAllChannel = async (): Promise<ChannelType[]> => {
 const ChannelsSidePannel = () => {
   const [channels, setChannels] = useState<ChannelType[]>([]);
 
+  const handleRemoveChannelFromArray = (value: string) => {
+    setChannels(channels.filter((channel) => channel._id !== value));
+  };
+
   useEffect(() => {
     getAllChannel().then((data) => {
       setChannels(data);
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -25,7 +30,11 @@ const ChannelsSidePannel = () => {
         {channels.map((channel) => (
           <React.Fragment key={channel._id}>
             <Link to={`/channels/${channel._id}`}>
-              <Channel id={channel._id} name={channel.name} />
+              <Channel
+                id={channel._id}
+                name={channel.name}
+                removeChannel={handleRemoveChannelFromArray}
+              />
             </Link>
           </React.Fragment>
         ))}
