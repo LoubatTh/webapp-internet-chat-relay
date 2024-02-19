@@ -26,7 +26,7 @@ const router = createBrowserRouter([
       {
         path: "messages",
         element: <Messages />,
-        children: [{ path: ":messageId", element: <Messages /> }],
+        children: [{ path: ":channelId", element: <Messages /> }],
       },
     ],
   },

@@ -24,7 +24,7 @@ const PrivateMessagesSidePannel = () => {
       <ScrollArea className="h-[calc(100%-50px)] ">
         {channels.map((channel) => (
           <React.Fragment key={channel._id}>
-            <Link to={`/channels/${channel._id}`}>
+            <Link to={`/messages/${channel._id}`}>
               <Channel id={channel._id} name={channel.name} />
             </Link>
           </React.Fragment>

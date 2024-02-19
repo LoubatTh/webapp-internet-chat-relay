@@ -9,7 +9,6 @@ import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
 import { getIdentity } from "../../lib/localstorage";
-// import { getAuthorById } from "../lib/getauthorbyid";
 
 const socket: Socket = io("http://localhost:4000");
 
@@ -38,10 +37,23 @@ const ChannelDiscussion = () => {
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
   };
 
+  const isCommand = (message: MessagesType): boolean => {
+    return message.authorId == "System";
+  };
+
+  useLayoutEffect(() => {
+    if (lastMessageRef.current) {
+      setTimeout(() => {
+        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+    }
+  }, [messages]);
+
   useEffect(() => {
+    console.log("Channel id", channelId);
     if (!channelId) return;
 
-    const storedIdentity = getIdentity()
+    const storedIdentity = getIdentity();
     if (storedIdentity) {
       setUserConnected(storedIdentity);
     }
@@ -52,20 +64,13 @@ const ChannelDiscussion = () => {
 
     fetchMessages(channelId).then((data) => {
       setMessages(data);
+      console.log("Messages", data);
     });
 
     return () => {
       socket.off("newMessage");
     };
   }, [channelId]);
-
-  useLayoutEffect(() => {
-    if (lastMessageRef.current) {
-      setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
-    }
-  }, [messages]);
 
   return (
     <div className="flex flex-col bg-background w-full h-full ">
@@ -108,10 +113,6 @@ const ChannelDiscussion = () => {
       <InputMessage onCommand={handleCommand} />
     </div>
   );
-};
-
-const isCommand = (message: MessagesType): boolean => {
-  return message.authorId == "System";
 };
 
 export default ChannelDiscussion;
