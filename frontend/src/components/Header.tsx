@@ -1,4 +1,3 @@
-import useSidePanelStore from "../store/sidePanelStore";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -9,40 +8,33 @@ import {
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [openSidePanel, setOpenSidePanel] = useSidePanelStore((state) => [
-    state.openSidePanel,
-    state.setOpenSidePanel,
-  ]);
-  const HandleOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
-  };
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to={"channels"}>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Channels
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            href="/channels"
+          >
+            Channels
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to={"messages"} onClick={HandleOpenSidePanel}>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Messages
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            href="/messages"
+          >
+            Messages
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to={"/"} onClick={HandleOpenSidePanel}>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Welcome
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
+            Welcome
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
