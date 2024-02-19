@@ -7,10 +7,14 @@ import { Message } from "~/models/messages.model";
 // Get all channels
 export const getChannels = async (req: Request, res: Response) => {
   try {
-    const channels = await Channel.find();
+    const visibility = req.query.visibility as string;
+    const channels =
+      visibility && checkVisibility(visibility)
+        ? await Channel.find({ visibility: visibility })
+        : await Channel.find({ visibility: { $in: ["public", "private"] } });
+
     res.status(200).json(channels);
     return;
-    // TODO: remove "any" type for error handling
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -53,8 +57,10 @@ export const createChannel = async (req: Request, res: Response) => {
     ) {
       res.status(400).json({ message: "Visibility is required" });
       return;
-    } else if (visibility !== "public" && visibility !== "private") {
-      res.status(400).json({ message: 'Visibility is "public" or "private"' });
+    } else if (checkVisibility(visibility) === false) {
+      res.status(400).json({
+        message: 'Visibility is "public" or "private" or "personnal"',
+      });
       return;
     }
 
@@ -111,7 +117,7 @@ export const updateChannel = async (req: Request, res: Response) => {
       data.name = name;
     }
 
-    if ((visibility && visibility === "public") || visibility === "private") {
+    if (visibility && checkVisibility(visibility)) {
       data.visibility = visibility;
     } else {
       res.status(400).json({ message: 'Visibility is "public" or "private"' });
@@ -187,4 +193,15 @@ export const deleteChannel = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
+};
+
+const checkVisibility = (visibility: string) => {
+  if (
+    visibility !== "public" &&
+    visibility !== "private" &&
+    visibility !== "personnal"
+  ) {
+    return false;
+  }
+  return true;
 };
