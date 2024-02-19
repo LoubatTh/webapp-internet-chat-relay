@@ -61,8 +61,8 @@ const ChannelDiscussion = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="flex flex-col h-[calc(100%-50px)] w-[calc(100%-10px)]">
+    <div className="flex flex-col bg-background w-full h-full ">
+      <div className="flex flex-col bg-secondary h-[calc(100%-50px)] w-[calc(100%-10px)] rounded-md">
         <ScrollArea className="h-full w-full">
           {messages.map((message, index) => (
             <div

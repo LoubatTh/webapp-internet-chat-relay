@@ -75,8 +75,12 @@ const InputMessage = ({
     }
   };
 
+  useEffect(() => {
+    setMessage("");
+  }, [channelId]);
+
   return (
-    <div className="flex flex-row h-5 w-full p-2 gap-2">
+    <div className="flex flex-row bg-background h-5 w-full pr-2 pt-2 gap-2">
       <Input
         className="resize-none text-secondary bg-white rounded-md w-full p-1 min-h-10"
         placeholder="Type your message here."
