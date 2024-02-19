@@ -1,5 +1,5 @@
-import ChannelDiscussion from "../components/bodyComponents/ChannelDiscussion";
 import PrivateMessagesSidePannel from "../components/sidePanelComponents/PrivateMessagesSidePannel";
+import ChannelDiscussion from "../components/bodyComponents/ChannelDiscussion";
 
 const Messages = () => {
   return (

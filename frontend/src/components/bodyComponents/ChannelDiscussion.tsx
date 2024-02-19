@@ -8,7 +8,7 @@ import { io, Socket } from "socket.io-client";
 import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
-// import { getAuthorById } from "../lib/getauthorbyid";
+import { getIdentity } from "../../lib/localstorage";
 
 const socket: Socket = io("http://localhost:4000");
 
@@ -20,8 +20,9 @@ const fetchMessages = async (id: string): Promise<MessagesType[]> => {
 const ChannelDiscussion = () => {
   const channelId = useParams<{ channelId: string }>().channelId;
   const [messages, setMessages] = useState<MessagesType[]>([]);
-  const lastMessageRef = useRef(null);
   const [hiddenMessages, setHiddenMessages] = useState<string[]>([]);
+  const [userConnected, setUserConnected] = useState<string>("");
+  const lastMessageRef = useRef(null);
 
   // Hide message function
   const handleHideMessage = (messageId: string) => {
@@ -36,21 +37,9 @@ const ChannelDiscussion = () => {
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
   };
 
-  useEffect(() => {
-    if (!channelId) return;
-
-    socket.on("newMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
-
-    fetchMessages(channelId).then((data) => {
-      setMessages(data);
-    });
-
-    return () => {
-      socket.off("newMessage");
-    };
-  }, [channelId]);
+  const isCommand = (message: MessagesType): boolean => {
+    return message.authorId == "System";
+  };
 
   useLayoutEffect(() => {
     if (lastMessageRef.current) {
@@ -59,6 +48,29 @@ const ChannelDiscussion = () => {
       }, 0);
     }
   }, [messages]);
+
+  useEffect(() => {
+    console.log("Channel id", channelId);
+    if (!channelId) return;
+
+    const storedIdentity = getIdentity();
+    if (storedIdentity) {
+      setUserConnected(storedIdentity);
+    }
+
+    socket.on("newMessage", (newMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    fetchMessages(channelId).then((data) => {
+      setMessages(data);
+      console.log("Messages", data);
+    });
+
+    return () => {
+      socket.off("newMessage");
+    };
+  }, [channelId]);
 
   return (
     <div className="flex flex-col bg-background w-full h-full ">
@@ -71,16 +83,16 @@ const ChannelDiscussion = () => {
             >
               {hiddenMessages.includes(message._id) ? null : (
                 <>
-                  {message._id === "101" ? (
+                  {message.authorId === userConnected ? (
                     <UserMessage
                       id={message._id}
-                      username={message.authorId}
+                      username={message.author}
                       text={message.text}
                     />
                   ) : (
                     <OtherUserMessage
                       id={message._id}
-                      username={message.authorId}
+                      username={message.author}
                       text={message.text}
                     />
                   )}
@@ -101,10 +113,6 @@ const ChannelDiscussion = () => {
       <InputMessage onCommand={handleCommand} />
     </div>
   );
-};
-
-const isCommand = (message: MessagesType): boolean => {
-  return message.authorId == "System";
 };
 
 export default ChannelDiscussion;
