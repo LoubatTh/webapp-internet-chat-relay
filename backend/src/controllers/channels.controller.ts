@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Channel, IChannel } from "../models/channels.model";
 import { User } from "~/models/users.model";
 import { Message } from "~/models/messages.model";
+import { Guest } from "~/models/guests.model";
 
 // GET /channels
 // Get all channels
@@ -26,6 +27,25 @@ export const getChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const channel = await Channel.findById(id);
+
+    if (!channel) {
+      res.status(404).json({ message: "Channel not found" });
+      return;
+    } else {
+      res.status(200).json(channel);
+      return;
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET /channels/:name
+// Get a channel by name
+export const getChannelByName = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.params;
+    const channel = await Channel.findOne({ name: name });
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
@@ -69,9 +89,9 @@ export const createChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    const checkOwner = await User.findById(owner);
+    const checkOwnerUser = await User.findById(owner);
 
-    if (!checkOwner) {
+    if (!checkOwnerUser) {
       res.status(404).json({ message: "Owner not found" });
       return;
     }
@@ -79,14 +99,14 @@ export const createChannel = async (req: Request, res: Response) => {
     let data = {
       name: name,
       visibility: visibility,
+      owner: owner,
     } as IChannel;
 
     if (members && members.length > 0) {
       for (let i = 0; i < members.length; i++) {
         const member = await User.findById(members[i]);
-        const guest = await Channel.findById(members[i]);
 
-        if (!member && !guest) {
+        if (!member) {
           res.status(404).json({ message: "Member not found" });
           return;
         }

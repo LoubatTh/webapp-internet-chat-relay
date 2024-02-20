@@ -8,5 +8,6 @@ router.get("/:id", channelsController.getChannel);
 router.post("/", channelsController.createChannel);
 router.put("/:id", channelsController.updateChannel);
 router.delete("/:id", channelsController.deleteChannel);
+router.get("/n/:name", channelsController.getChannelByName);
 
 module.exports = router;
