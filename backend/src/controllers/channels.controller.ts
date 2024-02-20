@@ -79,6 +79,7 @@ export const createChannel = async (req: Request, res: Response) => {
     let data = {
       name: name,
       visibility: visibility,
+      owner: owner,
     } as IChannel;
 
     if (members && members.length > 0) {
@@ -177,7 +178,9 @@ export const deleteChannel = async (req: Request, res: Response) => {
     const { owner } = req.body;
 
     if (!checkOwner(id, owner)) {
-      res.status(400).json({ message: "You are not the owner of this channel" });
+      res
+        .status(400)
+        .json({ message: "You are not the owner of this channel" });
     }
 
     const messages = await Message.find({ channelId: id });

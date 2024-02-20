@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ChannelType } from "../../lib/type";
 import { ScrollArea } from "../ui/ui/scroll-area";
 import { Link } from "react-router-dom";
 import { fetchApi } from "../../lib/api";
 import Channel from "./ChannelDisplay";
+import useChannelStorageStore from "../../store/channelStorage";
 
 const getAllChannel = async (): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>(
@@ -14,11 +15,7 @@ const getAllChannel = async (): Promise<ChannelType[]> => {
 };
 
 const PrivateMessagesSidePannel = () => {
-  const [channels, setChannels] = useState<ChannelType[]>([]);
-
-  const handleRemoveChannelFromArray = (value: string) => {
-    setChannels(channels.filter((channel) => channel._id !== value));
-  };
+  const {channels, setChannels} = useChannelStorageStore();
 
   useEffect(() => {
     getAllChannel().then((data) => {
@@ -35,7 +32,7 @@ const PrivateMessagesSidePannel = () => {
               <Channel
                 id={channel._id}
                 name={channel.name}
-                removeChannel={handleRemoveChannelFromArray}
+                owner={channel.owner}
               />
             </Link>
           </React.Fragment>
@@ -46,3 +43,4 @@ const PrivateMessagesSidePannel = () => {
 };
 
 export default PrivateMessagesSidePannel;
+

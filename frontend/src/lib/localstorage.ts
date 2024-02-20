@@ -10,8 +10,8 @@ export function getIdentity() {
   return localStorage.getItem("identity")
 }
 
-export function setIdentity() {
-  localStorage.setItem("identity", generateRandomString(15))
+export function setIdentity(string : string) {
+  localStorage.setItem("identity", string)
 }
 
 export function deleteIdentity() {
