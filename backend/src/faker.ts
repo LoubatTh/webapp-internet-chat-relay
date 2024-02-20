@@ -17,10 +17,10 @@ mongoose.connect(process.env.MONGO_URI, {
 const createFakeData = async () => {
   try {
     // Define how many fake entries you want
-    const numberOfGuests = 20;
-    const numberOfUsers = 20;
-    const numberOfChannels = 20;
-    const messagesPerChannel = 500;
+    const numberOfGuests = 10;
+    const numberOfUsers = 1;
+    const numberOfChannels = 15;
+    const messagesPerChannel = 100;
 
     const userIDs: any[] = [];
     const guestIDs: any[] = [];
@@ -58,11 +58,14 @@ const createFakeData = async () => {
       // Create a fake channel
       const channel = new Channel({
         name: faker.company.companyName(),
-        members: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.random.arrayElement([...userIDs, ...guestIDs])
+        members: Array.from({ length: faker.datatype.number({ min: 1, max: 8 }) }, () =>
+          faker.random.arrayElement([...userIDs])
         ),
-        visibility: faker.random.arrayElement(["public", "private", "mp","group"]),
+        visibility: faker.random.arrayElement(["public", "private"]),
       });
+
+      const owner = faker.random.arrayElement(channel.members);
+      channel.owner = owner;
 
       await channel.save();
 
