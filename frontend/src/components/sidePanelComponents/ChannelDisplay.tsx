@@ -1,6 +1,7 @@
 import { fetchApi } from "../../lib/api";
 import { getIdentity } from "../../lib/localstorage";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
+import useChannelStorageStore from "../../store/channelStorage";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -21,6 +22,18 @@ const deleteUserFromChannel = async (channelId: string, userId: string) => {
   }
 };
 
+const renameChannel = async (channelId: string, newName: string) => {
+  const response: Response = await fetchApi("PUT", `channels/${channelId}`, {
+    name: newName,
+  });
+  if (response) {
+    console.log("Channel renamed");
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const deleteChannel = async (channelId: string) => {
   const response: Response = await fetchApi("DELETE", `channels/${channelId}`);
   if (response) {
@@ -34,11 +47,13 @@ const deleteChannel = async (channelId: string) => {
 type ChannelProps = {
   id: string;
   name: string;
-  removeChannel: (value: string) => void;
+  owner: string;
 };
 
-const Channel = ({ id, name, removeChannel }: ChannelProps) => {
+const Channel = ({ id, name, owner }: ChannelProps) => {
   const { setChannelId } = useChannelMessageDisplayStore();
+  const { removeChannel } = useChannelStorageStore();
+  const user = getIdentity();
 
   const handleChannelMessageDisplay = () => {
     setChannelId(id);
@@ -49,18 +64,17 @@ const Channel = ({ id, name, removeChannel }: ChannelProps) => {
   };
 
   const handleQuitChannel = async () => {
-    const user = getIdentity();
-    if (!user) {
-      return;
-    }
+    if (!user) return;
     (await deleteUserFromChannel(id, user)) ? removeChannel(id) : null;
   };
 
+  const handleRenameChannel = () => {
+    if (!user) return;
+    renameChannel(id, "renaming");
+  };
+
   const handleDeleteChannel = async () => {
-    const user = getIdentity();
-    if (!user) {
-      return;
-    }
+    if (!user) return;
     (await deleteChannel(id)) ? removeChannel(id) : null;
   };
   return (
@@ -81,8 +95,15 @@ const Channel = ({ id, name, removeChannel }: ChannelProps) => {
           <button onClick={handleQuitChannel}>Quit channel</button>
         </ContextMenuItem>
         <ContextMenuItem>
-          <button onClick={handleDeleteChannel}>Delete channel</button>
+          <button onClick={handleRenameChannel}>Rename channel</button>
         </ContextMenuItem>
+        {owner === user && (
+          <>
+            <ContextMenuItem>
+              <button onClick={handleDeleteChannel}>Delete channel</button>
+            </ContextMenuItem>
+          </>
+        )}
       </ContextMenuContent>
     </ContextMenu>
   );

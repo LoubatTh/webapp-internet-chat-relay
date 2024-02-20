@@ -52,12 +52,14 @@ export type ChannelType = {
   name: string;
   visibility: Visibility;
   members: string[];
+  owner: string;
 };
 
 export type ChannelPostType = {
   name: string;
   visibility: Visibility;
   members: string[];
+  guests: string[];
   owner: string;
 };
 
@@ -79,5 +81,5 @@ export type MessagesPostType = {
 enum Visibility {
   personnal = "personnal",
   private = "private",
-  public = "public"
+  public = "public",
 }
