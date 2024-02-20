@@ -77,7 +77,7 @@ export const createChannel = async (req: Request, res: Response) => {
         if (!member && !guest) {
           res.status(404).json({ message: "Member not found" });
           return;
-        }
+        } 
       }
 
       data.members = members;
@@ -87,6 +87,20 @@ export const createChannel = async (req: Request, res: Response) => {
 
     const channel = new Channel(data);
     const savedChannel = await channel.save();
+    
+    for (let i = 0; i < savedChannel.members.length; i++) {
+      const member = await User.findById(savedChannel.members[i]);
+      const guest = await Channel.findById(savedChannel.members[i]);
+
+      if (member && !guest) {
+        member.channels.push(savedChannel._id.toString());
+        await member.save();
+      } else if (!member && guest) {
+        guest.members.push(savedChannel._id.toString());
+        await guest.save();
+      }
+    }
+
     res.status(201).json(savedChannel);
     return;
   } catch (error: any) {
