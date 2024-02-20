@@ -46,13 +46,13 @@ export type GuestPostType = {
 export type ChannelType = {
   _id: string;
   name: string;
-  visibility: string;
+  visibility: Visibility;
   members: string[];
 };
 
 export type ChannelPostType = {
   name: string;
-  visibility: string;
+  visibility: Visibility;
   members: string[];
 };
 
@@ -61,6 +61,7 @@ export type MessagesType = {
   text: string | JSX.Element;
   channelId: string;
   authorId: string;
+  author: string;
   createdAt: string;
 };
 
@@ -69,3 +70,9 @@ export type MessagesPostType = {
   channelId: string;
   authorId: string;
 };
+
+enum Visibility {
+  personnal = "personnal",
+  private = "private",
+  public = "public"
+}

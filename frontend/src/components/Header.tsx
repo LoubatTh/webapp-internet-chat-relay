@@ -5,16 +5,19 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "./ui/ui/navigation-menu";
-import { Link } from "react-router-dom";
 
 const Header = () => {
+  const channelsExist = window.location.href.includes("channels");
+  const messagesExist = window.location.href.includes("messages");
+
   return (
-    <NavigationMenu>
+    <NavigationMenu className="px-2 gap-2">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink
             className={navigationMenuTriggerStyle()}
             href="/channels"
+            active={channelsExist}
           >
             Channels
           </NavigationMenuLink>
@@ -25,6 +28,7 @@ const Header = () => {
           <NavigationMenuLink
             className={navigationMenuTriggerStyle()}
             href="/messages"
+            active={messagesExist}
           >
             Messages
           </NavigationMenuLink>
