@@ -167,12 +167,33 @@ export const getGuestChannels = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const guest = await Guest.findById(id, "channels");
+    const visibility = req.query.visibility as string;
+    let channels = [];
 
     if (!guest) {
       res.status(404).json({ message: "Guest not found" });
       return;
     }
 
+    for (let i = 0; i < guest.channels.length; i++) {
+      const channel = await Channel.findById(guest.channels[i]);
+
+      if (!channel) {
+        res.status(404).json({ message: "Channel not found" });
+        return;
+      }
+
+      if (visibility && visibility === channel.visibility) {
+        channels.push(channel);
+      } else if (
+        (!visibility && channel.visibility === "public") ||
+        channel.visibility === "private"
+      ) {
+        channels.push(channel);
+      }
+    }
+
+    res.status(200).json(channels);
     res.status(200).json(guest);
   } catch (error: any) {
     res.status(500).json(error.message);

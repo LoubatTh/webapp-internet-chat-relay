@@ -43,7 +43,7 @@ export const getChannel = async (req: Request, res: Response) => {
 // Create a new channel
 export const createChannel = async (req: Request, res: Response) => {
   try {
-    const { name, members, visibility } = req.body;
+    const { name, members, visibility, owner } = req.body;
 
     if (!name || name.length === 0 || typeof name !== "string") {
       res.status(400).json({ message: "Name is required" });
@@ -64,6 +64,18 @@ export const createChannel = async (req: Request, res: Response) => {
       return;
     }
 
+    if (!owner || owner.length === 0 || typeof owner !== "string") {
+      res.status(400).json({ message: "Owner is required" });
+      return;
+    }
+
+    const checkOwner = await User.findById(owner);
+
+    if (!checkOwner) {
+      res.status(404).json({ message: "Owner not found" });
+      return;
+    }
+
     let data = {
       name: name,
       visibility: visibility,
@@ -77,7 +89,7 @@ export const createChannel = async (req: Request, res: Response) => {
         if (!member && !guest) {
           res.status(404).json({ message: "Member not found" });
           return;
-        } 
+        }
       }
 
       data.members = members;
@@ -87,7 +99,7 @@ export const createChannel = async (req: Request, res: Response) => {
 
     const channel = new Channel(data);
     const savedChannel = await channel.save();
-    
+
     for (let i = 0; i < savedChannel.members.length; i++) {
       const member = await User.findById(savedChannel.members[i]);
       const guest = await Channel.findById(savedChannel.members[i]);
@@ -118,7 +130,14 @@ export const updateChannel = async (req: Request, res: Response) => {
 
   try {
     const { id } = req.params;
-    const { name, visibility } = req.body;
+    const { name, visibility, owner } = req.body;
+
+    if (!checkOwner(id, owner)) {
+      res
+        .status(400)
+        .json({ message: "You are not the owner of this channel" });
+      return;
+    }
 
     if (!name && !visibility) {
       res.status(400).json({ message: "At least one field is required" });
@@ -155,6 +174,11 @@ export const updateChannel = async (req: Request, res: Response) => {
 export const deleteChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const { owner } = req.body;
+
+    if (!checkOwner(id, owner)) {
+      res.status(400).json({ message: "You are not the owner of this channel" });
+    }
 
     const messages = await Message.find({ channelId: id });
 
@@ -217,5 +241,25 @@ const checkVisibility = (visibility: string) => {
   ) {
     return false;
   }
+  return true;
+};
+
+const checkOwner = async (server: string, owner: string) => {
+  const check = await User.findById(owner);
+
+  if (!check) {
+    return false;
+  }
+
+  const checkServer = await Channel.findById(server);
+
+  if (!checkServer) {
+    return false;
+  }
+
+  if (checkServer.owner !== owner) {
+    return false;
+  }
+
   return true;
 };
