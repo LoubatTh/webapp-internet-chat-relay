@@ -38,7 +38,7 @@ const ChannelDiscussion = () => {
   };
 
   const isCommand = (message: MessagesType): boolean => {
-    return message.authorId == "System";
+    return message.author == "System";
   };
 
   useLayoutEffect(() => {

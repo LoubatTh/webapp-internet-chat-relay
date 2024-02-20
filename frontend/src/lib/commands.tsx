@@ -13,7 +13,7 @@ const getAllChannel = async (): Promise<ChannelType[]> => {
 };
 
 const postChannel = async (
-  body: { name: string; visibility: string; members: string[]; guests: string[] }
+  body: { name: string; visibility: string; members: string[]; owner: string}
 ): Promise<ChannelPostType> => {
   const data = await fetchApi<ChannelPostType>(
     "POST",
@@ -21,6 +21,15 @@ const postChannel = async (
     body
   );
   return data;
+};
+
+const getIdChannelByName = async (name: string): Promise<ChannelType> => {
+  const data = await fetchApi<ChannelType>("GET", `channels/n/${name}`);
+  return data;
+}
+
+const deleteChannel = async (id: string) => {
+  await fetchApi("DELETE", `channels/${id}`);
 };
 
 const getAllChannelNames = async (): Promise<string[]> => {
@@ -43,7 +52,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Voici la liste des commandes disponibles : <br />
@@ -66,7 +75,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un pseudo. <br />
@@ -79,7 +88,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Commande /nick non implémentée.
@@ -96,7 +105,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Voici la liste des canaux disponibles : <br />
@@ -114,7 +123,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un nom de canal. <br />
@@ -125,14 +134,14 @@ export const onCommand = async (command: string | number | boolean | React.React
       ]
       try {
         const idUser = getIdentity() || '0000';
-        postChannel({ name: args, visibility: 'public', members: [idUser], guests: [] });
+        postChannel({ name: args, visibility: 'public', members: [idUser], owner: idUser});
       } catch (error) {
         console.error("Erreur lors de la création du canal :", error);
         return [
           {
             channelId: 'system',
             _id: `system-message-help-${randomId()}`,
-            authorId: 'System',
+            author: 'System',
             text: (
               <>
                 Erreur lors de la création du canal : {error}
@@ -145,7 +154,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Canal <strong><i>#{args}</i></strong> créé avec succès.
@@ -159,7 +168,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un nom de canal. <br />
@@ -168,14 +177,22 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+      let text = `Canal ${args} supprimé avec succès.`;
+      try{
+        const channel = await getIdChannelByName(args);
+        deleteChannel(channel._id);
+      } catch (error) {
+        console.error("Erreur lors de la suppression du canal :", error);
+        text = `Erreur lors de la suppression du canal : ${args}`; 
+      }
       return [
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
-              Commande /delete non implémentée.
+              {text}
             </>
           ),
         },
@@ -186,7 +203,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un nom de canal. <br />
@@ -199,7 +216,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Commande /join non implémentée.
@@ -213,7 +230,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un nom de canal. <br />
@@ -226,7 +243,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Commande /quit non implémentée.
@@ -240,7 +257,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Commande /users non implémentée.
@@ -254,7 +271,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Veuillez spécifier un pseudo et un message. <br />
@@ -267,7 +284,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           text: (
             <>
               Commande /msg non implémentée.
@@ -281,7 +298,7 @@ export const onCommand = async (command: string | number | boolean | React.React
         {
           channelId: 'system',
           _id: `system-message-notfound-${randomId()}`,
-          authorId: 'System',
+          author: 'System',
           length: 0,
           text: (
             <>

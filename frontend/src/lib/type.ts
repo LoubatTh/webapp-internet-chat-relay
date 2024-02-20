@@ -54,6 +54,7 @@ export type ChannelPostType = {
   name: string;
   visibility: Visibility;
   members: string[];
+  owner: string;
 };
 
 export type MessagesType = {
