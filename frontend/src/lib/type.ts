@@ -22,6 +22,10 @@ export type UserType = {
   createdAt: string;
 };
 
+export type UserTypeUsername = {
+  username: string
+}
+
 export type UserPostType = {
   username: string;
   informations: string;

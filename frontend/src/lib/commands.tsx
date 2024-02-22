@@ -1,6 +1,6 @@
 import { fetchApi } from "./api";
 import { getIdentity } from "./localstorage";
-import { ChannelPostType, ChannelType } from "./type";
+import { ChannelPostType, ChannelType, GuestType, UserType, UserTypeUsername } from "./type";
 
 
 const randomId = () => {
@@ -12,6 +12,18 @@ const getAllChannel = async (): Promise<ChannelType[]> => {
   return data;
 };
 
+const changeNick = async (id:string, name: string): Promise<UserTypeUsername> => {
+  try {
+    const updatedUser = await fetchApi<UserTypeUsername>("PUT", `users/${id}`, {
+      username: name,
+    });
+
+    return updatedUser;
+  } catch (error) {
+    console.error("Erreur lors de la modification du nom d'utilisateur :", error);
+    throw error;
+  }
+};
 const postChannel = async (
   body: { name: string; visibility: string; members: string[]; owner: string}
 ): Promise<ChannelPostType> => {
@@ -43,10 +55,12 @@ const getAllChannelNames = async (): Promise<string[]> => {
   }
 };
 
+
 const getMembers = async (id: string): Promise<string[]> => {
   try {
-    const channel = await fetchApi<string[]>("GET", `channels/${id}/members`);
-    return channel;
+    const channel = await fetchApi<ChannelType>("GET", `channels/${id}`);
+    const members: string[] = channel.members;
+    return members;
   } catch (error) {
     console.error("Erreur lors de la récupération des membres du canal :", error);
     throw error;
@@ -94,6 +108,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+      changeNick(getIdentity(),args)
       return [
         {
           channelId: 'system',
@@ -101,7 +116,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /nick non implémentée.
+              Votre pseudo à été changé avec succès !!
             </>
           ),
         },
@@ -273,8 +288,9 @@ export const onCommand = async (command: string | number | boolean | React.React
           text: (
             <>
               Voici la liste des membres dans le canal : <br />
+
               {(await membersChannel).map((member) => (
-                <strong key={membersChannel}>{member}<br /></strong>
+                <strong key={member}>{member}<br /></strong>
               ))}
             </>
           ),

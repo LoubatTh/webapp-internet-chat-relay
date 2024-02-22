@@ -264,7 +264,7 @@ export const getMembersChannel = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Channel not found" });
       return;
     } else {
-      res.status(200).json(channel.members);
+      res.status(200).json(channel);
       return;
     }
   } catch (error: any) {
