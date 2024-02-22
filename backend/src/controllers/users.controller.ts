@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import bcrypt from "bcrypt";
 import { User, IUser } from "../models/users.model";
 import { Guest } from "~/models/guests.model";
 import { Channel } from "~/models/channels.model";
-import { Message } from "~/models/messages.model";
 
 // GET /users
 // Get all users
@@ -35,66 +35,23 @@ export const getUser = async (req: Request, res: Response) => {
   }
 };
 
-// POST /users
-// Add a user
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const { username, informations } = req.body;
-
-    if (!username || !informations) {
-      res.status(400).json({ message: "Missing field" });
-      return;
-    }
-
-    const checkUsername = await User.findOne({ username: username });
-
-    if (checkUsername) {
-      res.status(400).json({ message: "Username already taken" });
-      return;
-    }
-
-    const checkGuest = await Guest.findOne({ username: username });
-
-    if (checkGuest) {
-      res.status(400).json({ message: "Username already taken" });
-      return;
-    }
-
-    const data: IUser = {
-      username: username,
-      channels: [],
-      informations: informations,
-      createdAt: new Date(),
-    };
-
-    const user = new User(data);
-    const savedUser = await user.save();
-
-    res.status(201).json(savedUser);
-    return;
-  } catch (error: any) {
-    res.status(500).json(error.message);
-  }
-};
-
 // PUT /users/:id
 // Update a user informations
 export const updateUser = async (req: Request, res: Response) => {
   interface IUserUpdate {
     username: string;
     informations: string;
+    password: string;
   }
 
   try {
     const { id } = req.params;
-    const { username, informations } = req.body;
+    const { username, informations, password, oldPassword } = req.body;
     const oldUsername = await User.findById(id).then((oldUser) => {
       return oldUser ? oldUser.username : "";
     });
 
-    console.log(oldUsername);
-
-    if (!username && !informations) {
+    if (!username && !informations && !password && !oldPassword) {
       res.status(400).json({ message: "Missing field" });
       return;
     }
@@ -114,6 +71,32 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     data.informations = informations;
+
+    if (password && oldPassword) {
+      const checkPwd = await User.findById(id);
+
+      if (checkPwd) {
+        const isPasswordOk = await bcrypt.compare(
+          oldPassword,
+          checkPwd.password
+        );
+
+        if (!isPasswordOk) {
+          res.status(401).json({ message: "Wrong password" });
+          return;
+        }
+
+        if (checkPwd) {
+          const saltRounds = 10;
+          data.password = await bcrypt.hash(password, saltRounds);
+        }
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } else if (password && !oldPassword) {
+      res.status(400).json({ message: 'Missing "oldPassword" field' });
+      return;
+    }
 
     const user = await User.findByIdAndUpdate(id, data, { new: true });
 
