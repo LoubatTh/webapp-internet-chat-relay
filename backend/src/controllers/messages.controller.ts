@@ -50,9 +50,8 @@ export const getMessage = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Message not found" });
       return;
     } else {
-      // const updatedMessage = await getMessageAuthor([message]);
-      // res.status(200).json(updatedMessage[0]);
-      res.status(200).json(message);
+      const updatedMessage = await getMessageAuthor([message]);
+      res.status(200).json(updatedMessage[0]);
       return;
     }
   } catch (error: any) {
@@ -99,8 +98,10 @@ export const createMessage = async (req: Request, res: Response) => {
     };
 
     const message = new Message(data);
-    const savedMessage = await message.save();
-    res.status(201).json(savedMessage);
+    const savedMessage = await message.save();      
+    const updatedMessage = await getMessageAuthor([savedMessage]);
+    res.status(201).json(updatedMessage[0]);
+    // res.status(201).json(savedMessage);
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
