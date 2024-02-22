@@ -43,6 +43,16 @@ const getAllChannelNames = async (): Promise<string[]> => {
   }
 };
 
+const getMembers = async (id: string): Promise<string[]> => {
+  try {
+    const channel = await fetchApi<string[]>("GET", `channels/${id}/members`);
+    return channel;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des membres du canal :", error);
+    throw error;
+  }
+}
+
 
 export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any) => {
   switch (command) {
@@ -253,6 +263,8 @@ export const onCommand = async (command: string | number | boolean | React.React
       ];
     case 'users':
       // List users in the channel
+      const membersChannel = await getMembers("65d4975649b64dda1934fe59");
+
       return [
         {
           channelId: 'system',
@@ -260,7 +272,10 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /users non implémentée.
+              Voici la liste des membres dans le canal : <br />
+              {(await membersChannel).map((member) => (
+                <strong key={membersChannel}>{member}<br /></strong>
+              ))}
             </>
           ),
         },

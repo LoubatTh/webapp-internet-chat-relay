@@ -253,6 +253,25 @@ export const deleteChannel = async (req: Request, res: Response) => {
   }
 };
 
+// GET /channels/:id/members
+// Get all members of a channel by id
+export const getMembersChannel = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const channel = await Channel.findById(id);
+
+    if (!channel) {
+      res.status(404).json({ message: "Channel not found" });
+      return;
+    } else {
+      res.status(200).json(channel.members);
+      return;
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const checkVisibility = (visibility: string) => {
   if (
     visibility !== "public" &&
