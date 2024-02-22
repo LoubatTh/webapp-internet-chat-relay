@@ -7,12 +7,13 @@ import { io, Socket } from "socket.io-client";
 import { Input } from "../ui/ui/input";
 import { getIdentity } from "../../lib/localstorage";
 
-const socket: Socket = io("http://localhost:4000");
+const socket: Socket = io("http://localhost:4001");
 
 const postMessage = async (body: {
   text: string;
   authorId: string;
   channelId: string;
+  author: string
 }): Promise<MessagesPostType> => {
   const data = await fetchApi<MessagesPostType>(
     "POST",
@@ -30,6 +31,7 @@ const InputMessage = ({
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
   const [authorId, setAuthorId] = useState("");
+  const [author, setAuthor] = useState("");
 
   const handleInputChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -56,8 +58,9 @@ const InputMessage = ({
       const newMessage = await postMessage({
         text: trimmedMessage,
         authorId: authorId,
-        channelId,
+        channelId, author,
       });
+      console.log("mess",newMessage)
       socket.emit("newMessage", newMessage); // Emit new message event
     }
 

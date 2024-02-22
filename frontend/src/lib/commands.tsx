@@ -12,20 +12,31 @@ const getAllChannel = async (): Promise<ChannelType[]> => {
   return data;
 };
 
-const changeNick = async (id:string, name: string): Promise<UserTypeUsername> => {
-  try {
-    const updatedUser = await fetchApi<UserTypeUsername>("PUT", `users/${id}`, {
-      username: name,
-    });
+const changeNick = async (id: string, name: string) => {
 
-    return updatedUser;
-  } catch (error) {
-    console.error("Erreur lors de la modification du nom d'utilisateur :", error);
-    throw error;
+  try{
+    const guest = await fetch(`/api/guests/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if(guest.status != 200){
+      const user = await fetch(`/api/users/${id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if(user.status != 200){
+        return "User not found";
+      } 
+      await fetchApi<UserTypeUsername>("PUT", `/users/${id}`,{username: name});
+    }
+    await fetchApi<UserTypeUsername>("PUT",`/guests/${id}`, {username: name})
+  } catch(error){
+    console.log(error);
   }
 };
+
 const postChannel = async (
-  body: { name: string; visibility: string; members: string[]; owner: string}
+  body: { name: string; visibility: string; members: string[]; owner: string }
 ): Promise<ChannelPostType> => {
   const data = await fetchApi<ChannelPostType>(
     "POST",
@@ -108,7 +119,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
-      changeNick(getIdentity(),args)
+      changeNick(getIdentity(), args)
       return [
         {
           channelId: 'system',
@@ -159,7 +170,7 @@ export const onCommand = async (command: string | number | boolean | React.React
       ]
       try {
         const idUser = getIdentity() || '0000';
-        postChannel({ name: args, visibility: 'public', members: [idUser], owner: idUser});
+        postChannel({ name: args, visibility: 'public', members: [idUser], owner: idUser });
       } catch (error) {
         console.error("Erreur lors de la création du canal :", error);
         return [
@@ -203,12 +214,12 @@ export const onCommand = async (command: string | number | boolean | React.React
         },
       ];
       let text = `Canal ${args} supprimé avec succès.`;
-      try{
+      try {
         const channel = await getIdChannelByName(args);
         deleteChannel(channel._id);
       } catch (error) {
         console.error("Erreur lors de la suppression du canal :", error);
-        text = `Erreur lors de la suppression du canal : ${args}`; 
+        text = `Erreur lors de la suppression du canal : ${args}`;
       }
       return [
         {
