@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Channel, IChannel } from "../models/channels.model";
 import { User } from "~/models/users.model";
 import { Message } from "~/models/messages.model";
+import { Guest } from "~/models/guests.model";
 
 // GET /channels
 // Get all channels
@@ -25,15 +26,34 @@ export const getChannels = async (req: Request, res: Response) => {
 export const getChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const name = req.query.name as string;
     const channel = await Channel.findById(id);
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
       return;
-    } else {
-      res.status(200).json(channel);
-      return;
     }
+
+    if (name && name == "true") {
+      let membersName: string[] = [];
+
+      for (let i = 0; i < channel.members.length; i++) {
+        const user = await User.findById(channel.members[i], "username");
+        const guest = await Guest.findById(channel.members[i], "username");
+
+        if (user && !guest) {
+          membersName.push(user.username);
+        } else if (!user && guest) {
+          membersName.push(guest.username);
+        }
+      }
+
+      channel.members = membersName;
+    }
+
+
+    res.status(200).json(channel);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -85,7 +105,7 @@ export const createChannel = async (req: Request, res: Response) => {
     if (members && members.length > 0) {
       for (let i = 0; i < members.length; i++) {
         const member = await User.findById(members[i]);
-        const guest = await Channel.findById(members[i]);
+        const guest = await Guest.findById(members[i]);
 
         if (!member && !guest) {
           res.status(404).json({ message: "Member not found" });
@@ -103,13 +123,13 @@ export const createChannel = async (req: Request, res: Response) => {
 
     for (let i = 0; i < savedChannel.members.length; i++) {
       const member = await User.findById(savedChannel.members[i]);
-      const guest = await Channel.findById(savedChannel.members[i]);
+      const guest = await Guest.findById(savedChannel.members[i]);
 
       if (member && !guest) {
         member.channels.push(savedChannel._id.toString());
         await member.save();
       } else if (!member && guest) {
-        guest.members.push(savedChannel._id.toString());
+        guest.channels.push(savedChannel._id.toString());
         await guest.save();
       }
     }
@@ -155,11 +175,9 @@ export const updateChannel = async (req: Request, res: Response) => {
       if (checkVisibility(visibility)) {
         data.visibility = visibility;
       } else {
-        res
-          .status(400)
-          .json({
-            message: 'Visibility is "public", "private" or "personnal"',
-          });
+        res.status(400).json({
+          message: 'Visibility is "public", "private" or "personnal"',
+        });
         return;
       }
     }
@@ -208,7 +226,7 @@ export const deleteChannel = async (req: Request, res: Response) => {
 
     for (let i = 0; i < channel.members.length; i++) {
       const member = await User.findById(channel.members[i]);
-      const guest = await Channel.findById(channel.members[i]);
+      const guest = await Guest.findById(channel.members[i]);
 
       if (member) {
         const memberIndex = member.channels.indexOf(id);
@@ -220,13 +238,13 @@ export const deleteChannel = async (req: Request, res: Response) => {
         member.channels.splice(memberIndex, 1);
         await member.save();
       } else if (guest) {
-        const guestIndex = guest.members.indexOf(id);
+        const guestIndex = guest.channels.indexOf(id);
         if (guestIndex === -1) {
           res.status(404).json({ message: "Channel not found in guest" });
           return;
         }
 
-        guest.members.splice(guestIndex, 1);
+        guest.channels.splice(guestIndex, 1);
         await guest.save();
       }
     }
