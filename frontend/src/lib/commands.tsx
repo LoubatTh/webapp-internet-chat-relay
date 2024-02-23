@@ -1,5 +1,5 @@
 import { fetchApi } from "./api";
-import { getIdentity } from "./localstorage";
+import { getIdentity } from "./utils";
 import { ChannelPostType, ChannelType, GuestType, UserType, UserTypeUsername } from "./type";
 
 

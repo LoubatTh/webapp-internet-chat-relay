@@ -5,7 +5,7 @@ import { fetchApi } from "../../lib/api";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import { io, Socket } from "socket.io-client";
 import { Input } from "../ui/ui/input";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 
 const socket: Socket = io("http://localhost:4001");
 

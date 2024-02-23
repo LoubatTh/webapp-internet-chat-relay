@@ -8,7 +8,7 @@ import { io, Socket } from "socket.io-client";
 import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 
 const socket: Socket = io("http://localhost:4001");
 
