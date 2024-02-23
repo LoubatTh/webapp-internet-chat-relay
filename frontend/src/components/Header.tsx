@@ -54,13 +54,6 @@ const Header = () => {
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
-            Welcome
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
     </NavigationMenu>
   );
 };

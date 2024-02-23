@@ -6,6 +6,11 @@ function generateRandomString(length: number): string {
   return randomString;
 }
 
+export function setUser(id:string, token: string){
+  setIdentity(id)
+  setAccessToken(token)
+}
+
 export function getIdentity() {
   return localStorage.getItem("identity")
 }
@@ -16,4 +21,16 @@ export function setIdentity(string : string) {
 
 export function deleteIdentity() {
     localStorage.removeItem("identity")
+}
+
+export function getAccessToken() {
+  return localStorage.getItem("accessToken")
+}
+
+export function setAccessToken(string : string) {
+  localStorage.setItem("accessToken", string)
+}
+
+export function deleteAccessToken() {
+    localStorage.removeItem("accessToken")
 }
