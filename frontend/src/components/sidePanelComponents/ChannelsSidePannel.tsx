@@ -10,7 +10,7 @@ import JoinChannelComponent from "./JoinChannelComponent";
 import { getAccessToken, getIdentity } from "../../lib/utils";
 
 const getAllChannel = async (user: string): Promise<ChannelType[]> => {
-  if(getAccessToken()){
+  if (getAccessToken()) {
     const data = await fetchApi<ChannelType[]>("GET", `users/${user}/channels`);
     return data;
   } else {
@@ -25,24 +25,24 @@ const ChannelsSidePannel = () => {
   useEffect(() => {
     const user = getIdentity();
     if (!user) return;
-    getAllChannel(user).then((data) => {
+    getAllChannel(user).then(async (data) => {
       setChannels(data);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>
-      <ScrollArea className="h-[calc(100%-50px)] ">
-        {channels.map((channel) => (
-          <React.Fragment key={channel._id}>
-            <Link to={`/channels/${channel._id}`}>
+      <ScrollArea className="h-[calc(100%-50px)]">
+        {channels.map((channel, index) => (
+          <Link key={`${channel._id}-${index}`} to={`/channels/${channel._id}`}>
+            <React.Fragment>
               <Channel
                 id={channel._id}
                 name={channel.name}
                 owner={channel.owner}
               />
-            </Link>
-          </React.Fragment>
+            </React.Fragment>
+          </Link>
         ))}
       </ScrollArea>
       <CreateChannelComponent />

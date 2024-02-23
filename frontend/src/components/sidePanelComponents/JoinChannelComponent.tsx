@@ -6,10 +6,18 @@ import { Input } from "../ui/ui/input";
 import { Label } from "../ui/ui/label";
 import useChannelStorageStore from "../../store/channelStorage";
 import { fetchApi } from "../../lib/api";
-import { getIdentity } from "../../lib/utils";
+import { getIdentity, getAccessToken } from "../../lib/utils";
 
 const joinChannel = async (user: string, channelId: string) => {
-  const response: Response = await fetchApi("POST", `guests/${user}/channels`, {
+  let userType;
+
+  if(getAccessToken()){
+    userType = "users";
+  } else {
+    userType = "guests";
+  }
+
+  const response: Response = await fetchApi("POST", `${userType}/${user}/channels`, {
     channelId
   });
   if (response) {

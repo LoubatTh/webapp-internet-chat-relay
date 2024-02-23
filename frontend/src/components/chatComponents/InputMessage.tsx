@@ -26,7 +26,7 @@ const postMessage = async (body: {
 const InputMessage = ({
   onCommand,
 }: {
-  onCommand: (command: string, args: string) => void;
+  onCommand: (command: string, args: string, channelId: string) => void;
 }) => {
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
@@ -51,7 +51,7 @@ const InputMessage = ({
       const args = argsArray.join(" ");
 
       // Get the command and its arguments
-      onCommand(command, args);
+      onCommand(command, args, channelId);
       console.log("Commande", command);
     } else {
       // If message is not a command, send it as a regular message
@@ -60,7 +60,6 @@ const InputMessage = ({
         authorId: authorId,
         channelId, author,
       });
-      console.log("mess",newMessage)
       socket.emit("newMessage", newMessage); // Emit new message event
     }
 

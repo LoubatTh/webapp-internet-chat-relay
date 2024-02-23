@@ -1,5 +1,5 @@
 import { fetchApi } from "../../lib/api";
-import { getIdentity } from "../../lib/utils";
+import { getIdentity, getAccessToken } from "../../lib/utils";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import useChannelStorageStore from "../../store/channelStorage";
 import {
@@ -10,9 +10,16 @@ import {
 } from "../ui/ui/context-menu";
 
 const deleteUserFromChannel = async (channelId: string, userId: string) => {
+  let userType;
+  if (getAccessToken()) {
+    userType = "users";
+  } else {
+    userType = "guests";
+  }
+
   const response: Response = await fetchApi(
     "DELETE",
-    `users/${userId}/channels/${channelId}`
+    `${userType}/${userId}/channels/${channelId}`
   );
   if (response) {
     console.log("User removed from channel");

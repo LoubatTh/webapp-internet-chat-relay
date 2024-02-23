@@ -1,36 +1,39 @@
 import { fetchApi } from "./api";
-import { getIdentity } from "./utils";
+import { getIdentity, getAccessToken } from "./utils";
 import { ChannelPostType, ChannelType, GuestType, UserType, UserTypeUsername } from "./type";
+import { useParams } from "react-router-dom";
 
 
 const randomId = () => {
   return Math.floor(Math.random() * 1000).toString();
 };
 
+function getUserType() {
+  if (getAccessToken()) {
+    return "users";
+  } else {
+    return "guests";
+  }
+}
 const getAllChannel = async (): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>("GET", "channels");
   return data;
 };
 
 const changeNick = async (id: string, name: string) => {
-
-  try{
-    const guest = await fetch(`/api/guests/${id}`, {
-      method: "GET",
+  const userType = getUserType();
+  try {
+    const guest = await fetch(`/api/${userType}/${id}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: name })
     });
-    if(guest.status != 200){
-      const user = await fetch(`/api/users/${id}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      if(user.status != 200){
-        return "User not found";
-      } 
-      await fetchApi<UserTypeUsername>("PUT", `/users/${id}`,{username: name});
+    if (guest.status !== 400) {
+      return `Pseudo remplacé avec succès par ${name}.`
+    } else {
+      return "Pseudo déjà pris. Veuillez essayer un autre pseudo."
     }
-    await fetchApi<UserTypeUsername>("PUT",`/guests/${id}`, {username: name})
-  } catch(error){
+  } catch (error) {
     console.log(error);
   }
 };
@@ -67,10 +70,29 @@ const getAllChannelNames = async (): Promise<string[]> => {
 };
 
 
-const getMembers = async (id: string): Promise<string[]> => {
+const getMembers = async (channelId: string): Promise<string[]> => {
   try {
-    const channel = await fetchApi<ChannelType>("GET", `channels/${id}`);
+    const channel = await fetchApi<ChannelType>("GET", `channels/${channelId}`);
     const members: string[] = channel.members;
+
+    const memberDetailsPromises = members.map(async (memberId) => {
+      let memberInfo;
+      try{
+        memberInfo = await fetchApi<UserType>("GET", `users/${memberId}`);
+      } catch(error){
+        memberInfo = await fetchApi<UserType>("GET", `guests/${memberId}`);
+      }
+      return memberInfo;
+    });
+
+    // Wait for all member details to be fetched
+    const memberDetails = await Promise.all(memberDetailsPromises);
+
+    // Extract names from member details
+    const memberNames = memberDetails.map((member) => member.username);
+
+    return memberNames;
+
     return members;
   } catch (error) {
     console.error("Erreur lors de la récupération des membres du canal :", error);
@@ -79,7 +101,7 @@ const getMembers = async (id: string): Promise<string[]> => {
 }
 
 
-export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any) => {
+export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, channelId: string) => {
   switch (command) {
     case 'help':
       // Display help message
@@ -119,7 +141,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
-      changeNick(getIdentity(), args)
+      const change = await changeNick(getIdentity() || '0000', args)
       return [
         {
           channelId: 'system',
@@ -127,7 +149,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Votre pseudo à été changé avec succès !!
+              {change}
             </>
           ),
         },
@@ -142,6 +164,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
           author: 'System',
+          username: 'System',
           text: (
             <>
               Voici la liste des canaux disponibles : <br />
@@ -289,7 +312,7 @@ export const onCommand = async (command: string | number | boolean | React.React
       ];
     case 'users':
       // List users in the channel
-      const membersChannel = await getMembers("65d4975649b64dda1934fe59");
+      const membersChannel = await getMembers(channelId);
 
       return [
         {
