@@ -82,6 +82,7 @@ export const register = async (req: Request, res: Response) => {
       username: username,
       password: hashedPassword,
       channels: [],
+      pmsgs: [],
       informations: informations ? informations : "",
       createdAt: new Date(),
     };

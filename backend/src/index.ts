@@ -33,9 +33,10 @@ mongoose
   });
 
 app.use("/api/channels", require("./routes/channels.routes"));
-app.use("/api/channels", require("./routes/messages.routes"));
+app.use("/api/messages", require("./routes/messages.routes"));
 app.use("/api/users", require("./routes/users.routes"));
 app.use("/api/guests", require("./routes/guests.routes"));
+app.use("/api/pmsgs", require("./routes/pmsgs.routes"));
 
 app.use("/ping", (req: Request, res: Response) => {
   res.send({ message: "Ping" });

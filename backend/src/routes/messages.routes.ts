@@ -3,10 +3,10 @@ import * as messagesController from "../controllers/messages.controller";
 
 const router = express.Router();
 
-router.get("/:channelId/messages", messagesController.getMessages);
-router.get("/:channelId/messages/:id", messagesController.getMessage);
-router.post("/:channelId/messages", messagesController.createMessage);
-router.put("/:channelId/messages/:id", messagesController.updateMessage);
-router.delete("/:channelId/messages/:id", messagesController.deleteMessage);
+router.get("/:channelId", messagesController.getMessages);
+router.get("/:channelId/:id", messagesController.getMessage);
+router.post("/:channelId", messagesController.createMessage);
+router.put("/:channelId/:id", messagesController.updateMessage);
+router.delete("/:channelId/:id", messagesController.deleteMessage);
 
 module.exports = router;
