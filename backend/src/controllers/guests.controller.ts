@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Guest, IGuest } from "../models/guests.model";
 import { User } from "../models/users.model";
 import { Channel } from "~/models/channels.model";
-import { Message } from "~/models/messages.model";
+import { Pmsg } from "~/models/pmsgs.model";
 
 // GET /guests
 // Get all guests
@@ -63,6 +63,7 @@ export const createGuest = async (req: Request, res: Response) => {
     const data: IGuest = {
       username: username,
       channels: [],
+      pmsgs: [],
       lastConnexion: new Date(),
     };
 
@@ -194,7 +195,7 @@ export const getGuestChannels = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(channels);
-    res.status(200).json(guest);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
   }
@@ -276,7 +277,38 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
     const savedChannel = await channel.save();
 
     res.status(200).json({ guest: savedGuest, channel: savedChannel });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+  }
+};
+
+// GET /users/:id/pmsg
+// Get user private messages
+export const getUserPmsgs = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const guest = await Guest.findById(id, "pmsgs");
+    let pmsgs = [];
+
+    if (!guest) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    for (let i = 0; i < guest.pmsgs.length; i++) {
+      const pmsg = await Pmsg.findById(guest.pmsgs[i]);
+
+      if (!pmsg) {
+        res.status(404).json({ message: "Channel not found" });
+        return;
+      }
+
+      pmsgs.push(pmsg);
+    }
+
+    res.status(200).json(pmsgs);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
