@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { User, IUser } from "../models/users.model";
 import { Guest } from "~/models/guests.model";
 import { Channel } from "~/models/channels.model";
+import { Pmsg } from "~/models/pmsgs.model";
 
 // GET /users
 // Get all users
@@ -264,5 +265,35 @@ export const removeUserChannel = async (req: Request, res: Response) => {
     res.status(200).json({ user: savedUser, channel: savedChannel });
   } catch (error: any) {
     res.status(500).json(error.message);
+  }
+};
+
+// GET /users/:id/pmsg
+// Get user private messages
+export const getUserPmsgs = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id, "pmsgs");
+    let pmsgs = [];
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    for (let i = 0; i < user.pmsgs.length; i++) {
+      const pmsg = await Pmsg.findById(user.pmsgs[i]);
+
+      if (!pmsg) {
+        res.status(404).json({ message: "Channel not found" });
+        return;
+      }
+
+      pmsgs.push(pmsg);
+    }
+
+    res.status(200).json(pmsgs);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };

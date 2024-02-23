@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 export interface IMessage {
-  _id?: string
+  _id?: string;
   text: string;
   channelId: string;
   authorId: string;

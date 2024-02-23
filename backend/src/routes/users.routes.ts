@@ -13,6 +13,11 @@ router.put("/:id", checkJwtToken, usersController.updateUser);
 router.delete("/:id", checkJwtToken, usersController.deleteUser);
 router.get("/:id/channels", checkJwtToken, usersController.getUserChannels);
 router.post("/:id/channels", checkJwtToken, usersController.addUserChannel);
-router.delete("/:id/channels/:channelId", checkJwtToken, usersController.removeUserChannel);
+router.delete(
+  "/:id/pmsgs/:pmsgId",
+  checkJwtToken,
+  usersController.removeUserChannel
+);
+router.get("/:id/pmsgs", checkJwtToken, usersController.getUserPmsgs);
 
 module.exports = router;
