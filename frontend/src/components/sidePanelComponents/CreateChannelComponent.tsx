@@ -1,6 +1,5 @@
 import { SetStateAction, useState } from "react";
 import { fetchApi } from "../../lib/api";
-import { getIdentity } from "../../lib/localstorage";
 import { Button } from "../ui/ui/button";
 import { Checkbox } from "../ui/ui/checkbox";
 import {
@@ -17,6 +16,7 @@ import { Input } from "../ui/ui/input";
 import { Label } from "../ui/ui/label";
 import useChannelStorageStore from "../../store/channelStorage";
 import { ChannelType } from "../../lib/type";
+import { getIdentity } from "../../lib/utils";
 
 const createChannel = async (
   channelName: string,

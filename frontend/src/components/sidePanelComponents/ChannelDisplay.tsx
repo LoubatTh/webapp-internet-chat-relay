@@ -1,5 +1,5 @@
 import { fetchApi } from "../../lib/api";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import useChannelStorageStore from "../../store/channelStorage";
 import {
