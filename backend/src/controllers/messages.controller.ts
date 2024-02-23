@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Message, IMessage, IMessageAuthor } from "../models/messages.model";
 import { Channel } from "../models/channels.model";
+import { Pmsg } from "~/models/pmsgs.model";
 import { User } from "~/models/users.model";
 import { Guest } from "~/models/guests.model";
 
@@ -9,38 +10,38 @@ interface IAuthorName {
   id: string;
 }
 
-// GET /channels/:channelId/messages
+// GET /messages/:channelId || :pmsgId/messages
 // Get all messages for a channel
 export const getMessages = async (req: Request, res: Response) => {
   try {
     const { channelId } = req.params;
     const channel = await Channel.findById(channelId);
+    const pmsg = await Pmsg.findById(channelId);
 
-    if (!channel) {
-      res.status(404).json({ message: "Channel not found" });
-      return;
+    if (!channel && !pmsg) {
+      res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
     }
 
     const messages = await Message.find({ channelId: req.params.channelId });
     const updatedMessages = await getMessageAuthor(messages);
 
     res.status(200).json(updatedMessages);
-    // res.status(200).json(messages);
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// GET /channels/:channelId/messages/:id
+// GET /messages/:channelId || :pmsgId/:id
 // Get a message by id
 export const getMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
     const channel = await Channel.findById(channelId);
+    const pmsg = await Pmsg.findById(channelId);
 
-    if (!channel) {
-      res.status(404).json({ message: "Channel not found" });
+    if (!channel && !pmsg) {
+      res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
       return;
     }
 
@@ -59,16 +60,17 @@ export const getMessage = async (req: Request, res: Response) => {
   }
 };
 
-// POST /channels/:channelId/messages
+// POST /messages/:channelId || :pmsgId
 // Create a new message
 export const createMessage = async (req: Request, res: Response) => {
   try {
     const { channelId } = req.params;
     const { text, authorId } = req.body;
     const channel = await Channel.findById(channelId);
+    const pmsg = await Pmsg.findById(channelId);
 
-    if (!channel) {
-      res.status(404).json({ message: "Channel not found" });
+    if (!channel && !pmsg) {
+      res.status(404).json({ message: "Target(Channel, Pmsg) not found" });
       return;
     }
 
@@ -107,16 +109,17 @@ export const createMessage = async (req: Request, res: Response) => {
   }
 };
 
-// PUT /channels/:channelId/messages/:id
+// PUT /messages/:channelId/:id
 // Update a message by id
 export const updateMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
     const { text, authorId } = req.body;
     const channel = await Channel.findById(channelId);
+    const pmsg = await Pmsg.findById(channelId);
 
-    if (!channel) {
-      res.status(404).json({ message: "Channel not found" });
+    if (!channel && !pmsg) {
+      res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
       return;
     }
 
@@ -158,16 +161,17 @@ export const updateMessage = async (req: Request, res: Response) => {
   }
 };
 
-// DELETE /channels/:channelId/messages/:id
+// DELETE /messages/:channelId/:id
 // Delete a message by id
 export const deleteMessage = async (req: Request, res: Response) => {
   try {
     const { channelId, id } = req.params;
     const { authorId } = req.body;
     const channel = await Channel.findById(channelId);
+    const pmsg = await Pmsg.findById(channelId);
 
-    if (!channel) {
-      res.status(404).json({ message: "Channel not found" });
+    if (!channel && !pmsg) {
+      res.status(404).json({ message: "Target (Channel / Pmsg) not found" });
       return;
     }
 
