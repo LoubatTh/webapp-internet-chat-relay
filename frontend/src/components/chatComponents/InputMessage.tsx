@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import { Input } from "../ui/ui/input";
 import { getIdentity } from "../../lib/utils";
 
-const socket: Socket = io("http://localhost:4001");
+const socket: Socket = io("http://localhost:4000");
 
 const postMessage = async (body: {
   text: string;

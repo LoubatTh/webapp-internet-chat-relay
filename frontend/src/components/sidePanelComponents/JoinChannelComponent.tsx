@@ -1,5 +1,5 @@
 import { useState, SetStateAction } from "react";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 import { ChannelType } from "../../lib/type";
 import { Button } from "../ui/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../ui/ui/dialog";

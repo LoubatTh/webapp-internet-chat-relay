@@ -7,7 +7,7 @@ import { ScrollArea } from "../ui/ui/scroll-area";
 import CreateChannelComponent from "./CreateChannelComponent";
 import useChannelStorageStore from "../../store/channelStorage";
 import JoinChannelComponent from "./JoinChannelComponent";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 
 const getAllChannel = async (user: string): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>("GET", `guests/${user}/channels`);

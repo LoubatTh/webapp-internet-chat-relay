@@ -3,7 +3,7 @@ import { Button } from "../ui/ui/button"
 import { Input } from "../ui/ui/input"
 import { Label } from "../ui/ui/label"
 import { fetchApi } from "../../lib/api"
-import { setUser } from "../../lib/localstorage"
+import { setUser } from "../../lib/utils"
 import { useNavigate } from "react-router-dom"
 
 const getUserLogin = async (username: string, password: string) => {

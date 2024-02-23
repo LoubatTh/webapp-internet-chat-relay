@@ -1,6 +1,6 @@
 import { SetStateAction, useState } from "react";
 import { fetchApi } from "../../lib/api";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 import { Button } from "../ui/ui/button";
 import { Checkbox } from "../ui/ui/checkbox";
 import {
