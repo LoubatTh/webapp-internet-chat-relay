@@ -26,7 +26,7 @@ export const UserLogin = () => {
 
     const handleUserConnection = async () => {
         const response = await getUserLogin(username, password)
-        setUser(response._id; response.token)
+        // setUser(response._id; response.token)
         console.log(response)
         navigate("/channels")
     }
