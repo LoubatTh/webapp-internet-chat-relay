@@ -9,11 +9,12 @@ import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
 import { getIdentity } from "../../lib/utils";
+import PublicChannel from "./PublicChannels";
 
 const socket: Socket = io("http://localhost:4000");
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
-  const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
+  const data = await fetchApi<MessagesType[]>("GET", `messages/${id}`);
   return data;
 };
 
@@ -74,43 +75,51 @@ const ChannelDiscussion = () => {
 
   return (
     <div className="flex flex-col bg-background w-full h-full ">
-      <div className="flex flex-col bg-secondary h-[calc(100%-50px)] w-[calc(100%-10px)] rounded-md">
-        <ScrollArea className="h-full w-full">
-          {messages.map((message, index) => (
-            <div
-              key={message._id}
-              ref={index === messages.length - 1 ? lastMessageRef : null}
-            >
-              {hiddenMessages.includes(message._id) ? null : (
-                <>
-                  {message.authorId === userConnected ? (
-                    <UserMessage
-                      id={message._id}
-                      username={message.author}
-                      text={message.text}
-                    />
-                  ) : (
-                    <OtherUserMessage
-                      id={message._id}
-                      username={message.author}
-                      text={message.text}
-                    />
+      {channelId ? (
+        <>
+          <div className="flex flex-col bg-secondary h-[calc(100%-50px)] w-[calc(100%-10px)] rounded-md">
+            <ScrollArea className="h-full w-full">
+              {messages.map((message, index) => (
+                <div
+                  key={message._id}
+                  ref={index === messages.length - 1 ? lastMessageRef : null}
+                >
+                  {hiddenMessages.includes(message._id) ? null : (
+                    <>
+                      {message.authorId === userConnected ? (
+                        <UserMessage
+                          id={message._id}
+                          username={message.author}
+                          text={message.text}
+                        />
+                      ) : (
+                        <OtherUserMessage
+                          id={message._id}
+                          username={message.author}
+                          text={message.text}
+                        />
+                      )}
+                      {isCommand(message) && (
+                        <div className="pl-5 text-red-400">
+                          <button
+                            onClick={() => handleHideMessage(message._id)}
+                          >
+                            <i>Cliquez ici</i>
+                          </button>
+                          <span> pour cacher ce message.</span>
+                        </div>
+                      )}
+                    </>
                   )}
-                  {isCommand(message) && (
-                    <div className="pl-5 text-red-400">
-                      <button onClick={() => handleHideMessage(message._id)}>
-                        <i>Cliquez ici</i>
-                      </button>
-                      <span> pour cacher ce message.</span>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-        </ScrollArea>
-      </div>
-      <InputMessage onCommand={handleCommand} />
+                </div>
+              ))}
+            </ScrollArea>
+          </div>
+          <InputMessage onCommand={handleCommand} />
+        </>
+      ) : (
+        <PublicChannel />
+      )}
     </div>
   );
 };
