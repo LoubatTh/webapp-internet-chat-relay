@@ -61,7 +61,7 @@ const deleteChannel = async (id: string) => {
 const getAllChannelNames = async (): Promise<string[]> => {
   try {
     const channels = await getAllChannel();
-    const names = channels.map((channel) => channel.name);
+    const names = channels.map((channel) => channel);
     return names;
   } catch (error) {
     console.error("Erreur lors de la récupération des noms de chaînes :", error);
@@ -77,9 +77,9 @@ const getMembers = async (channelId: string): Promise<string[]> => {
 
     const memberDetailsPromises = members.map(async (memberId) => {
       let memberInfo;
-      try{
+      try {
         memberInfo = await fetchApi<UserType>("GET", `users/${memberId}`);
-      } catch(error){
+      } catch (error) {
         memberInfo = await fetchApi<UserType>("GET", `guests/${memberId}`);
       }
       return memberInfo;
@@ -156,7 +156,7 @@ export const onCommand = async (command: string | number | boolean | React.React
       ];
     case 'list':
       // List available channels
-      const channels = getAllChannelNames();
+      const channels = getAllChannel();
 
       console.log(channels);
       return [
@@ -170,7 +170,9 @@ export const onCommand = async (command: string | number | boolean | React.React
               Voici la liste des canaux disponibles : <br />
 
               {(await channels).map((channel) => (
-                <strong key={channel}>#{channel}<br /></strong>
+                <div key={channel._id}>
+                  <strong key={channel._id}>#{channel.name}</strong> - {channel._id}<br />
+                </div>
               ))}
             </>
           ),
