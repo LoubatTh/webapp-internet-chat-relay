@@ -7,7 +7,7 @@ export default defineConfig({
     host: true,
     port: 3000,
     proxy: {
-      "/api": "http://backend:5000",
+      "/api": "http://localhost:5000",
     },
     watch: {
       usePolling: true,

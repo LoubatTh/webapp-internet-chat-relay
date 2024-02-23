@@ -10,7 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "./ui/ui/navigation-menu";
 import { fetchApi } from "../lib/api";
-import { getIdentity } from "../lib/localstorage";
+import { getIdentity } from "../lib/utils";
 
 const joinChannel = async (channelId: string, userId: string) => {
   const response: Response = await fetchApi(
