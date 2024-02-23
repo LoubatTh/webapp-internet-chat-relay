@@ -8,9 +8,9 @@ import { io, Socket } from "socket.io-client";
 import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
-import { getIdentity } from "../../lib/localstorage";
+import { getIdentity } from "../../lib/utils";
 
-const socket: Socket = io("http://localhost:4000");
+const socket: Socket = io("http://localhost:4001");
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
   const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
@@ -32,13 +32,13 @@ const ChannelDiscussion = () => {
     ]);
   };
 
-  const handleCommand = (command: string, args: string) => {
-    const newMessages = onCommand(command, args);
+  const handleCommand = async (command: string, args: string) => {
+    const newMessages = await onCommand(command, args);
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
   };
 
   const isCommand = (message: MessagesType): boolean => {
-    return message.authorId == "System";
+    return message.author == "System";
   };
 
   useLayoutEffect(() => {

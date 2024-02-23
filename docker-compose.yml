@@ -9,7 +9,7 @@ services:
     restart: on-failure
     ports:
       - "5000:5000"
-      - "4000:4000"
+      - "4001:4000"
     env_file:
       - ./backend/.env
     volumes:
