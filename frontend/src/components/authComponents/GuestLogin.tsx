@@ -8,30 +8,30 @@ import { useNavigate } from "react-router-dom"
 
 const postGuest = async (username: string) => {
   const response = await fetchApi("POST", "guests", { username })
-    return response
+  return response
 }
 
 const GuestLogin = () => {
-    const navigate = useNavigate()
-    const [username, setUsername] = useState("");
-    
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(e.target.value)
+  const navigate = useNavigate()
+  const [username, setUsername] = useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
+  }
+
+  const handleCreationGuest = async () => {
+    const response = await postGuest(username)
+    if (response) {
+      await setIdentity(response._id)
+      navigate("/channels")
     }
 
-    const handleCreationGuest = async () => {
-        const response = await postGuest(username)
-        if (response){
-            setIdentity(response._id)
-            navigate("/channels")
-        }
-        
-    }
+  }
   return (
     <>
-    <Label  htmlFor="username" >Username</Label>
-    <Input name="username" onChange={handleInputChange} value={username} />
-    <Button onClick={handleCreationGuest}>Continue as Guest</Button>
+      <Label htmlFor="username" >Username</Label>
+      <Input name="username" onChange={handleInputChange} value={username} />
+      <Button onClick={handleCreationGuest}>Continue as Guest</Button>
     </>
   )
 }

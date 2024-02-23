@@ -15,10 +15,28 @@ export function getIdentity() {
   return localStorage.getItem("identity")
 }
 
-export function setIdentity() {
-  localStorage.setItem("identity", generateRandomString(15))
+export function setIdentity(id: string) {
+  localStorage.setItem("identity", id)
 }
 
 export function deleteIdentity() {
     localStorage.removeItem("identity")
+}
+
+export function setUser(id:string, token: string){
+  setIdentity(id)
+  setAccessToken(token)
+}
+
+
+export function getAccessToken() {
+  return localStorage.getItem("accessToken")
+}
+
+export function setAccessToken(string : string) {
+  localStorage.setItem("accessToken", string)
+}
+
+export function deleteAccessToken() {
+    localStorage.removeItem("accessToken")
 }

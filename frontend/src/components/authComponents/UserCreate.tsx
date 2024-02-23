@@ -3,7 +3,7 @@ import { Label } from '../ui/ui/label';
 import { Button } from '../ui/ui/button';
 import { Input } from '../ui/ui/input';
 import { fetchApi } from '../../lib/api';
-import { setUser } from '../../lib/localstorage';
+import { setUser } from '../../lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 const postUser = async (username: string, password: string) => {
@@ -26,8 +26,7 @@ const UserCreate = () => {
 
     const handleUserConnection = async () => {
         const response = await postUser(username, password)
-        // setUser(response._id; response.token)
-        console.log(response)
+        await setUser(response.user._id,response.token)
         navigate("/channels")
     }
 
