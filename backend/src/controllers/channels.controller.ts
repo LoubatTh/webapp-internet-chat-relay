@@ -51,7 +51,6 @@ export const getChannel = async (req: Request, res: Response) => {
       channel.members = membersName;
     }
 
-
     res.status(200).json(channel);
     return;
   } catch (error: any) {
@@ -79,7 +78,7 @@ export const createChannel = async (req: Request, res: Response) => {
       return;
     } else if (checkVisibility(visibility) === false) {
       res.status(400).json({
-        message: 'Visibility is "public" or "private" or "personnal"',
+        message: 'Visibility is "public" or "private"',
       });
       return;
     }
@@ -176,7 +175,7 @@ export const updateChannel = async (req: Request, res: Response) => {
         data.visibility = visibility;
       } else {
         res.status(400).json({
-          message: 'Visibility is "public", "private" or "personnal"',
+          message: 'Visibility is "public", "private"',
         });
         return;
       }
@@ -261,11 +260,7 @@ export const deleteChannel = async (req: Request, res: Response) => {
 };
 
 const checkVisibility = (visibility: string) => {
-  if (
-    visibility !== "public" &&
-    visibility !== "private" &&
-    visibility !== "personnal"
-  ) {
+  if (visibility !== "public" && visibility !== "private") {
     return false;
   }
   return true;
