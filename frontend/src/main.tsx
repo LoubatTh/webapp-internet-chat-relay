@@ -3,21 +3,16 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./routes/Home.tsx";
-import Heroes from "./routes/Heroes.tsx";
-import Welcome from "./routes/Welcome.tsx";
 import Channels from "./routes/Channels.tsx";
 import Messages from "./routes/Messages.tsx";
+import Auth from "./routes/Auth.tsx";
 
 const router = createBrowserRouter([
-  { path: "/auth", element: <Heroes /> },
+  { path: "/auth", element: <Auth /> },
   {
     path: "/",
     element: <Home />,
     children: [
-      {
-        path: "/",
-        element: <Welcome />,
-      },
       {
         path: "channels",
         element: <Channels />,

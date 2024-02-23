@@ -98,10 +98,9 @@ export const createMessage = async (req: Request, res: Response) => {
     };
 
     const message = new Message(data);
-    const savedMessage = await message.save();      
+    const savedMessage = await message.save();
     const updatedMessage = await getMessageAuthor([savedMessage]);
     res.status(201).json(updatedMessage[0]);
-    // res.status(201).json(savedMessage);
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });

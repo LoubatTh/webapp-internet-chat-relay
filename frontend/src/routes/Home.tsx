@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header";
-import { getIdentity, setIdentity } from "../lib/localstorage";
+import { getIdentity, setIdentity } from "../lib/utils";
 import useChannelMessageDisplayStore from "../store/channelMessageDisplay";
 
 const Home = () => {
