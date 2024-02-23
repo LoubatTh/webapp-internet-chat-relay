@@ -26,7 +26,7 @@ const UserCreate = () => {
 
     const handleUserConnection = async () => {
         const response = await postUser(username, password)
-        setUser(response._id; response.token)
+        // setUser(response._id; response.token)
         console.log(response)
         navigate("/channels")
     }
