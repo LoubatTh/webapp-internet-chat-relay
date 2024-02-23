@@ -197,7 +197,9 @@ export const deleteChannel = async (req: Request, res: Response) => {
     const { owner } = req.body;
 
     if (!checkOwner(id, owner)) {
-      res.status(400).json({ message: "You are not the owner of this channel" });
+      res
+        .status(400)
+        .json({ message: "You are not the owner of this channel" });
     }
 
     const messages = await Message.find({ channelId: id });

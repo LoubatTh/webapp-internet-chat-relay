@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ChannelType } from "../../lib/type";
 import { ScrollArea } from "../ui/ui/scroll-area";
 import { Link } from "react-router-dom";
 import { fetchApi } from "../../lib/api";
 import Channel from "./ChannelDisplay";
+import useChannelStorageStore from "../../store/channelStorage";
 
 const getAllChannel = async (): Promise<ChannelType[]> => {
-  const data = await fetchApi<ChannelType[]>("GET", "channels?visibility=personnal");
+  const data = await fetchApi<ChannelType[]>(
+    "GET",
+    "channels?visibility=personnal"
+  );
   return data;
 };
 
 const PrivateMessagesSidePannel = () => {
-  const [channels, setChannels] = useState<ChannelType[]>([]);
+  const {channels, setChannels} = useChannelStorageStore();
 
   useEffect(() => {
     getAllChannel().then((data) => {
@@ -25,7 +29,11 @@ const PrivateMessagesSidePannel = () => {
         {channels.map((channel) => (
           <React.Fragment key={channel._id}>
             <Link to={`/messages/${channel._id}`}>
-              <Channel id={channel._id} name={channel.name} />
+              <Channel
+                id={channel._id}
+                name={channel.name}
+                owner={channel.owner}
+              />
             </Link>
           </React.Fragment>
         ))}
@@ -35,3 +43,4 @@ const PrivateMessagesSidePannel = () => {
 };
 
 export default PrivateMessagesSidePannel;
+
