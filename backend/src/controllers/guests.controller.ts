@@ -194,7 +194,7 @@ export const getGuestChannels = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(channels);
-    res.status(200).json(guest);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
   }

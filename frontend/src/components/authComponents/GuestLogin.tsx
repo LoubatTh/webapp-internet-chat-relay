@@ -3,8 +3,8 @@ import { fetchApi } from "../../lib/api"
 import { Button } from "../ui/ui/button"
 import { Input } from "../ui/ui/input"
 import { Label } from "../ui/ui/label"
-import { setIdentity } from "../../lib/utils"
 import { useNavigate } from "react-router-dom"
+import { setIdentity } from "../../lib/utils"
 
 const postGuest = async (username: string) => {
   const response = await fetchApi("POST", "guests", { username })

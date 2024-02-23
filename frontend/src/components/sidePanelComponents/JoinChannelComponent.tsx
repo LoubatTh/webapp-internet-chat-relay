@@ -1,5 +1,4 @@
 import { useState, SetStateAction } from "react";
-import { getIdentity } from "../../lib/utils";
 import { ChannelType } from "../../lib/type";
 import { Button } from "../ui/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../ui/ui/dialog";
@@ -7,6 +6,7 @@ import { Input } from "../ui/ui/input";
 import { Label } from "../ui/ui/label";
 import useChannelStorageStore from "../../store/channelStorage";
 import { fetchApi } from "../../lib/api";
+import { getIdentity } from "../../lib/utils";
 
 const joinChannel = async (user: string, channelId: string) => {
   const response: Response = await fetchApi("POST", `guests/${user}/channels`, {
