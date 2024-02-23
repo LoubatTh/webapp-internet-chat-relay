@@ -28,7 +28,6 @@ export function setUser(id:string, token: string){
   setAccessToken(token)
 }
 
-
 export function getAccessToken() {
   return localStorage.getItem("accessToken")
 }

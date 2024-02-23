@@ -38,7 +38,7 @@ const JoinChannelComponent = () => {
         channelId
       );
       addChannel(channel);
-      setChannelId("");
+      setChannelId(channelId);
     };
   
     return (
