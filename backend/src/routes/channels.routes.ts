@@ -9,6 +9,6 @@ router.get("/:id", channelsController.getChannel);
 router.post("/", channelsController.createChannel);
 router.put("/:id", channelsController.updateChannel);
 router.delete("/:id", channelsController.deleteChannel);
-router.delete("/:id", checkJwtToken, channelsController.deleteChannel);
+router.delete("/:id", channelsController.deleteChannel);
 
 module.exports = router;
