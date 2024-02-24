@@ -11,7 +11,8 @@ function getUserType() {
     ? "users"
     : "guests"
   return userType;
-}
+};
+
 const getAllChannel = async (): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>("GET", "channels?visibility=public");
   return data;
@@ -86,16 +87,30 @@ const deleteChannel = async (id: string) => {
   if (response.status !== 200) {
     return "Impossible de supprimer le channel. Veuillez réessayer."
   } else {
-    return "Channel supprimé avec succès.";
+    return "Channel supprimé avec succès !"
   }
 };
 
 const getMembers = async (channelId: string): Promise<string[]> => {
   const members = await fetchApi<ChannelType>("GET", `channels/${channelId}?name=true`);
   return members.members;
+};
+
+const removeMember = async (channelId: string, memberId: string) => {
+  const userType = getUserType();
+  const response = await fetch(`/api/${userType}/${memberId}/channels/${channelId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  console.log(response.status)
+  if (response.status !== 200) {
+    return "Impossible de supprimer le membre. Veuillez réessayer."
+  } else {
+    return "Vous avez bien quitté le channel.";
+  }
 }
 
-export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, channelId: string) => {
+export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, currentchannelId: string) => {
 
   switch (command) {
     case 'help':
@@ -197,7 +212,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-             {post} 
+              {post}
             </>
           ),
         },
@@ -276,6 +291,8 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+
+      const del = await removeMember(args, getIdentity());
       return [
         {
           channelId: 'system',
@@ -283,14 +300,15 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /quit non implémentée.
+              {del}
             </>
           ),
         },
       ];
+
     case 'users':
       // List users in the channel
-      const membersChannel = await getMembers(channelId);
+      const membersChannel = await getMembers(currentchannelId);
       console.log(membersChannel)
 
       return [
@@ -324,8 +342,20 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+      return [
+        {
+          channelId: 'system',
+          _id: `system-message-help-${randomId()}`,
+          author: 'System',
+          text: (
+            <>
+              Commande /msg pas implémentée.
+            </>
+          ),
+        },
+      ];
     case 'informations':
-      const data = await getChannelInformations(channelId);
+      const data = await getChannelInformations(currentchannelId);
       const isOwner = data.owner === getIdentity();
       const owner = isOwner
         ? "Vous êtes le owner du channel."
@@ -340,20 +370,8 @@ export const onCommand = async (command: string | number | boolean | React.React
           text: (
             <>
               Le nom du channel est : <strong>{data.name}</strong><br />
-              L'id de ce channel est : <strong>{channelId}</strong>.<br />
+              L'id de ce channel est : <strong>{currentchannelId}</strong>.<br />
               {owner}
-            </>
-          ),
-        },
-      ];
-      return [
-        {
-          channelId: 'system',
-          _id: `system-message-help-${randomId()}`,
-          author: 'System',
-          text: (
-            <>
-              Commande /msg non implémentée.
             </>
           ),
         },
