@@ -14,30 +14,15 @@ export type Members = {
   role: string;
 };
 
-export type UserType = {
-  _id: string;
-  username: string;
-  informations: string;
-  channels: ChannelType[];
-  createdAt: string;
-};
-
 export type UserTypeUsername = {
-  username: string
-}
+  username: string;
+};
 
 export type UserPostType = {
   username: string;
   informations: string;
   channels: ChannelType[];
   createdAt: string;
-};
-
-export type GuestType = {
-  _id: string;
-  username: string;
-  channels: ChannelType[];
-  lastConnexion: string;
 };
 
 export type GuestPostType = {
@@ -83,3 +68,17 @@ enum Visibility {
   private = "private",
   public = "public",
 }
+
+export type UserType = {
+  token: string;
+  user: GuestType;
+};
+
+export type GuestType = {
+  _id: string;
+  username: string;
+  password: string;
+  channels: ChannelType[];
+  createdAt: string;
+  pmsgs: MessagesType[];
+};

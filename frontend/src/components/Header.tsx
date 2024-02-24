@@ -1,60 +1,60 @@
-import React, { useState } from "react";
-import { cn } from "../lib/utils";
+import React from "react";
+import { cn, logout } from "../lib/utils";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/ui/navigation-menu";
-import { fetchApi } from "../lib/api";
-import { getIdentity } from "../lib/utils";
-
-const joinChannel = async (channelId: string, userId: string) => {
-  const response: Response = await fetchApi(
-    "POST",
-    `users/${userId}/channels`,
-    { channelId }
-  );
-  console.log("response", response);
-  if (response.status === 200) {
-    console.log("User joined channel");
-  } else {
-    console.log("User not joined channel", response.status);
-  }
-};
 
 const Header = () => {
   const channelsExist = window.location.href.includes("channels");
   const messagesExist = window.location.href.includes("messages");
 
   return (
-    <NavigationMenu className="px-2 gap-2">
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle()}
-            href="/channels"
-            active={channelsExist}
-          >
-            Channels
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle()}
-            href="/messages"
-            active={messagesExist}
-          >
-            Messages
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+    <div className="flex">
+      <NavigationMenu className="px-2 gap-2">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/channels"
+              active={channelsExist}
+            >
+              Channels
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/messages"
+              active={messagesExist}
+            >
+              Messages
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+      <div className="w-full"></div>
+      <NavigationMenu className="px-2">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/auth"
+              onClick={() => {
+                logout();
+              }}
+            >
+              Logout
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
   );
 };
 
