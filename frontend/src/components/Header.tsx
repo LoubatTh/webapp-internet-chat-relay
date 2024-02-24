@@ -39,8 +39,16 @@ const Header = () => {
         </NavigationMenuList>
       </NavigationMenu>
       <div className="w-full"></div>
-      <NavigationMenu className="px-2">
+      <NavigationMenu className="px-2 gap-2">
         <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/profile"
+            >
+              My Profile
+            </NavigationMenuLink>
+          </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}

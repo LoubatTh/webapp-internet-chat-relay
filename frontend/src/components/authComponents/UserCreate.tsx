@@ -5,14 +5,17 @@ import { Input } from "../ui/ui/input";
 import { fetchApi } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken, setIdentity } from "../../lib/utils";
-import { UserType } from "../../lib/type";
 
 const postUser = async (username: string, password: string) => {
-  const response = await fetchApi("POST", "users/register", {
-    username,
-    password,
-  });
-  return response;
+  try {
+    const response = await fetchApi("POST", "users/register", {
+      username,
+      password,
+    });
+    return response;
+  } catch (error) {
+    console.log("postUser error", error);
+  }
 };
 
 const UserCreate = () => {
@@ -29,7 +32,8 @@ const UserCreate = () => {
   };
 
   const handleUserConnection = async () => {
-    const response: UserType = await postUser(username, password);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response: any = await postUser(username, password);
     if (!response) {
       return;
     }

@@ -20,6 +20,10 @@ export const logout = () => {
   localStorage.removeItem("accessToken");
 };
 
+export const isUser = () => {
+  return localStorage.getItem("accessToken") !== null;
+};
+
 export function getIdentity() {
   return localStorage.getItem("identity");
 }
