@@ -1,85 +1,117 @@
 import { fetchApi } from "./api";
-import { getIdentity } from "./utils";
-import { ChannelPostType, ChannelType, GuestType, UserType, UserTypeUsername } from "./type";
-
+import { getIdentity, getAccessToken } from "./utils";
+import { ChannelType } from "./type";
 
 const randomId = () => {
   return Math.floor(Math.random() * 1000).toString();
 };
 
+function getUserType() {
+  const userType = getAccessToken()
+    ? "users"
+    : "guests"
+  return userType;
+};
+
 const getAllChannel = async (): Promise<ChannelType[]> => {
-  const data = await fetchApi<ChannelType[]>("GET", "channels");
-  return data;
+  const data = await fetchApi<ChannelType[]>("GET", "channels?visibility=public");
+  return data.data;
 };
 
 const changeNick = async (id: string, name: string) => {
-
-  try{
-    const guest = await fetch(`/api/guests/${id}`, {
-      method: "GET",
+  const userType = getUserType();
+  try {
+    const guest = await fetch(`/api/${userType}/${id}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: name })
     });
-    if(guest.status != 200){
-      const user = await fetch(`/api/users/${id}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      if(user.status != 200){
-        return "User not found";
-      } 
-      await fetchApi<UserTypeUsername>("PUT", `/users/${id}`,{username: name});
+    if (guest.status !== 200) {
+      return "Pseudo déjà pris. Veuillez essayer un autre pseudo."
+    } else {
+      return `Pseudo remplacé avec succès par ${name}.`
     }
-    await fetchApi<UserTypeUsername>("PUT",`/guests/${id}`, {username: name})
-  } catch(error){
+  } catch (error) {
     console.log(error);
   }
 };
 
+const joinChannel = async (channelId: string) => {
+  const userType = getUserType();
+  const user = getIdentity();
+  try {
+    const post = await fetch(`/api/${userType}/${user}/channels`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ channelId })
+    });
+
+    console.log(post.status)
+    if (post.status !== 200) {
+      return "Impossible de rejoindre le channel. Veuillez réessayer."
+    } else {
+      return "Channel rejoins avec succès.";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getChannelInformations = async (id: string): Promise<ChannelType> => {
+  const data = await fetchApi<ChannelType>("GET", `channels/${id}`);
+  return data;
+}
+
 const postChannel = async (
   body: { name: string; visibility: string; members: string[]; owner: string }
-): Promise<ChannelPostType> => {
-  const data = await fetchApi<ChannelPostType>(
-    "POST",
-    `channels`,
-    body
-  );
-  return data;
+) => {
+  const data = await fetch(`/api/channels`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  console.log(data.status)
+  if (data.status !== 201) {
+    return "Impossible de créer le channel. Veuillez réessayer."
+  } else {
+    return "Channel créé avec succès.";
+  }
 };
-
-const getIdChannelByName = async (name: string): Promise<ChannelType> => {
-  const data = await fetchApi<ChannelType>("GET", `channels/n/${name}`);
-  return data;
-}
 
 const deleteChannel = async (id: string) => {
-  await fetchApi("DELETE", `channels/${id}`);
-};
-
-const getAllChannelNames = async (): Promise<string[]> => {
-  try {
-    const channels = await getAllChannel();
-    const names = channels.map((channel) => channel.name);
-    return names;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des noms de chaînes :", error);
-    throw error;
+  const response = await fetch(`/api/channels/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+  if (response.status !== 200) {
+    return "Impossible de supprimer le channel. Veuillez réessayer."
+  } else {
+    return "Channel supprimé avec succès !"
   }
 };
 
+const getMembers = async (channelId: string): Promise<string[]> => {
+  const members = await fetchApi<ChannelType>("GET", `channels/${channelId}?name=true`);
+  return members.data.members;
+};
 
-const getMembers = async (id: string): Promise<string[]> => {
-  try {
-    const channel = await fetchApi<ChannelType>("GET", `channels/${id}`);
-    const members: string[] = channel.members;
-    return members;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des membres du canal :", error);
-    throw error;
+const removeMember = async (channelId: string, memberId: string) => {
+  const userType = getUserType();
+  const response = await fetch(`/api/${userType}/${memberId}/channels/${channelId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  console.log(response.status)
+  if (response.status !== 200) {
+    return "Impossible de supprimer le membre. Veuillez réessayer."
+  } else {
+    return "Vous avez bien quitté le channel.";
   }
 }
 
+export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, currentchannelId: string) => {
 
-export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any) => {
   switch (command) {
     case 'help':
       // Display help message
@@ -119,7 +151,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
-      changeNick(getIdentity(), args)
+      const change = await changeNick(getIdentity() || '0000', args)
       return [
         {
           channelId: 'system',
@@ -127,28 +159,34 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Votre pseudo à été changé avec succès !!
+              {change}
             </>
           ),
         },
       ];
     case 'list':
       // List available channels
-      const channels = getAllChannelNames();
-
-      console.log(channels);
+      if (args) {
+        console.log("args")
+        return [];
+      }
+      const channels = getAllChannel();
       return [
         {
           channelId: 'system',
           _id: `system-message-help-${randomId()}`,
           author: 'System',
+          username: 'System',
           text: (
             <>
-              Voici la liste des canaux disponibles : <br />
-
-              {(await channels).map((channel) => (
-                <strong key={channel}>#{channel}<br /></strong>
-              ))}
+              <div>
+                Voici la liste des canaux disponibles : <br />
+                {(await channels).map((channel) => (
+                  <div key={channel._id}>
+                    <strong>#{channel.name}</strong> - <i>{channel._id}</i><br />
+                  </div>
+                ))}
+              </div>
             </>
           ),
         },
@@ -168,24 +206,8 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ]
-      try {
-        const idUser = getIdentity() || '0000';
-        postChannel({ name: args, visibility: 'public', members: [idUser], owner: idUser });
-      } catch (error) {
-        console.error("Erreur lors de la création du canal :", error);
-        return [
-          {
-            channelId: 'system',
-            _id: `system-message-help-${randomId()}`,
-            author: 'System',
-            text: (
-              <>
-                Erreur lors de la création du canal : {error}
-              </>
-            ),
-          },
-        ];
-      }
+      const idUser = getIdentity() || '0000';
+      const post = await postChannel({ name: args, visibility: 'public', members: [idUser], owner: idUser });
       return [
         {
           channelId: 'system',
@@ -193,7 +215,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Canal <strong><i>#{args}</i></strong> créé avec succès.
+              {post}
             </>
           ),
         },
@@ -207,20 +229,16 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Veuillez spécifier un nom de canal. <br />
-              Exemple : <strong>/delete <i>[channel]</i></strong>
+              Veuillez spécifier un ID de canal. <br />
+              Exemple : <strong>/delete <i>[channel]</i></strong><br />
+              <i>Pour connaître les IDs des channels, <strong>/list</strong>.</i>
             </>
           ),
         },
       ];
-      let text = `Canal ${args} supprimé avec succès.`;
-      try {
-        const channel = await getIdChannelByName(args);
-        deleteChannel(channel._id);
-      } catch (error) {
-        console.error("Erreur lors de la suppression du canal :", error);
-        text = `Erreur lors de la suppression du canal : ${args}`;
-      }
+
+      const response = await deleteChannel(args);
+
       return [
         {
           channelId: 'system',
@@ -228,7 +246,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              {text}
+              {response}
             </>
           ),
         },
@@ -248,6 +266,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+      const join = await joinChannel(args)
       return [
         {
           channelId: 'system',
@@ -255,7 +274,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /join non implémentée.
+              {join}
             </>
           ),
         },
@@ -275,6 +294,8 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+
+      const del = await removeMember(args, getIdentity());
       return [
         {
           channelId: 'system',
@@ -282,14 +303,17 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /quit non implémentée.
+              {del}
             </>
           ),
         },
       ];
+
     case 'users':
       // List users in the channel
-      const membersChannel = await getMembers("65d4975649b64dda1934fe59");
+      const membersChannel = await getMembers(currentchannelId);
+      console.log(membersChannel);
+      console.log(membersChannel)
 
       return [
         {
@@ -301,7 +325,7 @@ export const onCommand = async (command: string | number | boolean | React.React
               Voici la liste des membres dans le canal : <br />
 
               {(await membersChannel).map((member) => (
-                <strong key={member}>{member}<br /></strong>
+                <strong key={member}>- {member}<br /></strong>
               ))}
             </>
           ),
@@ -329,7 +353,29 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /msg non implémentée.
+              Commande /msg pas implémentée.
+            </>
+          ),
+        },
+      ];
+    case 'informations':
+      const data = await getChannelInformations(currentchannelId);
+      const isOwner = data.owner === getIdentity();
+      const owner = isOwner
+        ? "Vous êtes le owner du channel."
+        : "Vous n'êtes pas le owner du channel, vous avez donc pas de permissions."
+
+      console.log(data)
+      return [
+        {
+          channelId: 'system',
+          _id: `system-message-help-${randomId()}`,
+          author: 'System',
+          text: (
+            <>
+              Le nom du channel est : <strong>{data.name}</strong><br />
+              L'id de ce channel est : <strong>{currentchannelId}</strong>.<br />
+              {owner}
             </>
           ),
         },

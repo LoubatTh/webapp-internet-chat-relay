@@ -1,5 +1,5 @@
 import { fetchApi } from "../../lib/api";
-import { getAccessToken, getIdentity } from "../../lib/utils";
+import { getIdentity, isUser } from "../../lib/utils";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import useChannelStorageStore from "../../store/channelStorage";
 import {
@@ -8,41 +8,26 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../ui/ui/context-menu";
+import { useToast } from "../ui/ui/use-toast";
 
 const deleteUserFromChannel = async (channelId: string, userId: string) => {
-  const token = getAccessToken();
-  const response: Response = await fetchApi(
+  const response = await fetchApi(
     "DELETE",
-    `${token ? "users" : "guests"}/${userId}/channels/${channelId}`
+    `${isUser() ? "users" : "guests"}/${userId}/channels/${channelId}`
   );
-  if (response) {
-    console.log("User removed from channel");
-    return true;
-  } else {
-    return false;
-  }
+  return response;
 };
 
 const renameChannel = async (channelId: string, newName: string) => {
   const response: Response = await fetchApi("PUT", `channels/${channelId}`, {
     name: newName,
   });
-  if (response) {
-    console.log("Channel renamed");
-    return true;
-  } else {
-    return false;
-  }
+  return response;
 };
 
 const deleteChannel = async (channelId: string) => {
   const response: Response = await fetchApi("DELETE", `channels/${channelId}`);
-  if (response) {
-    console.log("Channel deleted");
-    return true;
-  } else {
-    return false;
-  }
+  return response;
 };
 
 type ChannelProps = {
@@ -52,6 +37,7 @@ type ChannelProps = {
 };
 
 const Channel = ({ id, name, owner }: ChannelProps) => {
+  const { toast } = useToast();
   const { setChannelId } = useChannelMessageDisplayStore();
   const { removeChannel } = useChannelStorageStore();
   const user = getIdentity();
@@ -66,17 +52,52 @@ const Channel = ({ id, name, owner }: ChannelProps) => {
 
   const handleQuitChannel = async () => {
     if (!user) return;
-    (await deleteUserFromChannel(id, user)) ? removeChannel(id) : null;
+    const response = await deleteUserFromChannel(id, user);
+    const data = response.data;
+    if (response.status === 200) {
+      removeChannel(id);
+      toast({
+        description: `You have quit the channel`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
-  const handleRenameChannel = () => {
+  const handleRenameChannel = async () => {
     if (!user) return;
-    renameChannel(id, "renaming");
+    const response = await renameChannel(id, "renaming");
+    const data = response.data;
+    if (response.status === 200) {
+      toast({
+        description: `Channel renamed`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   const handleDeleteChannel = async () => {
     if (!user) return;
-    (await deleteChannel(id)) ? removeChannel(id) : null;
+    const response = await deleteChannel(id);
+    const data = response.data;
+    if (response.status === 200) {
+      removeChannel(id);
+      toast({
+        description: `Channel deleted`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
   return (
     <ContextMenu>

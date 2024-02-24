@@ -1,20 +1,18 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header";
-import { getIdentity, setIdentity } from "../lib/utils";
 import useChannelMessageDisplayStore from "../store/channelMessageDisplay";
 
 const Home = () => {
   const location = useLocation();
   const { setChannelId } = useChannelMessageDisplayStore();
 
-  useEffect(() => {
-    // Set the identity in the store if it's present in the localStorage
-    if (!getIdentity()) {
-      setIdentity();
-    }
+  const extractChannelIdFromUrl = (pathname: string): string | null => {
+    const match = pathname.match(/\/channels\/(\w+)/);
+    return match ? match[1] : null;
+  };
 
-    // Set the channelId in the store if it's present in the URL (if realoded on a channel page)
+  useEffect(() => {
     const channelIdFromUrl = extractChannelIdFromUrl(location.pathname);
 
     if (channelIdFromUrl) {
@@ -22,12 +20,6 @@ const Home = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Function to extract channelId from the URL
-  const extractChannelIdFromUrl = (pathname: string): string | null => {
-    const match = pathname.match(/\/channels\/(\w+)/);
-    return match ? match[1] : null;
-  };
 
   return (
     <div className="flex flex-col w-screen h-screen">

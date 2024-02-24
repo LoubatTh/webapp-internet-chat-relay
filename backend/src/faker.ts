@@ -5,6 +5,7 @@ const { Guest } = require("./models/guests.model");
 const { User } = require("./models/users.model");
 const faker = require("faker");
 import dotenv from "dotenv";
+import _ from 'lodash';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const createFakeData = async () => {
     const numberOfGuests = 10;
     const numberOfUsers = 1;
     const numberOfChannels = 15;
-    const messagesPerChannel = 100;
+    const messagesPerChannel = 50;
 
     const userIDs: any[] = [];
     const guestIDs: any[] = [];
@@ -63,10 +64,14 @@ const createFakeData = async () => {
 
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
+      const words = faker.lorem.words(faker.datatype.number({ min: 1, max: 3 }));
+      const channelName = words.split(' ').join('-')
       const channel = new Channel({
-        name: faker.company.companyName(),
+
+        // Concatène les mots pour créer le nom du canal sans espaces
+        name: channelName,
         members: Array.from({ length: faker.datatype.number({ min: 1, max: 8 }) }, () =>
-          faker.random.arrayElement([...userIDs])
+          faker.random.arrayElement(_.shuffle([...userIDs, ...guestIDs]))
         ),
         visibility: faker.random.arrayElement(["public", "private"]),
       });

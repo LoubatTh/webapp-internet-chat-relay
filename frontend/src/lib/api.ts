@@ -2,7 +2,7 @@ export async function fetchApi<T>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   endpoint: string,
   body?: T
-): Promise<T> {
+): Promise<{ data: T; status: number }> {
   const headers = new Headers({
     "Content-Type": "application/json",
   });
@@ -12,18 +12,12 @@ export async function fetchApi<T>(
     headers: headers,
     body: body ? JSON.stringify(body) : null,
   };
-
   if (method === "GET") {
     delete config.body;
   }
 
-  try {
-    const response = await fetch(`/api/${endpoint}`, config);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return await response.json();
-  } catch (error) {
-    throw new Error(`Network error: ${error}`);
-  }
+  const response = await fetch(`/api/${endpoint}`, config);
+  const data = await response.json();
+
+  return { data, status: response.status };
 }
