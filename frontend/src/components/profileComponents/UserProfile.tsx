@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "../ui/ui/dialog";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../ui/ui/use-toast";
 
 const getUser = async (id: string) => {
   const response = await fetchApi("GET", `users/${id}`);
@@ -32,6 +33,7 @@ const deleteUser = async (id: string) => {
 };
 
 const UserProfile = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const userId: string | null = getIdentity();
   const [username, setUsername] = useState<string>("");
@@ -40,35 +42,63 @@ const UserProfile = () => {
 
   const getUserInfo = async () => {
     if (!userId) return;
-    const data = await getUser(userId);
-    if (!data) return;
-    setUsername(data.username);
+    const response = await getUser(userId);
+    const data = response.data;
+    if (response.status === 200) {
+      setUsername(data.username);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   const handleUpdate = async () => {
+    let response;
     if (!userId) return;
     if (username && newPassword && oldPassword) {
-      const data = await putUser(userId, {
+      response = await putUser(userId, {
         username,
         oldPassword,
         newPassword,
       });
     } else if (username) {
-      const data = await putUser(userId, { username });
+      response = await putUser(userId, { username });
     } else if (newPassword && oldPassword) {
-      const data = await putUser(userId, {
+      response = await putUser(userId, {
         oldPassword,
         newPassword,
+      });
+    }
+    if (response.status === 200) {
+      setUsername(response.data.username);
+      toast({
+        description: "Profile updated",
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${response.data.message}`,
       });
     }
   };
 
   const handleDelete = async () => {
     if (!userId) return;
-    const data = await deleteUser(userId);
-    if (!data) return;
-    logout();
-    navigate("/auth");
+    const response = await deleteUser(userId);
+    if (response.status === 200) {
+      toast({
+        description: "Profile deleted",
+      });
+      logout();
+      navigate("/auth");
+    } else {
+      toast({
+        variant: "error",
+        description: `${response.data.message}`,
+      });
+    }
   };
 
   useEffect(() => {

@@ -1,33 +1,45 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchApi } from "../../lib/api";
-import { ChannelType } from "../../lib/type";
 import Channel from "./ChannelDisplay";
 import { ScrollArea } from "../ui/ui/scroll-area";
 import CreateChannelComponent from "./CreateChannelComponent";
 import useChannelStorageStore from "../../store/channelStorage";
 import JoinChannelComponent from "./JoinChannelComponent";
 import { getAccessToken, getIdentity } from "../../lib/utils";
+import { useToast } from "../ui/ui/use-toast";
 
-const getAllChannel = async (username: string): Promise<ChannelType[]> => {
+const getAllChannel = async (username: string) => {
   if (getAccessToken()) {
-    const data = await fetchApi<ChannelType[]>("GET", `users/${username}/channels`);
-    return data;
+    const response = await fetchApi("GET", `users/${username}/channels`);
+    return response;
   } else {
-    const data = await fetchApi<ChannelType[]>("GET", `guests/${username}/channels`);
-    return data;
+    const response = await fetchApi("GET", `guests/${username}/channels`);
+    return response;
   }
 };
 
 const ChannelsSidePannel = () => {
+  const { toast } = useToast();
   const { channels, setChannels } = useChannelStorageStore();
+
+  const getChannel = async (username: string) => {
+    const response = await getAllChannel(username);
+    const data = response.data;
+    if (response.status === 200) {
+      setChannels(data);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
+  };
 
   useEffect(() => {
     const user = getIdentity();
     if (!user) return;
-    getAllChannel(user).then(async (data) => {
-      setChannels(data);
-    });
+    getChannel(user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (

@@ -5,6 +5,7 @@ import { Label } from "../ui/ui/label";
 import { fetchApi } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken, setIdentity } from "../../lib/utils";
+import { useToast } from "../ui/ui/use-toast";
 
 const getUserLogin = async (username: string, password: string) => {
   const response = await fetchApi("POST", "users/login", {
@@ -15,6 +16,7 @@ const getUserLogin = async (username: string, password: string) => {
 };
 
 export const UserLogin = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +31,20 @@ export const UserLogin = () => {
 
   const handleUserConnection = async () => {
     const response = await getUserLogin(username, password);
-    setIdentity(response.id);
-    setAccessToken(response.token);
-    navigate("/channels");
+    const data = response.data;
+    if (response.status === 200) {
+      setIdentity(data.id);
+      setAccessToken(data.token);
+      toast({
+        description: `Welcome`,
+      });
+      navigate("/channels");
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   return (

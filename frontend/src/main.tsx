@@ -12,34 +12,37 @@ import GuestLogin from "./components/authComponents/GuestLogin.tsx";
 import AuthMethod from "./components/authComponents/AuthMethod.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import Profile from "./routes/Profile.tsx";
+import Layout from "./components/Layout.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<Auth />}>
-          <Route path="" element={<AuthMethod />} />
-          <Route path="login" element={<UserLogin />} />
-          <Route path="logon" element={<UserCreate />} />
-          <Route path="guest" element={<GuestLogin />} />
-        </Route>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="profile" element={<Profile />} />
-          <Route path="channels" element={<Channels />}>
-            <Route path=":channelId" element={<Channels />} />
+      <Layout>
+        <Routes>
+          <Route path="/auth" element={<Auth />}>
+            <Route path="" element={<AuthMethod />} />
+            <Route path="login" element={<UserLogin />} />
+            <Route path="logon" element={<UserCreate />} />
+            <Route path="guest" element={<GuestLogin />} />
           </Route>
-          <Route path="messages" element={<Messages />}>
-            <Route path=":channelId" element={<Messages />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="profile" element={<Profile />} />
+            <Route path="channels" element={<Channels />}>
+              <Route path=":channelId" element={<Channels />} />
+            </Route>
+            <Route path="messages" element={<Messages />}>
+              <Route path=":channelId" element={<Messages />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </Layout>
     </BrowserRouter>
   </React.StrictMode>
 );
