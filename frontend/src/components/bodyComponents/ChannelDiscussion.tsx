@@ -74,7 +74,8 @@ const ChannelDiscussion = () => {
     }
 
     socket.on("newMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      console.log(newMessage.data);
+      setMessages((prevMessages) => [...prevMessages, newMessage.data]);
     });
 
     fetchAllMessages();
