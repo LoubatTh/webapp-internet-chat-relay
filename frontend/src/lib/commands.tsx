@@ -15,7 +15,7 @@ function getUserType() {
 
 const getAllChannel = async (): Promise<ChannelType[]> => {
   const data = await fetchApi<ChannelType[]>("GET", "channels?visibility=public");
-  return data;
+  return data.data;
 };
 
 const changeNick = async (id: string, name: string) => {
@@ -93,7 +93,7 @@ const deleteChannel = async (id: string) => {
 
 const getMembers = async (channelId: string): Promise<string[]> => {
   const members = await fetchApi<ChannelType>("GET", `channels/${channelId}?name=true`);
-  return members.members;
+  return members.data.members;
 };
 
 const removeMember = async (channelId: string, memberId: string) => {
@@ -168,30 +168,29 @@ export const onCommand = async (command: string | number | boolean | React.React
       // List available channels
       if (args) {
         console.log("args")
-        return[];
-      } 
-        const channels = getAllChannel();
-
-        console.log(channels);
-        return [
-          {
-            channelId: 'system',
-            _id: `system-message-help-${randomId()}`,
-            author: 'System',
-            username: 'System',
-            text: (
-              <>
+        return [];
+      }
+      const channels = getAllChannel();
+      return [
+        {
+          channelId: 'system',
+          _id: `system-message-help-${randomId()}`,
+          author: 'System',
+          username: 'System',
+          text: (
+            <>
+              <div>
                 Voici la liste des canaux disponibles : <br />
-
                 {(await channels).map((channel) => (
                   <div key={channel._id}>
-                    <strong key={channel._id}>#{channel.name}</strong> - {channel._id}<br />
+                    <strong>#{channel.name}</strong> - <i>{channel._id}</i><br />
                   </div>
                 ))}
-              </>
-            ),
-          },
-        ];
+              </div>
+            </>
+          ),
+        },
+      ];
     case 'create':
       // Create a new channel
       if (!args) return [
@@ -313,6 +312,7 @@ export const onCommand = async (command: string | number | boolean | React.React
     case 'users':
       // List users in the channel
       const membersChannel = await getMembers(currentchannelId);
+      console.log(membersChannel);
       console.log(membersChannel)
 
       return [
