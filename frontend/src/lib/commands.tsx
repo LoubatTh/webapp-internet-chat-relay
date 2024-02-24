@@ -166,28 +166,32 @@ export const onCommand = async (command: string | number | boolean | React.React
       ];
     case 'list':
       // List available channels
-      const channels = getAllChannel();
+      if (args) {
+        console.log("args")
+        return[];
+      } 
+        const channels = getAllChannel();
 
-      console.log(channels);
-      return [
-        {
-          channelId: 'system',
-          _id: `system-message-help-${randomId()}`,
-          author: 'System',
-          username: 'System',
-          text: (
-            <>
-              Voici la liste des canaux disponibles : <br />
+        console.log(channels);
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            username: 'System',
+            text: (
+              <>
+                Voici la liste des canaux disponibles : <br />
 
-              {(await channels).map((channel) => (
-                <div key={channel._id}>
-                  <strong key={channel._id}>#{channel.name}</strong> - {channel._id}<br />
-                </div>
-              ))}
-            </>
-          ),
-        },
-      ];
+                {(await channels).map((channel) => (
+                  <div key={channel._id}>
+                    <strong key={channel._id}>#{channel.name}</strong> - {channel._id}<br />
+                  </div>
+                ))}
+              </>
+            ),
+          },
+        ];
     case 'create':
       // Create a new channel
       if (!args) return [
