@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchApi } from "../../lib/api";
-import { ChannelType, UserType } from "../../lib/type";
-
+import { ChannelType, UserPostType } from "../../lib/type";
+import ChannelCard from "../ChannelCard";
+import { getIdentity, isUser } from "../../lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -9,9 +10,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/ui/pagination";
-
-import ChannelCard from "../ChannelCard";
-import { getAccessToken, getIdentity } from "../../lib/utils";
 
 const PublicChannel = () => {
   const [publicChannels, setPublicChannels] = useState<ChannelType[]>([]);
@@ -44,22 +42,21 @@ const PublicChannel = () => {
   }, []);
 
   const fetchPublicChannels = async (): Promise<ChannelType[]> => {
-    const data = await fetchApi<ChannelType[]>(
+    const response = await fetchApi<ChannelType[]>(
       "GET",
       `channels?visibility=public`
     );
-    return data;
+    return response.data;
   };
 
   const fetchUser = async (): Promise<string[]> => {
     const identity = getIdentity();
-    const token = getAccessToken();
 
-    const data = await fetchApi<UserType>(
+    const response = await fetchApi<UserPostType>(
       "GET",
-      `${token ? "users" : "guests"}/${identity}`
+      `${isUser() ? "users" : "guests"}/${identity}`
     );
-    return data.channels;
+    return response.data.channels;
   };
 
   const isChannelJoined = (channelId: string) => {
@@ -78,7 +75,7 @@ const PublicChannel = () => {
       <div className="container grid gap-3 mb-5">
         {items.map((channel, index) => (
           <ChannelCard
-            id={index}
+            key={index}
             channelId={channel._id}
             name={channel.name}
             membersCount={channel.members.length}

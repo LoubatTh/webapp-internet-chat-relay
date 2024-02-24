@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import React from "react";
 
 type ChannelCardProps = {
-  id: number;
   channelId: string;
   name: string;
   membersCount: number;
@@ -14,7 +13,6 @@ type ChannelCardProps = {
 };
 
 const ChannelCard = ({
-  id,
   channelId,
   name,
   membersCount,
@@ -44,7 +42,7 @@ const ChannelCard = ({
   };
 
   return (
-    <React.Fragment key={id}>
+    <React.Fragment>
       <Card className="grid grid-cols-3">
         <CardTitle className="text-start self-center ml-3">{name}</CardTitle>
         <CardContent className="text-end self-center mr-3">

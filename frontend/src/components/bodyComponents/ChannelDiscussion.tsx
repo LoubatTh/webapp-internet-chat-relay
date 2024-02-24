@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
 import { getIdentity } from "../../lib/utils";
 import { useToast } from "../ui/ui/use-toast";
+import PublicChannel from "./PublicChannels";
 
 const socket: Socket = io("http://localhost:4000");
 
