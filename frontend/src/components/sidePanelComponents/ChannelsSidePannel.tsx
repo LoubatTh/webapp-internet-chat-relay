@@ -45,17 +45,21 @@ const ChannelsSidePannel = () => {
   return (
     <>
       <ScrollArea className="h-[calc(100%-50px)]">
-        {channels.map((channel, index) => (
-          <Link key={`${channel._id}-${index}`} to={`/channels/${channel._id}`}>
-            <React.Fragment>
-              <Channel
-                id={channel._id}
-                name={channel.name}
-                owner={channel.owner}
-              />
-            </React.Fragment>
-          </Link>
-        ))}
+        {channels.length > 0 &&
+          channels.map((channel, index) => (
+            <Link
+              key={`${channel._id}-${index}`}
+              to={`/channels/${channel._id}`}
+            >
+              <React.Fragment>
+                <Channel
+                  id={channel._id}
+                  name={channel.name}
+                  owner={channel.owner}
+                />
+              </React.Fragment>
+            </Link>
+          ))}
       </ScrollArea>
       <CreateChannelComponent />
       <JoinChannelComponent />

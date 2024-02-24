@@ -65,16 +65,13 @@ const ChannelDiscussion = () => {
   }, [messages]);
 
   useEffect(() => {
-    console.log("Channel id", channelId);
     if (!channelId) return;
-
     const storedIdentity = getIdentity();
     if (storedIdentity) {
       setUserConnected(storedIdentity);
     }
 
     socket.on("newMessage", (newMessage) => {
-      console.log(newMessage.data);
       setMessages((prevMessages) => [...prevMessages, newMessage.data]);
     });
 
@@ -98,19 +95,19 @@ const ChannelDiscussion = () => {
                 <>
                   {message.authorId === userConnected ? (
                     <UserMessage
-                      id={message._id}
+                      key={message._id}
                       username={message.author}
                       text={message.text}
                     />
                   ) : (
                     <OtherUserMessage
-                      id={message._id}
+                      key={message._id}
                       username={message.author}
                       text={message.text}
                     />
                   )}
                   {isCommand(message) && (
-                    <div className="pl-5 text-red-400">
+                    <div className="pl-5 text-red-400" key={message._id}>
                       <button onClick={() => handleHideMessage(message._id)}>
                         <i>Cliquez ici</i>
                       </button>
