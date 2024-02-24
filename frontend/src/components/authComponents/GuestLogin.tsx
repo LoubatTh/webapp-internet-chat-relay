@@ -4,7 +4,7 @@ import { Button } from "../ui/ui/button"
 import { Input } from "../ui/ui/input"
 import { Label } from "../ui/ui/label"
 import { useNavigate } from "react-router-dom"
-import { setIdentity } from "../../lib/utils"
+import { setIdentity, deleteAccessToken } from "../../lib/utils"
 
 const postGuest = async (username: string) => {
   const response = await fetchApi("POST", "guests", { username })
@@ -20,6 +20,7 @@ const GuestLogin = () => {
   }
 
   const handleCreationGuest = async () => {
+    deleteAccessToken();
     const response = await postGuest(username)
     if (response) {
       await setIdentity(response._id)
