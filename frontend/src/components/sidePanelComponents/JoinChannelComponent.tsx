@@ -18,7 +18,6 @@ import { getIdentity, isUser } from "../../lib/utils";
 import { useToast } from "../ui/ui/use-toast";
 
 const joinChannel = async (user: string, channelId: string) => {
-
   const response: Response = await fetchApi(
     "POST",
     `${isUser() ? "users" : "guests"}/${user}/channels`,
@@ -47,7 +46,6 @@ const JoinChannelComponent = () => {
     const data = await response.data;
     if (response.status === 201) {
       addChannel(data.channel);
-
       setChannelId(channelId);
       toast({
         description: `Channel joined`,

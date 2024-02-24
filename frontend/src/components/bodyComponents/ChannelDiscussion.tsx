@@ -94,7 +94,11 @@ const ChannelDiscussion = () => {
               {hiddenMessages.includes(message._id) ? null : (
                 <>
                   {message.authorId === userConnected ? (
-                    <UserMessage key={message._id} text={message.text} />
+                    <UserMessage
+                      key={message._id}
+                      username={message.author}
+                      text={message.text}
+                    />
                   ) : (
                     <OtherUserMessage
                       key={message._id}
