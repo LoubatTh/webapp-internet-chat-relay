@@ -17,7 +17,7 @@ const postMessage = async (body: {
 }): Promise<MessagesPostType> => {
   const data = await fetchApi<MessagesPostType>(
     "POST",
-    `channels/${body.channelId}/messages`,
+    `messages/${body.channelId}`,
     body
   );
   return data;
