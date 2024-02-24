@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "../ui/ui/dialog";
 import { useNavigate } from "react-router-dom";
+import { toast } from "../ui/ui/use-toast";
 
 const getGuest = async (id: string) => {
   const response = await fetchApi("GET", `guests/${id}`);
@@ -36,23 +37,50 @@ const GuestProfile = () => {
 
   const getUserInfo = async () => {
     if (!userId) return;
-    const data = await getGuest(userId);
-    if (!data) return;
-    setUsername(data.username);
+    const response = await getGuest(userId);
+    const data = response.data;
+    if (response.status === 200) {
+      setUsername(data.username);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   const handleUpdate = async () => {
     if (!userId) return;
-    const data = await putGuest(username, userId);
-    if (!data) return;
+    const response = await putGuest(username, userId);
+    const data = response.data;
+    if (response.status === 200) {
+      toast({
+        description: `Profile updated`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   const handleDelete = async () => {
     if (!userId) return;
-    const data = await deleteGuest(userId);
-    if (!data) return;
-    logout();
-    navigate("/auth");
+    const response = await deleteGuest(userId);
+    const data = response.data;
+    if (response.status === 200) {
+      toast({
+        description: `Profile deleted`,
+      });
+      logout();
+      navigate("/auth");
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import type { MessagesPostType } from "../../lib/type";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/ui/button";
 import { fetchApi } from "../../lib/api";
@@ -9,18 +8,9 @@ import { getIdentity } from "../../lib/utils";
 
 const socket: Socket = io("http://localhost:4000");
 
-const postMessage = async (body: {
-  text: string;
-  authorId: string;
-  channelId: string;
-  author: string
-}): Promise<MessagesPostType> => {
-  const data = await fetchApi<MessagesPostType>(
-    "POST",
-    `messages/${body.channelId}`,
-    body
-  );
-  return data;
+const postMessage = async (channelId: string, body: any) => {
+  const response = await fetchApi("POST", `messages/${channelId}`, body);
+  return response;
 };
 
 const InputMessage = ({
@@ -31,7 +21,6 @@ const InputMessage = ({
   const { channelId } = useChannelMessageDisplayStore();
   const [message, setMessage] = useState("");
   const [authorId, setAuthorId] = useState("");
-  const [author, setAuthor] = useState("");
 
   const handleInputChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -55,10 +44,9 @@ const InputMessage = ({
       console.log("Commande", command);
     } else {
       // If message is not a command, send it as a regular message
-      const newMessage = await postMessage({
+      const newMessage = await postMessage(channelId, {
         text: trimmedMessage,
-        authorId: authorId,
-        channelId, author,
+        authorId,
       });
       socket.emit("newMessage", newMessage); // Emit new message event
     }
@@ -94,9 +82,9 @@ const InputMessage = ({
       <Input
         className="resize-none text-secondary bg-white rounded-md w-full p-1 min-h-10"
         placeholder="Type your message here."
-        value={message} // Controlled component
-        onChange={handleInputChange} // Update state on change
-        onKeyDown={handleKeyDown} // Handle enter key press
+        value={message}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       <Button className="h-10" onClick={handlePostMessage}>
         Send

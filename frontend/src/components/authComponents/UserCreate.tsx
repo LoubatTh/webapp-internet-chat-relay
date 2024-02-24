@@ -5,20 +5,18 @@ import { Input } from "../ui/ui/input";
 import { fetchApi } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken, setIdentity } from "../../lib/utils";
+import { useToast } from "../ui/ui/use-toast";
 
 const postUser = async (username: string, password: string) => {
-  try {
-    const response = await fetchApi("POST", "users/register", {
-      username,
-      password,
-    });
-    return response;
-  } catch (error) {
-    console.log("postUser error", error);
-  }
+  const response = await fetchApi("POST", "users/register", {
+    username,
+    password,
+  });
+  return response;
 };
 
 const UserCreate = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,12 +32,20 @@ const UserCreate = () => {
   const handleUserConnection = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await postUser(username, password);
-    if (!response) {
-      return;
+    const data = response.data;
+    if (response.status === 201) {
+      setIdentity(data.user._id);
+      setAccessToken(data.token);
+      toast({
+        description: `Welcome ${data.username}`,
+      });
+      navigate("/channels");
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
     }
-    setIdentity(response.user._id);
-    setAccessToken(response.token);
-    navigate("/channels");
   };
 
   return (
