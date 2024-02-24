@@ -32,6 +32,10 @@ const createFakeData = async () => {
         channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
           faker.company.companyName()
         ),
+        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
+          faker.company.companyName()
+        ),
+        password: faker.internet.password(),
         informations: faker.lorem.sentence(),
         createdAt: faker.date.past(),
       });
@@ -45,6 +49,9 @@ const createFakeData = async () => {
       const guest = new Guest({
         username: faker.internet.userName(),
         channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
+          faker.company.companyName()
+        ),
+        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
           faker.company.companyName()
         ),
         lastConnexion: faker.date.past(),

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchApi } from "../../lib/api";
-import { ChannelType } from "../../lib/type";
+import { ChannelType, UserType } from "../../lib/type";
 
 import {
   Pagination,
@@ -11,27 +11,19 @@ import {
 } from "../ui/ui/pagination";
 
 import ChannelCard from "../ChannelCard";
+import { getAccessToken, getIdentity } from "../../lib/utils";
 
 const PublicChannel = () => {
   const [publicChannels, setPublicChannels] = useState<ChannelType[]>([]);
+  const [userChannels, setUserChannels] = useState<string[]>([]);
   const [page, setPage] = useState(1);
-
   const pages = Math.ceil(publicChannels.length / 15);
-
   const items = useMemo(() => {
     const start = (page - 1) * 15;
     const end = start + 15;
 
     return publicChannels.slice(start, end);
   }, [page, publicChannels]);
-
-  const fetchPublicChannels = async (): Promise<ChannelType[]> => {
-    const data = await fetchApi<ChannelType[]>(
-      "GET",
-      `channels?visibility=public`
-    );
-    return data;
-  };
 
   useEffect(() => {
     fetchPublicChannels()
@@ -41,7 +33,44 @@ const PublicChannel = () => {
       .catch((error: Error) => {
         console.error(error.message);
       });
+
+    fetchUser()
+      .then((data) => {
+        setUserChannels(data);
+      })
+      .catch((error: Error) => {
+        console.error(error.message);
+      });
   }, []);
+
+  const fetchPublicChannels = async (): Promise<ChannelType[]> => {
+    const data = await fetchApi<ChannelType[]>(
+      "GET",
+      `channels?visibility=public`
+    );
+    return data;
+  };
+
+  const fetchUser = async (): Promise<string[]> => {
+    const identity = getIdentity();
+    const token = getAccessToken();
+
+    const data = await fetchApi<UserType>(
+      "GET",
+      `${token ? "users" : "guests"}/${identity}`
+    );
+    return data.channels;
+  };
+
+  const isChannelJoined = (channelId: string) => {
+    for (let i = 0; i < userChannels.length; i++) {
+      if (userChannels[i] === channelId) {
+        return true;
+      }
+    }
+
+    return false;
+  };
 
   return (
     <>
@@ -53,6 +82,7 @@ const PublicChannel = () => {
             channelId={channel._id}
             name={channel.name}
             membersCount={channel.members.length}
+            isJoined={isChannelJoined(channel._id)}
           />
         ))}
         {pages > 1 ? (
