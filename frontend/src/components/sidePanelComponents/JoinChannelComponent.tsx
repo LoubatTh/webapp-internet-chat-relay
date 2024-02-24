@@ -9,13 +9,9 @@ import { fetchApi } from "../../lib/api";
 import { getIdentity, getAccessToken } from "../../lib/utils";
 
 const joinChannel = async (user: string, channelId: string) => {
-  let userType;
-
-  if(getAccessToken()){
-    userType = "users";
-  } else {
-    userType = "guests";
-  }
+  const userType = getAccessToken()
+    ? "users"
+    : "guests"
 
   const response: Response = await fetchApi("POST", `${userType}/${user}/channels`, {
     channelId
@@ -45,7 +41,7 @@ const JoinChannelComponent = () => {
         user,
         channelId
       );
-      console.log("aze",channelId);
+      console.log(channel.channel)
       addChannel(channel.channel);
       setChannelId(channelId);
     };
