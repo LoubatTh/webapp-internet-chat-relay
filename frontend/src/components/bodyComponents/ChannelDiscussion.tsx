@@ -9,15 +9,17 @@ import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
 import { getIdentity } from "../../lib/utils";
+import { useToast } from "../ui/ui/use-toast";
 
 const socket: Socket = io("http://localhost:4000");
 
-const fetchMessages = async (id: string): Promise<MessagesType[]> => {
-  const data = await fetchApi<MessagesType[]>("GET", `messages/${id}`);
-  return data;
+const fetchMessages = async (id: string) => {
+  const response = await fetchApi("GET", `messages/${id}`);
+  return response;
 };
 
 const ChannelDiscussion = () => {
+  const { toast } = useToast();
   const channelId = useParams<{ channelId: string }>().channelId;
   const [messages, setMessages] = useState<MessagesType[]>([]);
   const [hiddenMessages, setHiddenMessages] = useState<string[]>([]);
@@ -30,6 +32,19 @@ const ChannelDiscussion = () => {
       ...prevHiddenMessages,
       messageId,
     ]);
+  };
+
+  const fetchAllMessages = async () => {
+    const response = await fetchMessages(channelId);
+    const data = response.data;
+    if (response.status === 200) {
+      setMessages(data);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   const handleCommand = async (command: string, args: string) => {
@@ -62,10 +77,7 @@ const ChannelDiscussion = () => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    fetchMessages(channelId).then((data) => {
-      setMessages(data);
-      console.log("Messages", data);
-    });
+    fetchAllMessages();
 
     return () => {
       socket.off("newMessage");

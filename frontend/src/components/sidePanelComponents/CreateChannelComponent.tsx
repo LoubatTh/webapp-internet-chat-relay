@@ -15,29 +15,25 @@ import {
 import { Input } from "../ui/ui/input";
 import { Label } from "../ui/ui/label";
 import useChannelStorageStore from "../../store/channelStorage";
-import { ChannelType } from "../../lib/type";
 import { getIdentity } from "../../lib/utils";
+import { useToast } from "../ui/ui/use-toast";
 
 const createChannel = async (
   channelName: string,
   isPublic: boolean,
   user: string
 ) => {
-  const response: Response = await fetchApi("POST", "channels", {
+  const response = await fetchApi("POST", "channels", {
     name: channelName,
     members: [user],
     visibility: isPublic ? "public" : "private",
     owner: user,
   });
-  if (response) {
-    console.log("Channel created");
-    return response;
-  } else {
-    console.log("Channel not created");
-  }
+  return response;
 };
 
 const CreateChannelComponent = () => {
+  const { toast } = useToast();
   const { addChannel } = useChannelStorageStore();
   const [channelName, setChannelName] = useState<string>("");
   const [isChannelPublic, setIsChannelPublic] = useState<boolean>(false);
@@ -55,13 +51,20 @@ const CreateChannelComponent = () => {
   const handleCreateChannel = async () => {
     const user = getIdentity();
     if (!user) return;
-    const channel: ChannelType = await createChannel(
-      channelName,
-      isChannelPublic,
-      user
-    );
-    addChannel(channel);
-    console.log("create channel");
+    const response = await createChannel(channelName, isChannelPublic, user);
+    const data = response.data;
+    console.log(response);
+    if (response.status === 201) {
+      addChannel(data);
+      toast({
+        description: `Channel ${data.name} created`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
   };
 
   return (

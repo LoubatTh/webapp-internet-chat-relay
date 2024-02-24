@@ -6,7 +6,7 @@ import { Label } from "../ui/ui/label";
 import { useNavigate } from "react-router-dom";
 import { setIdentity } from "../../lib/utils";
 import { GuestType } from "../../lib/type";
-
+import { useToast } from "../ui/ui/use-toast";
 
 const postGuest = async (username: string) => {
   const response = await fetchApi("POST", "guests", { username });
@@ -14,6 +14,7 @@ const postGuest = async (username: string) => {
 };
 
 const GuestLogin = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
@@ -22,11 +23,19 @@ const GuestLogin = () => {
   };
 
   const handleCreationGuest = async () => {
-
     const response: GuestType = await postGuest(username);
-    if (response) {
-      setIdentity(response._id);
+    const data = response.data;
+    if (response.status === 201) {
+      setIdentity(data._id);
       navigate("/channels");
+      toast({
+        description: `Welcome ${data.username}`,
+      });
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
     }
   };
   return (
