@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { setIdentity } from "../../lib/utils";
 import { GuestType } from "../../lib/type";
 
+
 const postGuest = async (username: string) => {
   const response = await fetchApi("POST", "guests", { username });
   return response;
@@ -21,6 +22,7 @@ const GuestLogin = () => {
   };
 
   const handleCreationGuest = async () => {
+
     const response: GuestType = await postGuest(username);
     if (response) {
       setIdentity(response._id);

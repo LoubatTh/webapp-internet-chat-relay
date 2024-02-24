@@ -1,13 +1,14 @@
 import { fetchApi } from "./api";
 import { getIdentity, getAccessToken } from "./utils";
 import { ChannelPostType, ChannelType, GuestType, UserType, UserTypeUsername } from "./type";
-import { useParams } from "react-router-dom";
-
 
 const randomId = () => {
   return Math.floor(Math.random() * 1000).toString();
 };
 
+//TODO
+// recuperer la fonction de Thomas pour savoir si user ou guest
+//changer la route des messages (regarder les routes)
 function getUserType() {
   if (getAccessToken()) {
     return "users";
@@ -16,7 +17,7 @@ function getUserType() {
   }
 }
 const getAllChannel = async (): Promise<ChannelType[]> => {
-  const data = await fetchApi<ChannelType[]>("GET", "channels");
+  const data = await fetchApi<ChannelType[]>("GET", "channels?visibility=public");
   return data;
 };
 
@@ -58,7 +59,7 @@ const deleteChannel = async (id: string) => {
   await fetchApi("DELETE", `channels/${id}`);
 };
 
-const getAllChannelNames = async (): Promise<string[]> => {
+const getAllChannelNames = async (): Promise<ChannelType[]> => {
   try {
     const channels = await getAllChannel();
     const names = channels.map((channel) => channel);
@@ -71,35 +72,9 @@ const getAllChannelNames = async (): Promise<string[]> => {
 
 
 const getMembers = async (channelId: string): Promise<string[]> => {
-  try {
-    const channel = await fetchApi<ChannelType>("GET", `channels/${channelId}`);
-    const members: string[] = channel.members;
-
-    const memberDetailsPromises = members.map(async (memberId) => {
-      let memberInfo;
-      try {
-        memberInfo = await fetchApi<UserType>("GET", `users/${memberId}`);
-      } catch (error) {
-        memberInfo = await fetchApi<UserType>("GET", `guests/${memberId}`);
-      }
-      return memberInfo;
-    });
-
-    // Wait for all member details to be fetched
-    const memberDetails = await Promise.all(memberDetailsPromises);
-
-    // Extract names from member details
-    const memberNames = memberDetails.map((member) => member.username);
-
-    return memberNames;
-
-    return members;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des membres du canal :", error);
-    throw error;
-  }
+  const members = await fetchApi<ChannelType>("GET", `channels/${channelId}?name=true`);
+  return members.members;
 }
-
 
 export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, channelId: string) => {
   switch (command) {
@@ -315,6 +290,7 @@ export const onCommand = async (command: string | number | boolean | React.React
     case 'users':
       // List users in the channel
       const membersChannel = await getMembers(channelId);
+      console.log(membersChannel)
 
       return [
         {

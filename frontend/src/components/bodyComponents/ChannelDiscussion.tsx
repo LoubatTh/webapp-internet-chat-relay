@@ -13,7 +13,7 @@ import { getIdentity } from "../../lib/utils";
 const socket: Socket = io("http://localhost:4000");
 
 const fetchMessages = async (id: string): Promise<MessagesType[]> => {
-  const data = await fetchApi<MessagesType[]>("GET", `channels/${id}/messages`);
+  const data = await fetchApi<MessagesType[]>("GET", `messages/${id}`);
   return data;
 };
 
