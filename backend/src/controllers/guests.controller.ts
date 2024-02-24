@@ -227,7 +227,7 @@ export const addGuestChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    for (let i = 0; guest.channels.length; i++) {
+    for (let i = 0; i < guest.channels.length; i++) {
       if (channelId === guest.channels[i]) {
         res.status(400).json({ message: "channel already joined" });
         return;

@@ -213,7 +213,7 @@ export const addUserChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    for (let i = 0; user.channels.length; i++) {
+    for (let i = 0; i < user.channels.length; i++) {
       if (channelId === user.channels[i]) {
         res.status(400).json({ message: "channel already joined" });
         return;
