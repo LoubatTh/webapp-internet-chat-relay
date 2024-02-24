@@ -11,6 +11,7 @@ import UserCreate from "./components/authComponents/UserCreate.tsx";
 import GuestLogin from "./components/authComponents/GuestLogin.tsx";
 import AuthMethod from "./components/authComponents/AuthMethod.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import Profile from "./routes/Profile.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
+          <Route path="profile" element={<Profile />} />
           <Route path="channels" element={<Channels />}>
             <Route path=":channelId" element={<Channels />} />
           </Route>
