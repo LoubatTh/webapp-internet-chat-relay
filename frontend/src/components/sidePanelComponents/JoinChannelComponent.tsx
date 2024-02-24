@@ -45,7 +45,8 @@ const JoinChannelComponent = () => {
         user,
         channelId
       );
-      addChannel(channel);
+      console.log("aze",channelId);
+      addChannel(channel.channel);
       setChannelId(channelId);
     };
   
