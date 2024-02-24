@@ -9,12 +9,12 @@ import useChannelStorageStore from "../../store/channelStorage";
 import JoinChannelComponent from "./JoinChannelComponent";
 import { getAccessToken, getIdentity } from "../../lib/utils";
 
-const getAllChannel = async (user: string): Promise<ChannelType[]> => {
+const getAllChannel = async (username: string): Promise<ChannelType[]> => {
   if (getAccessToken()) {
-    const data = await fetchApi<ChannelType[]>("GET", `users/${user}/channels`);
+    const data = await fetchApi<ChannelType[]>("GET", `users/${username}/channels`);
     return data;
   } else {
-    const data = await fetchApi<ChannelType[]>("GET", `guests/${user}/channels`);
+    const data = await fetchApi<ChannelType[]>("GET", `guests/${username}/channels`);
     return data;
   }
 };

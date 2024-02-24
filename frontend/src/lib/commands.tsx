@@ -6,9 +6,6 @@ const randomId = () => {
   return Math.floor(Math.random() * 1000).toString();
 };
 
-//TODO
-// recuperer la fonction de Thomas pour savoir si user ou guest
-//changer la route des messages (regarder les routes)
 function getUserType() {
   if (getAccessToken()) {
     return "users";
@@ -38,6 +35,11 @@ const changeNick = async (id: string, name: string) => {
     console.log(error);
   }
 };
+
+const getChannelInformations = async (id: string): Promise<ChannelType> => {
+  const data = await fetchApi<ChannelType>("GET", `channels/${id}`);
+  return data;
+}
 
 const postChannel = async (
   body: { name: string; visibility: string; members: string[]; owner: string }
@@ -207,8 +209,9 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Veuillez spécifier un nom de canal. <br />
-              Exemple : <strong>/delete <i>[channel]</i></strong>
+              Veuillez spécifier un ID de canal. <br />
+              Exemple : <strong>/delete <i>[channel]</i></strong><br />
+              <i>Pour connaître les IDs des channels, <strong>/list</strong>.</i>
             </>
           ),
         },
@@ -319,6 +322,28 @@ export const onCommand = async (command: string | number | boolean | React.React
             <>
               Veuillez spécifier un pseudo et un message. <br />
               Exemple : <strong>/msg <i>[nickname] [message]</i></strong>
+            </>
+          ),
+        },
+      ];
+    case 'informations':
+      const data = await getChannelInformations(channelId);
+      const isOwner = data.owner === getIdentity();
+      const owner = isOwner
+        ? "Vous êtes le owner du channel."
+        : "Vous n'êtes pas le owner du channel, vous avez donc pas de permissions."
+
+      console.log(data)
+      return [
+        {
+          channelId: 'system',
+          _id: `system-message-help-${randomId()}`,
+          author: 'System',
+          text: (
+            <>
+              Le nom du channel est : <strong>{data.name}</strong><br />
+              L'id de ce channel est : <strong>{channelId}</strong>.<br />
+              {owner}
             </>
           ),
         },
