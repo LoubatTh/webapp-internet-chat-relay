@@ -8,6 +8,7 @@ import { getIdentity } from "../../lib/utils";
 
 const socket: Socket = io("http://localhost:4000");
 
+
 const postMessage = async (channelId: string, body: any) => {
   const response = await fetchApi("POST", `messages/${channelId}`, body);
   return response;
