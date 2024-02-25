@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/ui/button";
 import { fetchApi } from "../../lib/api";
-import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import { io, Socket } from "socket.io-client";
 import { Input } from "../ui/ui/input";
 import { getIdentity } from "../../lib/utils";
+import { useParams } from "react-router-dom";
 
 const socket: Socket = io("http://localhost:4000");
-
 
 const postMessage = async (channelId: string, body: any) => {
   const response = await fetchApi("POST", `messages/${channelId}`, body);
@@ -19,7 +18,7 @@ const InputMessage = ({
 }: {
   onCommand: (command: string, args: string, channelId: string) => void;
 }) => {
-  const { channelId } = useChannelMessageDisplayStore();
+  const { channelId } = useParams();
   const [message, setMessage] = useState("");
   const [authorId, setAuthorId] = useState("");
 
@@ -45,6 +44,10 @@ const InputMessage = ({
       console.log("Commande", command);
     } else {
       // If message is not a command, send it as a regular message
+      if (!channelId) {
+        setMessage(""); // Prevent sending messages without a channel
+        return;
+      }
       const newMessage = await postMessage(channelId, {
         text: trimmedMessage,
         authorId,
