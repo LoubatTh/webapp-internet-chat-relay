@@ -36,9 +36,23 @@ const changeNick = async (id: string, name: string) => {
   }
 };
 
-const joinChannel = async (channelId: string) => {
+const searchChannel = async (name: string): Promise<ChannelType[]> => {
+  const data = await fetchApi<ChannelType[]>("GET", `channels?name=${name}&search=true`);
+  return data.data;
+}
+
+const joinChannel = async (nameChannel: string) => {
   const userType = getUserType();
   const user = getIdentity();
+
+  const channel = await fetchApi("GET", `channels?name=${nameChannel}`);
+
+  if (channel.status !== 200) {
+    return "Channel non trouvé."
+  }
+
+  const channelId = channel.data._id;
+
   try {
     const post = await fetch(`/api/${userType}/${user}/channels`, {
       method: "POST",
@@ -46,7 +60,6 @@ const joinChannel = async (channelId: string) => {
       body: JSON.stringify({ channelId })
     });
 
-    console.log(post.status)
     if (post.status !== 200) {
       return "Impossible de rejoindre le channel. Veuillez réessayer."
     } else {
@@ -70,7 +83,6 @@ const postChannel = async (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  console.log(data.status)
   if (data.status !== 201) {
     return "Impossible de créer le channel. Veuillez réessayer."
   } else {
@@ -78,12 +90,16 @@ const postChannel = async (
   }
 };
 
-const deleteChannel = async (id: string) => {
-  const response = await fetch(`/api/channels/${id}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id })
-  });
+const deleteChannel = async (nameChannel: string) => {
+  const channel = await fetchApi("GET", `channels?name=${nameChannel}`);
+
+  if (channel.status !== 200) {
+    return "Channel non trouvé."
+  }
+
+  const channelId = channel.data._id;
+
+  const response = await fetchApi("DELETE", `channels/${channelId}`);
   if (response.status !== 200) {
     return "Impossible de supprimer le channel. Veuillez réessayer."
   } else {
@@ -102,7 +118,6 @@ const removeMember = async (channelId: string, memberId: string) => {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
-  console.log(response.status)
   if (response.status !== 200) {
     return "Impossible de supprimer le membre. Veuillez réessayer."
   } else {
@@ -131,7 +146,7 @@ const sendMessage = async (body: string) => {
   })
   const msg = await fetchApi("POST", `messages/${data.data._id}`, msgcontent);
 
-  if (msg.status !== 201){
+  if (msg.status !== 201) {
     return "Erreur lors de la création du messages."
   }
   return `Message privé envoyer avec succès. Rendez-vous dans <a href="/messages">messages</a>.`
@@ -194,8 +209,27 @@ export const onCommand = async (command: string | number | boolean | React.React
     case 'list':
       // List available channels
       if (args) {
-        console.log("args")
-        return [];
+        const channels = searchChannel(args);
+        return [
+          {
+            channelId: 'system',
+            _id: `system-message-help-${randomId()}`,
+            author: 'System',
+            username: 'System',
+            text: (
+              <>
+                <div>
+                  Voici la liste des canaux disponibles contenant la chaîne <strong>{args}</strong>: <br />
+                  {(await channels).map((channel) => (
+                    <div key={channel._id}>
+                      <strong>#{channel.name}</strong> - <i>{channel._id}</i><br />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ),
+          },
+        ];
       }
       const channels = getAllChannel();
       return [
@@ -338,8 +372,6 @@ export const onCommand = async (command: string | number | boolean | React.React
     case 'users':
       // List users in the channel
       const membersChannel = await getMembers(currentchannelId);
-      console.log(membersChannel);
-      console.log(membersChannel)
 
       return [
         {
@@ -392,7 +424,6 @@ export const onCommand = async (command: string | number | boolean | React.React
         ? "Vous êtes le owner du channel."
         : "Vous n'êtes pas le owner du channel, vous avez donc pas de permissions."
 
-      console.log(data)
       return [
         {
           channelId: 'system',
@@ -400,7 +431,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Le nom du channel est : <strong>{data.name}</strong><br />
+              Le nom du channel est : <strong>{data.data.name}</strong><br />
               L'id de ce channel est : <strong>{currentchannelId}</strong>.<br />
               {owner}
             </>
