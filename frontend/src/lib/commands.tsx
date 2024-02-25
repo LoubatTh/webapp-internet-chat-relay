@@ -125,13 +125,16 @@ const sendMessage = async (body: string) => {
     return "Erreur lors de l'envoie du message."
   }
 
-  const msg = await fetchApi("POST", `messages/${data.data._id}`, msgtxt);
+  const msgcontent = ({
+    text: msgtxt,
+    authorId: otherUserId
+  })
+  const msg = await fetchApi("POST", `messages/${data.data._id}`, msgcontent);
 
   if (msg.status !== 201){
     return "Erreur lors de la création du messages."
   }
   return `Message privé envoyer avec succès. Rendez-vous dans <a href="/messages">messages</a>.`
-
 }
 
 export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, currentchannelId: string) => {
