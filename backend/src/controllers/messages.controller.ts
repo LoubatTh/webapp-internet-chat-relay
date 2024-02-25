@@ -10,7 +10,7 @@ interface IAuthorName {
   id: string;
 }
 
-// GET /messages/:channelId || :pmsgId/messages
+// GET /messages/:channelId || :pmsgId
 // Get all messages for a channel
 export const getMessages = async (req: Request, res: Response) => {
   try {
@@ -20,6 +20,7 @@ export const getMessages = async (req: Request, res: Response) => {
 
     if (!channel && !pmsg) {
       res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
+      return
     }
 
     const messages = await Message.find({ channelId: req.params.channelId });
