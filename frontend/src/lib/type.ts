@@ -21,7 +21,7 @@ export type UserTypeUsername = {
 export type UserPostType = {
   username: string;
   informations: string;
-  channels: ChannelType[];
+  channels: string[];
   createdAt: string;
 };
 
@@ -46,6 +46,12 @@ export type ChannelPostType = {
   members: string[];
   guests: string[];
   owner: string;
+};
+
+export type PmsgType = {
+  _id: string;
+  name: string;
+  members: string[];
 };
 
 export type MessagesType = {
