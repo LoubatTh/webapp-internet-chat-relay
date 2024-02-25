@@ -8,30 +8,6 @@ import { Pmsg } from "~/models/pmsgs.model";
 // GET /users
 // Get all users
 export const getUsers = async (req: Request, res: Response) => {
-  // try {
-  //   const { name } = req.query;
-
-  //   if (name) {
-  //     const guests = await Guest.find({ username: name });
-      
-  //     if (!guests || guests.length === 0) {
-  //       res.status(404).json({ message: "Guest not found" });
-  //       return;
-  //     }
-
-  //     res.status(200).json(guests);
-  //     return;
-
-  //   } else {
-  //     const guests = await Guest.find();
-  //     res.status(200).json(guests);
-  //     return;
-
-  //   }
-  // } catch (error: any) {
-  //   res.status(500).json({ message: "Guest not found" });
-  //   return;
-  // }
   try {
     const { name } = req.query;
 
