@@ -7,6 +7,7 @@ import { useToast } from "../ui/ui/use-toast";
 import { getIdentity, isUser } from "../../lib/utils";
 import usePmsgStorageStore from "../../store/pmsgStorage";
 import Pmsg from "./PrivateMessagesDisplay";
+import CreatePmsgComponent from "./CreatePrivateMessages";
 
 type PmsgTypeResponse = {
   data: PmsgType[];
@@ -72,6 +73,9 @@ const PrivateMessagesSidePannel = () => {
             </React.Fragment>
           ))}
       </ScrollArea>
+      <div className="flex flex-col pr-2 pb-2 w-full gap-2">
+        <CreatePmsgComponent />
+      </div>
     </>
   );
 };

@@ -11,18 +11,17 @@ type PmsgStorageActions = {
   removePmsg: (pmsgId: string) => void;
 };
 
-const usePmsgStorageStore = create<
-  PmsgStorageState & PmsgStorageActions 
->((set) => ({
-  pmsgs: [],
-  setPmsgs: (pmsgs: PmsgType[]) => set({ pmsgs }),
-  addPmsg: (pmsg: PmsgType) =>
-    set((state) => ({ pmsgs: [...state.pmsgs, pmsg] })),
-  removePmsg: (pmsgId: string) =>
-    set((state) => ({
-      pmsgs: state.pmsgs.filter((pmsg) => pmsg._id !== pmsgId),
-    })),
-}));
+const usePmsgStorageStore = create<PmsgStorageState & PmsgStorageActions>(
+  (set) => ({
+    pmsgs: [],
+    setPmsgs: (pmsgs: PmsgType[]) => set({ pmsgs }),
+    addPmsg: (pmsg: PmsgType) =>
+      set((state) => ({ pmsgs: [...state.pmsgs, pmsg] })),
+    removePmsg: (pmsgId: string) =>
+      set((state) => ({
+        pmsgs: state.pmsgs.filter((pmsg) => pmsg._id !== pmsgId),
+      })),
+  })
+);
 
 export default usePmsgStorageStore;
-
