@@ -8,7 +8,7 @@ import { io, Socket } from "socket.io-client";
 import { onCommand } from "../../lib/commands";
 import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
-import { getIdentity } from "../../lib/utils";
+import { getIdentity, isUser } from "../../lib/utils";
 import { useToast } from "../ui/ui/use-toast";
 
 const socket: Socket = io("http://localhost:4000");
@@ -18,12 +18,21 @@ const fetchMessages = async (id: string) => {
   return response;
 };
 
+const fetchUser = async (id: string) => {
+  const response = await fetchApi(
+    "GET",
+    `${isUser() ? "users" : "guests"}/${id}`
+  );
+  return response;
+};
+
 const ChannelDiscussion = () => {
   const { toast } = useToast();
   const channelId = useParams<{ channelId: string }>().channelId;
   const [messages, setMessages] = useState<MessagesType[]>([]);
   const [hiddenMessages, setHiddenMessages] = useState<string[]>([]);
   const [userConnected, setUserConnected] = useState<string>("");
+  const [userChannels, setUserChannels] = useState<string[]>([]);
   const lastMessageRef = useRef(null);
 
   // Hide message function
@@ -34,7 +43,21 @@ const ChannelDiscussion = () => {
     ]);
   };
 
+  const getUserChannels = async () => {
+    const response = await fetchUser(userConnected);
+    const data = response.data;
+    if (response.status === 200) {
+      setUserChannels(data.channels);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
+      });
+    }
+  };
+
   const fetchAllMessages = async () => {
+    if (!userChannels.find((channel) => channel === channelId)) return;
     const response = await fetchMessages(channelId);
     const data = response.data;
     if (response.status === 200) {
@@ -65,17 +88,17 @@ const ChannelDiscussion = () => {
   }, [messages]);
 
   useEffect(() => {
+    setMessages([]);
+    const user = getIdentity();
+    if (!user) return;
+    setUserConnected(user);
     if (!channelId) return;
-    const storedIdentity = getIdentity();
-    if (storedIdentity) {
-      setUserConnected(storedIdentity);
-    }
+    getUserChannels();
+    fetchAllMessages();
 
     socket.on("newMessage", (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage.data]);
     });
-
-    fetchAllMessages();
 
     return () => {
       socket.off("newMessage");
