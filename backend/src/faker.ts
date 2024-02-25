@@ -92,9 +92,8 @@ const createFakeData = async () => {
 
 // Helper function to generate random channels for users and guests
 const generateRandomChannels = () => {
-  return Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-    faker.company.companyName()
-  );
+  const words = faker.lorem.words(faker.datatype.number({ min: 1, max: 3 }));
+  return words.split(' ').join('-');
 };
 
 // Helper function to generate random members for a channel
@@ -104,4 +103,19 @@ const generateRandomMembers = (userIDs: any[], guestIDs: any[]) => {
   );
 };
 
+const createSystemUser = async() => {
+  const userAdmin = new User({
+    _id: "65db5d8c1dc68d78ca5801d4",
+    username: "System_Notification",
+    channels: [],
+    pmsgs: [],
+    password: faker.internet.password(),
+    informations: "Super Administrator, do not disturb !",
+    createdAt: faker.date.past(),
+  });
+
+  await userAdmin.save();
+}
+
+createSystemUser();
 createFakeData();
