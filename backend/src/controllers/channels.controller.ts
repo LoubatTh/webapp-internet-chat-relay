@@ -18,6 +18,7 @@ export const getChannels = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -55,6 +56,7 @@ export const getChannel = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -138,6 +140,7 @@ export const createChannel = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -186,11 +189,14 @@ export const updateChannel = async (req: Request, res: Response) => {
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
     }
 
     res.status(200).json(channel);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -205,6 +211,7 @@ export const deleteChannel = async (req: Request, res: Response) => {
       res
         .status(400)
         .json({ message: "You are not the owner of this channel" });
+        return;
     }
 
     const messages = await Message.find({ channelId: id });
@@ -252,11 +259,14 @@ export const deleteChannel = async (req: Request, res: Response) => {
     const deletedChannel = await Channel.findByIdAndDelete(id);
     if (!deletedChannel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
     } else {
       res.status(200).json({ message: "Channel deleted" });
+      return;
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 

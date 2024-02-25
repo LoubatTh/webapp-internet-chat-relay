@@ -11,8 +11,10 @@ export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -33,6 +35,7 @@ export const getUser = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -93,6 +96,7 @@ export const updateUser = async (req: Request, res: Response) => {
         }
       } else {
         res.status(404).json({ message: "User not found" });
+        return;
       }
     } else if (password && !oldPassword) {
       res.status(400).json({ message: 'Missing "oldPassword" field' });
@@ -107,8 +111,10 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(user);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -144,8 +150,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ message: "User deleted" });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return
   }
 };
 
@@ -182,8 +190,10 @@ export const getUserChannels = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(channels);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -226,8 +236,10 @@ export const addUserChannel = async (req: Request, res: Response) => {
     const savedChannel = await channel.save();
 
     res.status(200).json({ user: savedUser, channel: savedChannel });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -270,8 +282,10 @@ export const removeUserChannel = async (req: Request, res: Response) => {
     const savedChannel = await channel.save();
 
     res.status(200).json({ user: savedUser, channel: savedChannel });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -300,7 +314,9 @@ export const getUserPmsgs = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(pmsgs);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };

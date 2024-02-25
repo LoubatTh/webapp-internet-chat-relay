@@ -29,6 +29,7 @@ export const getMessages = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -57,6 +58,7 @@ export const getMessage = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -106,6 +108,7 @@ export const createMessage = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -156,8 +159,10 @@ export const updateMessage = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(message);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -202,6 +207,7 @@ export const deleteMessage = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
