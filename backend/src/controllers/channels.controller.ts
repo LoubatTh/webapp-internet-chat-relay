@@ -11,8 +11,23 @@ export const getChannels = async (req: Request, res: Response) => {
   try {
     const name = req.query.name as string;
     const search = req.query.search === "true"; 
+    const visibility = req.query.visibility as string;
+    
+    if (name && visibility === "public") {
+      const regex = new RegExp(name, 'i');
 
-    if (name) {
+      const channel = await Channel.find({
+        name: search ? { $regex: regex } : name, visibility: "public"
+      });
+
+      if (!channel) {
+        res.status(404).json({ message: "Channel not found" });
+        return;
+      }
+
+      res.status(200).json(channel);
+      return;
+    } else if(name) {
       const regex = new RegExp(name, 'i');
 
       const channel = await Channel.find({
@@ -28,7 +43,6 @@ export const getChannels = async (req: Request, res: Response) => {
       return;
     }
 
-    const visibility = req.query.visibility as string;
     const channels = visibility && checkVisibility(visibility)
       ? await Channel.find({ visibility: visibility })
       : await Channel.find({ visibility: { $in: ["public", "private"] } });
@@ -46,7 +60,6 @@ export const getChannels = async (req: Request, res: Response) => {
 export const getChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { memberId } = req.body;
     const name = req.query.name as string;
     const channel = await Channel.findById(id);
 
@@ -55,13 +68,15 @@ export const getChannel = async (req: Request, res: Response) => {
       return;
     }
 
-    const isMember = await isChannelMember(id, memberId);
-    if (!memberId || !isMember) {
-      res.status(403).json({
-        message: "You are not a channel member",
-      });
-      return;
-    }
+    // const isMember = await isChannelMember(id, memberId);
+    // console.log("channel id",id)
+    // console.log("memberId",req)
+    // if (!memberId || !isMember) {
+    //   res.status(403).json({
+    //     message: "You are not a channel member",
+    //   });
+    //   return;
+    // }
 
     if (name && name == "true") {
       let membersName: string[] = [];

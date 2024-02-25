@@ -37,7 +37,7 @@ const changeNick = async (id: string, name: string) => {
 };
 
 const searchChannel = async (name: string): Promise<ChannelType[]> => {
-  const data = await fetchApi<ChannelType[]>("GET", `channels?name=${name}&search=true`);
+  const data = await fetchApi<ChannelType[]>("GET", `channels?name=${name}&search=true&visibility=public`);
   return data.data;
 }
 
@@ -51,7 +51,8 @@ const joinChannel = async (nameChannel: string) => {
     return "Channel non trouvé."
   }
 
-  const channelId = channel.data._id;
+  console.log(channel)
+  const channelId = channel.data[0]._id;
 
   try {
     const post = await fetch(`/api/${userType}/${user}/channels`, {
@@ -71,7 +72,7 @@ const joinChannel = async (nameChannel: string) => {
 };
 
 const getChannelInformations = async (id: string): Promise<ChannelType> => {
-  const data = await fetchApi<ChannelType>("GET", `channels/${id}`);
+  const data = fetchApi<ChannelType>("GET", `channels/${id}`)
   return data;
 };
 
@@ -97,7 +98,7 @@ const deleteChannel = async (nameChannel: string) => {
     return "Channel non trouvé."
   }
 
-  const channelId = channel.data._id;
+  const channelId = channel.data[0]._id;
 
   const response = await fetchApi("DELETE", `channels/${channelId}`);
   if (response.status !== 200) {
@@ -112,8 +113,14 @@ const getMembers = async (channelId: string): Promise<string[]> => {
   return members.data.members;
 };
 
-const removeMember = async (channelId: string, memberId: string) => {
+const removeMember = async (channelname: string, memberId: string) => {
   const userType = getUserType();
+  const searchchannel = await fetchApi("GET", `channels?name=${channelname}&search=true`);
+
+  if (searchchannel.data.length === 0) {
+    return "Impossible de trouver le channel. Vérifier son nom."
+  }
+  const channelId = (await searchchannel).data[0]._id
   const response = await fetch(`/api/${userType}/${memberId}/channels/${channelId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
@@ -132,10 +139,12 @@ const sendMessage = async (body: string) => {
 
   const msgData = ({
     members: [otherUserId]
-  })
+  });
+
   const data = await fetchApi("POST", `pmsgs?name=${usernameUser}`,
     msgData);
 
+  console.log(data.status)
   if (data.status !== 201) {
     return "Erreur lors de l'envoie du message."
   }
@@ -144,12 +153,12 @@ const sendMessage = async (body: string) => {
     text: msgtxt,
     authorId: otherUserId
   })
-  const msg = await fetchApi("POST", `messages/${data.data._id}`, msgcontent);
+  const msg = await fetchApi("POST", `messages/${data.data.pmsg._id}`, msgcontent);
 
   if (msg.status !== 201) {
     return "Erreur lors de la création du messages."
   }
-  return `Message privé envoyer avec succès. Rendez-vous dans <a href="/messages">messages</a>.`
+  return `Message privé envoyer avec succès. Rendez-vous dans l'onglet "Messages".`
 }
 
 export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, currentchannelId: string) => {
@@ -372,6 +381,7 @@ export const onCommand = async (command: string | number | boolean | React.React
     case 'users':
       // List users in the channel
       const membersChannel = await getMembers(currentchannelId);
+      console.log("azer", currentchannelId)
 
       return [
         {
