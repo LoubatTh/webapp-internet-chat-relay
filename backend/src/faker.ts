@@ -5,7 +5,7 @@ const { Guest } = require("./models/guests.model");
 const { User } = require("./models/users.model");
 const faker = require("faker");
 import dotenv from "dotenv";
-import _ from 'lodash';
+import _ from "lodash";
 
 dotenv.config();
 

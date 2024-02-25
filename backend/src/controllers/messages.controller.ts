@@ -4,13 +4,14 @@ import { Channel } from "../models/channels.model";
 import { Pmsg } from "~/models/pmsgs.model";
 import { User } from "~/models/users.model";
 import { Guest } from "~/models/guests.model";
+import { isChannelMember } from "~/utils/utils";
 
 interface IAuthorName {
   username: string;
   id: string;
 }
 
-// GET /messages/:channelId || :pmsgId/messages
+// GET /messages/:channelId || :pmsgId
 // Get all messages for a channel
 export const getMessages = async (req: Request, res: Response) => {
   try {
@@ -20,6 +21,7 @@ export const getMessages = async (req: Request, res: Response) => {
 
     if (!channel && !pmsg) {
       res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
+      return;
     }
 
     const messages = await Message.find({ channelId: req.params.channelId });
@@ -29,6 +31,7 @@ export const getMessages = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -57,6 +60,7 @@ export const getMessage = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -92,6 +96,14 @@ export const createMessage = async (req: Request, res: Response) => {
       return;
     }
 
+    const isMember = await isChannelMember(channelId, authorId);
+    if (!isMember) {
+      res.status(403).json({
+        message: "You can't send message if you are not a channel member",
+      });
+      return;
+    }
+
     let data: IMessage = {
       text: text,
       channelId: channelId,
@@ -106,6 +118,7 @@ export const createMessage = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -156,8 +169,10 @@ export const updateMessage = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(message);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -202,6 +217,7 @@ export const deleteMessage = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 

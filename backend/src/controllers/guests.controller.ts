@@ -13,7 +13,7 @@ export const getGuests = async (req: Request, res: Response) => {
 
     if (name) {
       const guests = await Guest.findOne({ username: name });
-      
+
       if (!guests) {
         res.status(404).json({ message: "Guest not found" });
         return;
@@ -21,12 +21,10 @@ export const getGuests = async (req: Request, res: Response) => {
 
       res.status(200).json(guests);
       return;
-
     } else {
       const guests = await Guest.find();
       res.status(200).json(guests);
       return;
-
     }
   } catch (error: any) {
     res.status(500).json(error.message);
@@ -51,6 +49,7 @@ export const getGuest = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -93,6 +92,7 @@ export const createGuest = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -139,8 +139,10 @@ export const updateGuest = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(guest);
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -176,8 +178,10 @@ export const deleteGuest = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ message: "Guest deleted" });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -217,6 +221,7 @@ export const getGuestChannels = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -269,8 +274,10 @@ export const addGuestChannel = async (req: Request, res: Response) => {
     const savedChannel = await channel.save();
 
     res.status(200).json({ guest: savedGuest, channel: savedChannel });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -326,6 +333,7 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -354,7 +362,9 @@ export const getUserPmsgs = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(pmsgs);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };

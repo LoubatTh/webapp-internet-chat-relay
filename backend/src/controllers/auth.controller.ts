@@ -41,8 +41,10 @@ export const login = async (req: Request, res: Response) => {
     const token = await generateAccessToken(user._id.toString());
 
     res.status(200).json({ id: user.id, token: token });
+    return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };
 
@@ -52,7 +54,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { username, password, informations } = req.body;
 
-    if (!username || !password ) {
+    if (!username || !password) {
       res.status(400).json({ message: "Missing field" });
       return;
     }
@@ -95,5 +97,6 @@ export const register = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json(error.message);
+    return;
   }
 };

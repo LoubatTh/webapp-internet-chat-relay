@@ -3,6 +3,7 @@ import { Channel, IChannel } from "../models/channels.model";
 import { User } from "~/models/users.model";
 import { Message } from "~/models/messages.model";
 import { Guest } from "~/models/guests.model";
+import { isChannelMember } from "~/utils/utils";
 
 // GET /channels
 // Get all channels
@@ -36,6 +37,7 @@ export const getChannels = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -44,11 +46,20 @@ export const getChannels = async (req: Request, res: Response) => {
 export const getChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const { memberId } = req.body;
     const name = req.query.name as string;
     const channel = await Channel.findById(id);
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
+    }
+
+    const isMember = await isChannelMember(id, memberId);
+    if (!memberId || !isMember) {
+      res.status(403).json({
+        message: "You are not a channel member",
+      });
       return;
     }
 
@@ -73,6 +84,7 @@ export const getChannel = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -156,6 +168,7 @@ export const createChannel = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -204,11 +217,14 @@ export const updateChannel = async (req: Request, res: Response) => {
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
     }
 
     res.status(200).json(channel);
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -223,6 +239,7 @@ export const deleteChannel = async (req: Request, res: Response) => {
       res
         .status(400)
         .json({ message: "You are not the owner of this channel" });
+      return;
     }
 
     const messages = await Message.find({ channelId: id });
@@ -270,11 +287,14 @@ export const deleteChannel = async (req: Request, res: Response) => {
     const deletedChannel = await Channel.findByIdAndDelete(id);
     if (!deletedChannel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
     } else {
       res.status(200).json({ message: "Channel deleted" });
+      return;
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 

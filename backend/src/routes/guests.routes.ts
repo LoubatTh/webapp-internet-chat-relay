@@ -11,5 +11,6 @@ router.delete("/:id", guestsController.deleteGuest);
 router.get("/:id/channels", guestsController.getGuestChannels);
 router.post("/:id/channels", guestsController.addGuestChannel);
 router.delete("/:id/channels/:channelId", guestsController.removeGuestChannel);
+router.get("/:id/pmsgs", guestsController.getUserPmsgs);
 
 module.exports = router;

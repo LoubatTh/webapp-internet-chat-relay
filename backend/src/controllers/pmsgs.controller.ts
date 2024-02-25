@@ -32,6 +32,7 @@ export const getPmsg = async (req: Request, res: Response) => {
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -39,10 +40,33 @@ export const getPmsg = async (req: Request, res: Response) => {
 // Create a new private message
 export const createPmsg = async (req: Request, res: Response) => {
   try {
-    const { members } = req.body;
+    let { members } = req.body;
+    const { name } = req.query;
 
-    if (!members || members.length !== 2) {
-      res.status(400).json({ message: "2 users are required" });
+    if (name) {
+      if (!members || members.length !== 1) {
+        res
+          .status(400)
+          .json({ message: "1 user is required when the name is specified" });
+        return;
+      }
+
+      const user = await User.findOne({ username: name });
+      const guest = await Guest.findOne({ username: name });
+
+      if (!user && !guest) {
+        res.status(404).json({ message: "Member not found" });
+        return;
+      } else if (user && !guest) {
+        members.push(user._id);
+      } else if (!user && guest) {
+        members.push(guest._id);
+      }
+    } else {
+      if (!members || members.length !== 2) {
+        res.status(400).json({ message: "2 users are required" });
+        return;
+      }
     }
 
     let membersUsername: string[] = [];
@@ -52,6 +76,7 @@ export const createPmsg = async (req: Request, res: Response) => {
 
       if (!user && !guest) {
         res.status(404).json({ message: "Member not found" });
+        return;
       } else if (user && !guest) {
         membersUsername.push(user.username);
       } else if (!user && guest) {
@@ -67,7 +92,7 @@ export const createPmsg = async (req: Request, res: Response) => {
     const pmsg = new Pmsg(data);
     const savedPmsg: IPmsg = await pmsg.save();
 
-    const updatedMembers = []
+    const updatedMembers = [];
     if (typeof savedPmsg._id == "object") {
       for (let i = 0; i < members.length; i++) {
         const user = await User.findById(members[i]);
@@ -75,6 +100,7 @@ export const createPmsg = async (req: Request, res: Response) => {
 
         if (!user && !guest) {
           res.status(404).json({ message: "Member not found" });
+          return;
         } else if (user && !guest) {
           user.pmsgs.push(savedPmsg._id);
           updatedMembers.push(await user.save());
@@ -85,10 +111,11 @@ export const createPmsg = async (req: Request, res: Response) => {
       }
     }
 
-    res.status(201).json({pmsg: savedPmsg, members: updatedMembers});
+    res.status(201).json({ pmsg: savedPmsg, members: updatedMembers });
     return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
 
@@ -119,7 +146,7 @@ export const deletePmsg = async (req: Request, res: Response) => {
       const member = await User.findById(pmsg.members[i]);
       const guest = await Guest.findById(pmsg.members[i]);
 
-      console.log(pmsg.members.length, " | ", member, guest)
+      console.log(pmsg.members.length, " | ", member, guest);
       if (member && !guest) {
         const memberIndex = member.pmsgs.indexOf(id);
         if (memberIndex === -1) {
@@ -144,11 +171,14 @@ export const deletePmsg = async (req: Request, res: Response) => {
     const deletedPmsg = await Pmsg.findByIdAndDelete(id);
 
     if (!deletedPmsg) {
-      res.status(404).json({ message: "Pmsg not found"});
+      res.status(404).json({ message: "Pmsg not found" });
+      return;
     }
 
-    res.status(200).json({ message: "Pmsg deleted"});
+    res.status(200).json({ message: "Pmsg deleted" });
+    return;
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+    return;
   }
 };
