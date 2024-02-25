@@ -59,6 +59,7 @@ const UserCreate = () => {
         <Label htmlFor="password">Password</Label>
         <Input
           name="password"
+          type="password"
           onChange={handlePasswordChange}
           value={password}
         />

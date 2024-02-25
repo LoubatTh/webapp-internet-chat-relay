@@ -13,18 +13,18 @@ export const checkJwtToken = async (
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  // if (!token) {
-  //   return res.status(401).json({ message: "No token provided" });
-  // }
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
 
   try {
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-    // if (!decoded) {
-    //   return res.status(401).json({ message: "Unauthorized" });
-    // }
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    // req.body.userId = decoded.id;
+    req.body.userId = decoded.id;
     next();
   } catch (error: any) {
     res.status(500).json(error.message);

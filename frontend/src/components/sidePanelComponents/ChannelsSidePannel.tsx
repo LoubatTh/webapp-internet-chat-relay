@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
-import { fetchApi } from "../../lib/api";
+import { fetchApi, fetchApiAuth } from "../../lib/api";
 import Channel from "./ChannelDisplay";
 import { ScrollArea } from "../ui/ui/scroll-area";
 import CreateChannelComponent from "./CreateChannelComponent";
@@ -11,7 +11,7 @@ import { useToast } from "../ui/ui/use-toast";
 
 const getAllChannel = async (username: string) => {
   if (getAccessToken()) {
-    const response = await fetchApi("GET", `users/${username}/channels`);
+    const response = await fetchApiAuth("GET", `users/${username}/channels`);
     return response;
   } else {
     const response = await fetchApi("GET", `guests/${username}/channels`);

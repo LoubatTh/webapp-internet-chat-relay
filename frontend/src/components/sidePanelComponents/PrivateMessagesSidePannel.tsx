@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { PmsgType } from "../../lib/type";
 import { ScrollArea } from "../ui/ui/scroll-area";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { fetchApi } from "../../lib/api";
+import { fetchApi, fetchApiAuth } from "../../lib/api";
 import { useToast } from "../ui/ui/use-toast";
 import { getIdentity, isUser } from "../../lib/utils";
 import usePmsgStorageStore from "../../store/pmsgStorage";
@@ -15,10 +15,9 @@ type PmsgTypeResponse = {
 };
 
 const getPM = async (): Promise<PmsgTypeResponse> => {
-  const response = await fetchApi<PmsgType[]>(
-    "GET",
-    `${isUser() ? "users" : "guests"}/${getIdentity()}/pmsgs`
-  );
+  const response = isUser()
+    ? await fetchApiAuth<PmsgType[]>("GET", `users/${getIdentity()}/pmsgs`)
+    : await fetchApi<PmsgType[]>("GET", `guests/${getIdentity()}/pmsgs`);
   return response;
 };
 

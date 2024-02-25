@@ -13,18 +13,18 @@ import {
 import { Input } from "../ui/ui/input";
 import { Label } from "../ui/ui/label";
 import useChannelStorageStore from "../../store/channelStorage";
-import { fetchApi } from "../../lib/api";
+import { fetchApi, fetchApiAuth } from "../../lib/api";
 import { getIdentity, isUser } from "../../lib/utils";
 import { useToast } from "../ui/ui/use-toast";
 
 const joinChannel = async (user: string, channelId: string) => {
-  const response: Response = await fetchApi(
-    "POST",
-    `${isUser() ? "users" : "guests"}/${user}/channels`,
-    {
-      channelId,
-    }
-  );
+  const response: Response = isUser()
+    ? await fetchApiAuth("POST", `users/${user}/channels`, {
+        channelId,
+      })
+    : await fetchApi("POST", `guests/${user}/channels`, {
+        channelId,
+      });
   return response;
 };
 

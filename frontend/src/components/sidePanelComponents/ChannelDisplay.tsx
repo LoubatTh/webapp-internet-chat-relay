@@ -1,5 +1,5 @@
 import { Label } from "@radix-ui/react-context-menu";
-import { fetchApi } from "../../lib/api";
+import { fetchApi, fetchApiAuth } from "../../lib/api";
 import { getIdentity, isUser } from "../../lib/utils";
 import useChannelMessageDisplayStore from "../../store/channelMessageDisplay";
 import useChannelStorageStore from "../../store/channelStorage";
@@ -24,10 +24,9 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const deleteUserFromChannel = async (channelId: string, userId: string) => {
-  const response = await fetchApi(
-    "DELETE",
-    `${isUser() ? "users" : "guests"}/${userId}/channels/${channelId}`
-  );
+  const response = isUser()
+    ? await fetchApiAuth("DELETE", `users/${userId}/channels/${channelId}`)
+    : await fetchApi("DELETE", `guests/${userId}/channels/${channelId}`);
   return response;
 };
 

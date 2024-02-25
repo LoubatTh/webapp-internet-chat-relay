@@ -1,18 +1,18 @@
 import { Card, CardContent, CardTitle } from "./ui/ui/card";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { getIdentity, isUser } from "../lib/utils";
-import { fetchApi } from "../lib/api";
+import { fetchApi, fetchApiAuth } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./ui/ui/use-toast";
 
-const getChannel = async (
-  userType: string,
-  userId: string,
-  channelId: string
-) => {
-  const response = await fetchApi("POST", `${userType}/${userId}/channels`, {
-    channelId,
-  });
+const getChannel = async (userId: string, channelId: string) => {
+  const response = isUser()
+    ? await fetchApiAuth("POST", `users/${userId}/channels`, {
+        channelId,
+      })
+    : await fetchApi("POST", `guests/${userId}/channels`, {
+        channelId,
+      });
   return response;
 };
 
@@ -35,11 +35,7 @@ const ChannelCard = ({
 
   const joinChannel = async () => {
     if (!userId) return;
-    const response = await getChannel(
-      isUser() ? "users" : "guests",
-      userId,
-      channelId
-    );
+    const response = await getChannel(userId, channelId);
     const data = response.data;
     if (response.status === 200) {
       navigate(`/channels/${data.channel._id}`);
