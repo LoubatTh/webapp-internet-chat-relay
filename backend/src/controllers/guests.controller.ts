@@ -3,6 +3,7 @@ import { Guest, IGuest } from "../models/guests.model";
 import { User } from "../models/users.model";
 import { Channel } from "~/models/channels.model";
 import { Pmsg } from "~/models/pmsgs.model";
+import { IMessage, Message } from "~/models/messages.model";
 
 // GET /guests
 // Get all guests
@@ -252,6 +253,16 @@ export const addGuestChannel = async (req: Request, res: Response) => {
       }
     }
 
+    let data: IMessage = {
+      text: `${guest.username} vient d'arriver dans le channel. Bienvenu(e) !`,
+      channelId: channelId,
+      authorId: "65db5d8c1dc68d78ca5801d4",
+      createdAt: new Date(),
+    };
+
+    const message = new Message(data);
+    await message.save();
+
     guest.channels.push(channelId);
     channel.members.push(id);
     const savedGuest = await guest.save();
@@ -295,6 +306,16 @@ export const removeGuestChannel = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Guest not found in channel" });
       return;
     }
+    
+    let data: IMessage = {
+      text: `${guest.username} vient de quitter le channel. :(`,
+      channelId: channelId,
+      authorId: "65db5d8c1dc68d78ca5801d4",
+      createdAt: new Date(),
+    };
+
+    const message = new Message(data);
+    await message.save();
 
     guest.channels.splice(guestIndex, 1);
     channel.members.splice(channelIndex, 1);

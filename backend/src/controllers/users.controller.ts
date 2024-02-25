@@ -4,6 +4,7 @@ import { User, IUser } from "../models/users.model";
 import { Guest } from "~/models/guests.model";
 import { Channel } from "~/models/channels.model";
 import { Pmsg } from "~/models/pmsgs.model";
+import { IMessage, Message } from "~/models/messages.model";
 
 // GET /users
 // Get all users
@@ -14,17 +15,17 @@ export const getUsers = async (req: Request, res: Response) => {
     if (name) {
       const user = await User.findOne({ username: name });
 
-      if(!user){
-        res.status(404).json({ message: "User not found"});
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
         return;
       }
 
       res.status(200).json(user);
     } else {
       const users = await User.find();
-      res.status(200).json(users); 
+      res.status(200).json(users);
     }
-  } catch (error: any) { 
+  } catch (error: any) {
     res.status(500).json(error.message);
   }
 };
@@ -233,6 +234,16 @@ export const addUserChannel = async (req: Request, res: Response) => {
       }
     }
 
+    let data: IMessage = {
+      text: `${user.username} vient d'arriver dans le channel. Bienvenu(e) !`,
+      channelId: channelId,
+      authorId: "65db5d8c1dc68d78ca5801d4",
+      createdAt: new Date(),
+    };
+
+    const message = new Message(data);
+    await message.save();
+
     user.channels.push(channelId);
     channel.members.push(id);
     const savedUser = await user.save();
@@ -276,6 +287,17 @@ export const removeUserChannel = async (req: Request, res: Response) => {
       res.status(404).json({ message: "User not found in channel" });
       return;
     }
+
+
+    let data: IMessage = {
+      text: `${user.username} vient de quitter le channel. :(`,
+      channelId: channelId,
+      authorId: "65db5d8c1dc68d78ca5801d4",
+      createdAt: new Date(),
+    };
+
+    const message = new Message(data);
+    await message.save();
 
     user.channels.splice(userIndex, 1);
     channel.members.splice(channelIndex, 1);
