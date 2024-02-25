@@ -14,7 +14,7 @@ router.delete("/:id", checkJwtToken, usersController.deleteUser);
 router.get("/:id/channels", checkJwtToken, usersController.getUserChannels);
 router.post("/:id/channels", checkJwtToken, usersController.addUserChannel);
 router.delete(
-  "/:id/pmsgs/:pmsgId",
+  "/:id/channels/:channelId",
   checkJwtToken,
   usersController.removeUserChannel
 );

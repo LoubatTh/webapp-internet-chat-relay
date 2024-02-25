@@ -61,8 +61,10 @@ const ChannelsSidePannel = () => {
             </Link>
           ))}
       </ScrollArea>
-      <CreateChannelComponent />
-      <JoinChannelComponent />
+      <div className="flex flex-col pr-2 pb-2 w-full gap-2">
+        <JoinChannelComponent />
+        <CreateChannelComponent />
+      </div>
     </>
   );
 };

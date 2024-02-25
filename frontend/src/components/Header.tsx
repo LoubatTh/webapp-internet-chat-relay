@@ -11,6 +11,7 @@ import {
 const Header = () => {
   const channelsExist = window.location.href.includes("channels");
   const messagesExist = window.location.href.includes("messages");
+  const publicChannelsExist = window.location.href.includes("publicChannels");
 
   return (
     <div className="flex">
@@ -19,10 +20,10 @@ const Header = () => {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
-              href="/channels"
-              active={channelsExist}
+              href="/messages"
+              active={messagesExist}
             >
-              Channels
+              Messages
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -30,10 +31,21 @@ const Header = () => {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
-              href="/messages"
-              active={messagesExist}
+              href="/channels"
+              active={channelsExist}
             >
-              Messages
+              My Channels
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/publicChannels"
+              active={publicChannelsExist}
+            >
+              Public Channels
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

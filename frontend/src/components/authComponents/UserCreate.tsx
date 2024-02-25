@@ -36,9 +36,6 @@ const UserCreate = () => {
     if (response.status === 201) {
       setIdentity(data.user._id);
       setAccessToken(data.token);
-      toast({
-        description: `Welcome ${data.username}`,
-      });
       navigate("/channels");
     } else {
       toast({
