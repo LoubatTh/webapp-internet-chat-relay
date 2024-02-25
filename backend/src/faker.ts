@@ -18,24 +18,20 @@ mongoose.connect(process.env.MONGO_URI, {
 const createFakeData = async () => {
   try {
     // Define how many fake entries you want
-    const numberOfGuests = 10;
-    const numberOfUsers = 1;
-    const numberOfChannels = 15;
-    const messagesPerChannel = 50;
+    const numberOfGuests = 15;
+    const numberOfUsers = 15;
+    const numberOfChannels = 50;
+    const messagesPerChannel = 250;
 
-    const userIDs: any[] = [];
-    const guestIDs: any[] = [];
+    const userIDs = [];
+    const guestIDs = [];
 
     // Create fake users
     for (let i = 0; i < numberOfUsers; i++) {
       const user = new User({
         username: faker.internet.userName(),
-        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
-        ),
-        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
-        ),
+        channels: generateRandomChannels(),
+        pmsgs: generateRandomChannels(),
         password: faker.internet.password(),
         informations: faker.lorem.sentence(),
         createdAt: faker.date.past(),
@@ -49,12 +45,8 @@ const createFakeData = async () => {
     for (let i = 0; i < numberOfGuests; i++) {
       const guest = new Guest({
         username: faker.internet.userName(),
-        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
-        ),
-        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
-        ),
+        channels: generateRandomChannels(),
+        pmsgs: generateRandomChannels(),
         lastConnexion: faker.date.past(),
       });
 
@@ -65,14 +57,10 @@ const createFakeData = async () => {
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
       const words = faker.lorem.words(faker.datatype.number({ min: 1, max: 3 }));
-      const channelName = words.split(' ').join('-')
+      const channelName = words.split(' ').join('-');
       const channel = new Channel({
-
-        // Concatène les mots pour créer le nom du canal sans espaces
         name: channelName,
-        members: Array.from({ length: faker.datatype.number({ min: 1, max: 8 }) }, () =>
-          faker.random.arrayElement(_.shuffle([...userIDs, ...guestIDs]))
-        ),
+        members: generateRandomMembers(userIDs, guestIDs),
         visibility: faker.random.arrayElement(["public", "private"]),
       });
 
@@ -100,6 +88,20 @@ const createFakeData = async () => {
   } finally {
     mongoose.disconnect();
   }
+};
+
+// Helper function to generate random channels for users and guests
+const generateRandomChannels = () => {
+  return Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
+    faker.company.companyName()
+  );
+};
+
+// Helper function to generate random members for a channel
+const generateRandomMembers = (userIDs: any[], guestIDs: any[]) => {
+  return Array.from({ length: faker.datatype.number({ min: 1, max: 8 }) }, () =>
+    faker.random.arrayElement(_.shuffle([...userIDs, ...guestIDs]))
+  );
 };
 
 createFakeData();
