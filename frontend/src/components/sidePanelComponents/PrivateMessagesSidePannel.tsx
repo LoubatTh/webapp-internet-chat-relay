@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { ChannelType } from "../../lib/type";
 import { ScrollArea } from "../ui/ui/scroll-area";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchApi } from "../../lib/api";
 import Channel from "./ChannelDisplay";
 import useChannelStorageStore from "../../store/channelStorage";
@@ -14,12 +14,17 @@ const getPM = async (): Promise<ChannelType[]> => {
 
 const PrivateMessagesSidePannel = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { channelId } = useParams();
   const { channels, setChannels } = useChannelStorageStore();
 
   const getChannel = async () => {
     const response = await getPM();
     const data = response;
     if (response.status === 200) {
+      if (!data.find((channel) => channel._id === channelId)) {
+        navigate("/messages");
+      }
       setChannels(data);
     } else {
       toast({
