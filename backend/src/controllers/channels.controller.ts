@@ -3,6 +3,7 @@ import { Channel, IChannel } from "../models/channels.model";
 import { User } from "~/models/users.model";
 import { Message } from "~/models/messages.model";
 import { Guest } from "~/models/guests.model";
+import { isChannelMember } from "~/utils/utils";
 
 // GET /channels
 // Get all channels
@@ -27,11 +28,20 @@ export const getChannels = async (req: Request, res: Response) => {
 export const getChannel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const { memberId } = req.body;
     const name = req.query.name as string;
     const channel = await Channel.findById(id);
 
     if (!channel) {
       res.status(404).json({ message: "Channel not found" });
+      return;
+    }
+
+    const isMember = await isChannelMember(id, memberId);
+    if (!memberId || !isMember) {
+      res.status(403).json({
+        message: "You are not a channel member",
+      });
       return;
     }
 

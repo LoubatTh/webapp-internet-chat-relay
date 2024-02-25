@@ -4,6 +4,7 @@ import { Channel } from "../models/channels.model";
 import { Pmsg } from "~/models/pmsgs.model";
 import { User } from "~/models/users.model";
 import { Guest } from "~/models/guests.model";
+import { isChannelMember } from "~/utils/utils";
 
 interface IAuthorName {
   username: string;
@@ -92,6 +93,14 @@ export const createMessage = async (req: Request, res: Response) => {
 
     if (!checkUser && !checkGuest) {
       res.status(404).json({ message: "Author not found" });
+      return;
+    }
+
+    const isMember = await isChannelMember(channelId, authorId);
+    if (!isMember) {
+      res.status(403).json({
+        message: "You can't send message if you are not a channel member",
+      });
       return;
     }
 
