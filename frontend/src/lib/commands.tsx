@@ -431,7 +431,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Le nom du channel est : <strong>{data.name}</strong><br />
+              Le nom du channel est : <strong>{data.data.name}</strong><br />
               L'id de ce channel est : <strong>{currentchannelId}</strong>.<br />
               {owner}
             </>
