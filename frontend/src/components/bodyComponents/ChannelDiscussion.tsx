@@ -46,8 +46,14 @@ const ChannelDiscussion = () => {
   const getUserChannels = async () => {
     const response = await fetchUser(userConnected);
     const data = response.data;
+    const typeOfChannel =
+      window.location.href.split("/")[
+        window.location.href.split("/").length - 2
+      ] !== "messages"
+        ? data.channels
+        : data.pmsgs;
     if (response.status === 200) {
-      setUserChannels(data.channels);
+      setUserChannels(typeOfChannel);
     } else {
       toast({
         variant: "error",
@@ -97,7 +103,9 @@ const ChannelDiscussion = () => {
     fetchAllMessages();
 
     socket.on("newMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage.data]);
+      if (newMessage.data.channelId === channelId) {
+        setMessages((prevMessages) => [...prevMessages, newMessage.data]);
+      }
     });
 
     return () => {
