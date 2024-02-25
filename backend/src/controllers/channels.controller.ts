@@ -8,11 +8,29 @@ import { Guest } from "~/models/guests.model";
 // Get all channels
 export const getChannels = async (req: Request, res: Response) => {
   try {
+    const name = req.query.name as string;
+    const search = req.query.search === "true"; // Parse the search query as a boolean
+
+    if (name) {
+      const regex = new RegExp(name, 'i');
+
+      const channel = await Channel.find({
+        name: search ? { $regex: regex } : name
+      });
+
+      if (!channel) {
+        res.status(404).json({ message: "Channel not found" });
+        return;
+      }
+
+      res.status(200).json(channel);
+      return;
+    }
+
     const visibility = req.query.visibility as string;
-    const channels =
-      visibility && checkVisibility(visibility)
-        ? await Channel.find({ visibility: visibility })
-        : await Channel.find({ visibility: { $in: ["public", "private"] } });
+    const channels = visibility && checkVisibility(visibility)
+      ? await Channel.find({ visibility: visibility })
+      : await Channel.find({ visibility: { $in: ["public", "private"] } });
 
     res.status(200).json(channels);
     return;
