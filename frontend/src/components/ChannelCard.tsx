@@ -1,9 +1,20 @@
 import { Card, CardContent, CardTitle } from "./ui/ui/card";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import { getAccessToken, getIdentity } from "../lib/utils";
+import { getIdentity, isUser } from "../lib/utils";
 import { fetchApi } from "../lib/api";
-import { Link } from "react-router-dom";
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "./ui/ui/use-toast";
+
+const getChannel = async (
+  userType: string,
+  userId: string,
+  channelId: string
+) => {
+  const response = await fetchApi("POST", `${userType}/${userId}/channels`, {
+    channelId,
+  });
+  return response;
+};
 
 type ChannelCardProps = {
   channelId: string;
@@ -18,36 +29,36 @@ const ChannelCard = ({
   membersCount,
   isJoined,
 }: ChannelCardProps) => {
-  const joinChannel = async () => {
-    const identity = getIdentity();
-    const token = getAccessToken();
+  const { toast } = useToast();
+  const userId = getIdentity();
+  const navigate = useNavigate();
 
-    await fetchApi(
-      "POST",
-      `${token ? "users" : "guests"}/${identity}/channels`,
-      {
-        channelId,
-      }
-    )
-      .then((data) => {
-        return data ? (
-          <Link to={`/channels/${channelId}`}></Link>
-        ) : (
-          console.error("Failed to join channel")
-        );
-      })
-      .catch((error: Error) => {
-        console.error(error.message);
+  const joinChannel = async () => {
+    if (!userId) return;
+    const response = await getChannel(
+      isUser() ? "users" : "guests",
+      userId,
+      channelId
+    );
+    const data = response.data;
+    if (response.status === 200) {
+      navigate(`/channels/${data.channel._id}`);
+    } else {
+      toast({
+        variant: "error",
+        description: `${data.message}`,
       });
+    }
   };
 
   return (
-    <React.Fragment>
+    <>
       <Card
+        onClick={() => joinChannel()}
         className={`grid grid-cols-3 ${
           isJoined
             ? "bg-primary text-primary-foreground border-primary-foreground"
-            : "bg-background text-foreground"
+            : "bg-background text-foreground hover:bg-secondary border-secondary-foreground cursor-pointer"
         }`}
       >
         <CardTitle className="text-start self-center ml-3">{name}</CardTitle>
@@ -57,19 +68,16 @@ const ChannelCard = ({
             : `${membersCount} member`}
         </CardContent>
         {isJoined ? (
-          <CardContent className="flex flex-row justify-end text-center self-end mr-3 hover:font-semibold">
-            <Link to={`channels/${channelId}`}>Already joined</Link>
+          <CardContent className="flex flex-row justify-end text-center self-end mr-3">
+            Already joined
           </CardContent>
         ) : (
-          <CardContent
-            className="flex flex-row justify-end text-center self-end mr-3 hover:font-semibold"
-            onClick={() => joinChannel()}
-          >
+          <CardContent className="flex flex-row justify-end text-center self-end mr-3 hover:font-semibold">
             join <OpenInNewWindowIcon className="self-center ml-2 h-4 w-4" />
           </CardContent>
         )}
       </Card>
-    </React.Fragment>
+    </>
   );
 };
 
