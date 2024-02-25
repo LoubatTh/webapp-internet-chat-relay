@@ -5,7 +5,7 @@ const { Guest } = require("./models/guests.model");
 const { User } = require("./models/users.model");
 const faker = require("faker");
 import dotenv from "dotenv";
-import _ from 'lodash';
+import _ from "lodash";
 
 dotenv.config();
 
@@ -30,11 +30,13 @@ const createFakeData = async () => {
     for (let i = 0; i < numberOfUsers; i++) {
       const user = new User({
         username: faker.internet.userName(),
-        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
+        channels: Array.from(
+          { length: faker.datatype.number({ min: 1, max: 10 }) },
+          () => faker.company.companyName()
         ),
-        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
+        pmsgs: Array.from(
+          { length: faker.datatype.number({ min: 1, max: 10 }) },
+          () => faker.company.companyName()
         ),
         password: faker.internet.password(),
         informations: faker.lorem.sentence(),
@@ -49,11 +51,13 @@ const createFakeData = async () => {
     for (let i = 0; i < numberOfGuests; i++) {
       const guest = new Guest({
         username: faker.internet.userName(),
-        channels: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
+        channels: Array.from(
+          { length: faker.datatype.number({ min: 1, max: 10 }) },
+          () => faker.company.companyName()
         ),
-        pmsgs: Array.from({ length: faker.datatype.number({ min: 1, max: 10 }) }, () =>
-          faker.company.companyName()
+        pmsgs: Array.from(
+          { length: faker.datatype.number({ min: 1, max: 10 }) },
+          () => faker.company.companyName()
         ),
         lastConnexion: faker.date.past(),
       });
@@ -64,14 +68,16 @@ const createFakeData = async () => {
 
     for (let i = 0; i < numberOfChannels; i++) {
       // Create a fake channel
-      const words = faker.lorem.words(faker.datatype.number({ min: 1, max: 3 }));
-      const channelName = words.split(' ').join('-')
+      const words = faker.lorem.words(
+        faker.datatype.number({ min: 1, max: 3 })
+      );
+      const channelName = words.split(" ").join("-");
       const channel = new Channel({
-
         // Concatène les mots pour créer le nom du canal sans espaces
         name: channelName,
-        members: Array.from({ length: faker.datatype.number({ min: 1, max: 8 }) }, () =>
-          faker.random.arrayElement(_.shuffle([...userIDs, ...guestIDs]))
+        members: Array.from(
+          { length: faker.datatype.number({ min: 1, max: 8 }) },
+          () => faker.random.arrayElement(_.shuffle([...userIDs, ...guestIDs]))
         ),
         visibility: faker.random.arrayElement(["public", "private"]),
       });

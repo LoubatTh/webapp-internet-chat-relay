@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { username, password, informations } = req.body;
 
-    if (!username || !password ) {
+    if (!username || !password) {
       res.status(400).json({ message: "Missing field" });
       return;
     }

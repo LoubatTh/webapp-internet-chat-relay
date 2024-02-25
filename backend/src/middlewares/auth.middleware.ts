@@ -1,13 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 interface JwtPayload {
   id: string;
 }
 
-export const checkJwtToken = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+export const checkJwtToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   // if (!token) {
   //   return res.status(401).json({ message: "No token provided" });
@@ -25,4 +29,4 @@ export const checkJwtToken = async (req: Request, res: Response, next: NextFunct
   } catch (error: any) {
     res.status(500).json(error.message);
   }
-}
+};

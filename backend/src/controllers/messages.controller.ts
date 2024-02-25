@@ -20,7 +20,7 @@ export const getMessages = async (req: Request, res: Response) => {
 
     if (!channel && !pmsg) {
       res.status(404).json({ message: "Target(Channel / Pmsg) not found" });
-      return
+      return;
     }
 
     const messages = await Message.find({ channelId: req.params.channelId });
