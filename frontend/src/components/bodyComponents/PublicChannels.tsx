@@ -51,12 +51,12 @@ const PublicChannel = () => {
 
   const fetchUser = async (): Promise<string[]> => {
     const identity = getIdentity();
-
     const response = await fetchApi<UserPostType>(
       "GET",
       `${isUser() ? "users" : "guests"}/${identity}`
     );
-    return response.data.channels;
+    const data = response.data;
+    return data.channels;
   };
 
   const isChannelJoined = (channelId: string) => {
@@ -70,8 +70,8 @@ const PublicChannel = () => {
   };
 
   return (
-    <>
-      <p className="text-2xl my-4">Public Channels</p>
+    <div className="flex flex-col gap-2">
+      <h1 className="text-2xl my-4 text-center">Public Channels</h1>
       <div className="container grid gap-3 mb-5">
         {items.map((channel, index) => (
           <ChannelCard
@@ -101,7 +101,7 @@ const PublicChannel = () => {
           </>
         ) : null}
       </div>
-    </>
+    </div>
   );
 };
 

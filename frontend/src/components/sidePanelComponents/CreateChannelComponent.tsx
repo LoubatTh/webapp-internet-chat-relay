@@ -70,7 +70,7 @@ const CreateChannelComponent = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create new channel</Button>
+        <Button>Create new channel</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
