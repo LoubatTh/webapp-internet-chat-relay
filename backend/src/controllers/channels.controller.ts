@@ -9,7 +9,7 @@ import { Guest } from "~/models/guests.model";
 export const getChannels = async (req: Request, res: Response) => {
   try {
     const name = req.query.name as string;
-    const search = req.query.search === "true"; // Parse the search query as a boolean
+    const search = req.query.search === "true"; 
 
     if (name) {
       const regex = new RegExp(name, 'i');
