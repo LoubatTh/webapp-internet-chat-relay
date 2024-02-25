@@ -55,12 +55,12 @@ const joinChannel = async (channelId: string) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const getChannelInformations = async (id: string): Promise<ChannelType> => {
   const data = await fetchApi<ChannelType>("GET", `channels/${id}`);
   return data;
-}
+};
 
 const postChannel = async (
   body: { name: string; visibility: string; members: string[]; owner: string }
@@ -108,6 +108,33 @@ const removeMember = async (channelId: string, memberId: string) => {
   } else {
     return "Vous avez bien quitté le channel.";
   }
+};
+
+const sendMessage = async (body: string) => {
+  const usernameUser = body.split(" ")[0];
+  const msgtxt = body.split(" ")[1];
+  const otherUserId = getIdentity();
+
+  const msgData = ({
+    members: [otherUserId]
+  })
+  const data = await fetchApi("POST", `pmsgs?name=${usernameUser}`,
+    msgData);
+
+  if (data.status !== 201) {
+    return "Erreur lors de l'envoie du message."
+  }
+
+  const msgcontent = ({
+    text: msgtxt,
+    authorId: otherUserId
+  })
+  const msg = await fetchApi("POST", `messages/${data.data._id}`, msgcontent);
+
+  if (msg.status !== 201){
+    return "Erreur lors de la création du messages."
+  }
+  return `Message privé envoyer avec succès. Rendez-vous dans <a href="/messages">messages</a>.`
 }
 
 export const onCommand = async (command: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, args: any, currentchannelId: string) => {
@@ -308,7 +335,6 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
-
     case 'users':
       // List users in the channel
       const membersChannel = await getMembers(currentchannelId);
@@ -346,6 +372,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           ),
         },
       ];
+      const message = await sendMessage(args);
       return [
         {
           channelId: 'system',
@@ -353,7 +380,7 @@ export const onCommand = async (command: string | number | boolean | React.React
           author: 'System',
           text: (
             <>
-              Commande /msg pas implémentée.
+              {message}
             </>
           ),
         },

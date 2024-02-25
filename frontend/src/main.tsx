@@ -13,6 +13,7 @@ import AuthMethod from "./components/authComponents/AuthMethod.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import Profile from "./routes/Profile.tsx";
 import Layout from "./components/Layout.tsx";
+import PublicChannel from "./components/bodyComponents/PublicChannels.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -33,13 +34,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               </ProtectedRoute>
             }
           >
-            <Route path="profile" element={<Profile />} />
             <Route path="channels" element={<Channels />}>
               <Route path=":channelId" element={<Channels />} />
             </Route>
             <Route path="messages" element={<Messages />}>
               <Route path=":channelId" element={<Messages />} />
             </Route>
+            <Route path="publicChannels" element={<PublicChannel />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>
       </Layout>

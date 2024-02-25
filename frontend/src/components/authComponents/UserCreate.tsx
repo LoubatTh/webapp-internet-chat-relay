@@ -36,9 +36,6 @@ const UserCreate = () => {
     if (response.status === 201) {
       setIdentity(data.user._id);
       setAccessToken(data.token);
-      toast({
-        description: `Welcome ${data.username}`,
-      });
       navigate("/channels");
     } else {
       toast({
@@ -66,9 +63,20 @@ const UserCreate = () => {
           value={password}
         />
       </div>
-      <Button className="mt-4 mx-auto w-36" onClick={handleUserConnection}>
-        Create
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button className="w-1/2" onClick={handleUserConnection}>
+          Create account
+        </Button>
+        <Button
+          className="w-1/2"
+          variant="secondary"
+          onClick={() => {
+            navigate("/auth");
+          }}
+        >
+          Go back
+        </Button>
+      </div>
     </div>
   );
 };

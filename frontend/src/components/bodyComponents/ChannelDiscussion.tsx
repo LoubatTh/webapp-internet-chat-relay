@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import InputMessage from "../chatComponents/InputMessage";
 import { getIdentity } from "../../lib/utils";
 import { useToast } from "../ui/ui/use-toast";
-import PublicChannel from "./PublicChannels";
 
 const socket: Socket = io("http://localhost:4000");
 
@@ -84,10 +83,8 @@ const ChannelDiscussion = () => {
   }, [channelId]);
 
   return (
-    <div className="flex flex-col bg-background w-full h-full ">
-      {channelId ? (
-        <>
-       <div className="flex flex-col bg-secondary h-[calc(100%-50px)] w-[calc(100%-10px)] rounded-md">
+    <div className="flex flex-col bg-background w-full h-full gap-2">
+      <div className="flex flex-col bg-secondary h-[calc(100%-44px)] w-[calc(100%-10px)] rounded-md">
         <ScrollArea className="h-full w-full">
           {messages.map((message, index) => (
             <div
@@ -123,11 +120,9 @@ const ChannelDiscussion = () => {
           ))}
         </ScrollArea>
       </div>
-      <InputMessage onCommand={handleCommand} />
-        </>
-      ) : (
-        <PublicChannel />
-      )}
+      <div className="mb-2 ">
+        <InputMessage onCommand={handleCommand} />
+      </div>
     </div>
   );
 };

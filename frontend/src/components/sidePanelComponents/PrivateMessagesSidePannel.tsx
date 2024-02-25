@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { PmsgType } from "../../lib/type";
 import { ScrollArea } from "../ui/ui/scroll-area";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchApi } from "../../lib/api";
 import { useToast } from "../ui/ui/use-toast";
 import { getIdentity, isUser } from "../../lib/utils";
@@ -14,7 +14,7 @@ type PmsgTypeResponse = {
 };
 
 const getPM = async (): Promise<PmsgTypeResponse> => {
-  const response = await fetchApi(
+  const response = await fetchApi<PmsgType[]>(
     "GET",
     `${isUser() ? "users" : "guests"}/${getIdentity()}/pmsgs`
   );
@@ -24,11 +24,16 @@ const getPM = async (): Promise<PmsgTypeResponse> => {
 const PrivateMessagesSidePannel = () => {
   const { toast } = useToast();
   const { pmsgs, setPmsgs } = usePmsgStorageStore();
+  const navigate = useNavigate();
+  const { channelId } = useParams();
 
   const getPmsg = async () => {
     const response = await getPM();
     const data = response.data;
     if (response.status === 200) {
+      if (!data.find((pmsg) => pmsg._id === channelId)) {
+        navigate("/messages");
+      }
       setPmsgs(data);
     } else {
       toast({
