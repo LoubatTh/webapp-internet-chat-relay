@@ -65,9 +65,20 @@ export const UserLogin = () => {
           value={password}
         />
       </div>
-      <Button className="mt-4 mx-auto w-36" onClick={handleUserConnection}>
-        Login
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button className="w-1/2" onClick={handleUserConnection}>
+          Connection
+        </Button>
+        <Button
+          className="w-1/2"
+          variant="secondary"
+          onClick={() => {
+            navigate("/auth");
+          }}
+        >
+          Go back
+        </Button>
+      </div>
     </div>
   );
 };

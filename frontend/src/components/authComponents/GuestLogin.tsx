@@ -44,9 +44,20 @@ const GuestLogin = () => {
         <Label htmlFor="username">Username</Label>
         <Input name="username" onChange={handleInputChange} value={username} />
       </div>
-      <Button className="mt-4 mx-auto w-36" onClick={handleCreationGuest}>
-        Continue as guest
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button className="w-1/2" onClick={handleCreationGuest}>
+          Continue as guest
+        </Button>
+        <Button
+          className="w-1/2"
+          variant="secondary"
+          onClick={() => {
+            navigate("/auth");
+          }}
+        >
+          Go back
+        </Button>
+      </div>
     </div>
   );
 };
