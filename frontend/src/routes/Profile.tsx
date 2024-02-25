@@ -6,9 +6,11 @@ const Profile = () => {
   const isUserConnected = isUser();
 
   return (
-    <div className="w-full flex flex-col items-center gap-8">
+    <div className="w-full flex flex-col items-center gap-8 bg-secondary">
       <div className=" text-6xl my-10">My profile</div>
-      {isUserConnected ? <UserProfile /> : <GuestProfile />}
+      <div className="bg-background p-6 rounded-lg border-[0.5px] border-foreground">
+        {isUserConnected ? <UserProfile /> : <GuestProfile />}
+      </div>
     </div>
   );
 };

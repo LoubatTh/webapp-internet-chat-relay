@@ -70,8 +70,8 @@ const PublicChannel = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-2xl my-4 text-center">Public Channels</h1>
+    <div className="flex flex-col gap-2 bg-secondary w-full justify-center">
+      <h1 className="text-3xl my-4 text-center">Public Channels</h1>
       <div className="container grid gap-3 mb-5">
         {items.map((channel, index) => (
           <ChannelCard

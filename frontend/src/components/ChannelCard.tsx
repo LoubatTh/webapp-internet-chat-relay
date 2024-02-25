@@ -43,7 +43,13 @@ const ChannelCard = ({
 
   return (
     <React.Fragment>
-      <Card className="grid grid-cols-3">
+      <Card
+        className={`grid grid-cols-3 ${
+          isJoined
+            ? "bg-primary text-primary-foreground border-primary-foreground"
+            : "bg-background text-foreground"
+        }`}
+      >
         <CardTitle className="text-start self-center ml-3">{name}</CardTitle>
         <CardContent className="text-end self-center mr-3">
           {membersCount > 1
